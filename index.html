@@ -986,3 +986,29 @@
   </script>
 </body>
 </html>
+# bot.py dosyanızın en altındaki main() fonksiyonunu bununla güncelleyin:
+from aiohttp import web
+
+async def handle_ping(request):
+    return web.Response(text="Eliar Bot 7/24 Canlı!")
+
+async def main():
+    await setup_bot_commands()
+    asyncio.create_task(automated_scheduler())
+    
+    # Render Bulut Sunucusu İçin Canlılık Portu (Uyku Engelleme)
+    app = web.Application()
+    app.router.add_get("/", handle_ping)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    port = int(os.environ.get("PORT", 8080))
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+
+    print("=" * 60)
+    print(f"🚀 Eliar Canlı Santral Bulutta Başlatıldı! (Port: {port})")
+    print("=" * 60)
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())
