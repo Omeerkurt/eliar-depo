@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Eliar Depo & Saha Yönetim Santrali</title>
+  <title>Eliar Depo - Parça & İş Paylaşımı</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -28,7 +28,7 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-20">
+<body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
 
   <!-- ==================== HEADER ==================== -->
   <header class="sticky top-0 z-40 bg-cardbg/95 backdrop-blur border-b border-bordercol px-4 py-3 flex items-center justify-between shadow-lg">
@@ -38,7 +38,7 @@
       </div>
       <div>
         <h1 class="text-base font-bold tracking-wide text-white leading-tight">ELIAR DEPO</h1>
-        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ÖMER ⇄ KAMİL TAM ENTEGRASYON</p>
+        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ÖMER ⇄ KAMİL İŞ PAYLAŞIMI</p>
       </div>
     </div>
 
@@ -52,23 +52,19 @@
   <!-- ==================== ANA ALAN ==================== -->
   <main class="p-3.5 max-w-2xl mx-auto space-y-4">
 
-    <!-- 4'LÜ KURUMSAL NAVİGASYON -->
-    <div class="grid grid-cols-4 gap-1 p-1 bg-cardbg border border-bordercol rounded-2xl text-[11px] font-semibold">
-      <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-2.5 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
-        <i class="fa-solid fa-boxes-stacked text-xs"></i>
+    <!-- 3'LÜ ANA MENÜ (Teklifler Silindi) -->
+    <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
+      <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
+        <i class="fa-solid fa-boxes-stacked text-sm"></i>
         <span data-i18n="nav_stock">Stok</span>
       </button>
-      <button onclick="switchTab('workflow')" id="tab-btn-workflow" class="tab-btn py-2.5 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
-        <i class="fa-solid fa-share-nodes text-xs"></i>
+      <button onclick="switchTab('workflow')" id="tab-btn-workflow" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
+        <i class="fa-solid fa-share-nodes text-sm"></i>
         <span data-i18n="nav_workflow">İş Akışı</span>
       </button>
-      <button onclick="switchTab('quotes')" id="tab-btn-quotes" class="tab-btn py-2.5 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
-        <i class="fa-solid fa-file-invoice text-xs"></i>
-        <span data-i18n="nav_quotes">Teklifler</span>
-      </button>
-      <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn py-2.5 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
-        <i class="fa-solid fa-chart-line text-xs"></i>
-        <span data-i18n="nav_reports">Rapor/Tesis</span>
+      <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
+        <i class="fa-solid fa-chart-line text-sm"></i>
+        <span data-i18n="nav_reports">Rapor / Tesis</span>
       </button>
     </div>
 
@@ -80,12 +76,13 @@
           <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Ürün kodu veya isimle ara..." 
             class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-brand-500 text-white placeholder-slate-500 shadow-inner">
         </div>
-        <button onclick="openStockModal()" class="px-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1 text-xs shadow-md">
+        <button onclick="openStockModal()" class="px-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1 text-xs shadow-md">
           <i class="fa-solid fa-plus"></i>
           <span data-i18n="btn_add_part">Yeni</span>
         </button>
       </div>
 
+      <!-- Kategori Filtre Butonları -->
       <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
         <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white shadow-sm whitespace-nowrap" data-i18n="cat_all">Tümü</button>
         <button onclick="filterCategory('KONTROL')" id="pill-KONTROL" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap" data-i18n="cat_control">Kontrolörler</button>
@@ -111,7 +108,7 @@
         </button>
       </div>
 
-      <!-- FORMA A: ÖMER ➔ KAMİL -->
+      <!-- FORM A: ÖMER ➔ KAMİL -->
       <div id="form-omer-to-kamil" class="bg-cardbg border border-bordercol rounded-2xl p-4 shadow-xl space-y-3">
         <div class="border-b border-bordercol pb-2">
           <h2 class="text-sm font-bold text-white flex items-center space-x-2">
@@ -146,6 +143,7 @@
           </div>
         </div>
 
+        <!-- Akıllı Ürün Arama -->
         <div class="relative">
           <label class="text-xs text-slate-400 font-semibold flex items-center justify-between">
             <span class="flex items-center"><span data-i18n="lbl_search_part">İstenen Ürün / Parça</span> <span class="text-rose-400 ml-1">*</span></span>
@@ -177,7 +175,7 @@
         </div>
 
         <div>
-          <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_note_otk">Ömer'in Notu</label>
+          <label class="text-xs text-slate-400 font-semibold">Ömer'in Notu</label>
           <textarea id="otk-notes" rows="2" placeholder="Açıklama..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
         </div>
 
@@ -230,88 +228,18 @@
       </div>
     </section>
 
-    <!-- ==================== 3. TAB: TEKLİF & BELGE YÖNETİMİ ==================== -->
-    <section id="tab-quotes" class="tab-content hidden space-y-3">
-      
-      <!-- Ref No ile Hızlı Teklif Arama -->
-      <div class="bg-cardbg border border-bordercol rounded-2xl p-3.5 space-y-2">
-        <label class="text-xs text-slate-400 font-semibold flex items-center justify-between">
-          <span>🔖 Eliar Ref No ile Teklif Sorgula</span>
-        </label>
-        <div class="flex space-x-2">
-          <input type="text" id="ref-search-input" placeholder="Örn: 46189ND" class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white font-mono uppercase">
-          <button onclick="searchQuoteByRef()" class="px-4 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-xs">Sorgula</button>
-        </div>
-        <div id="ref-search-result" class="hidden pt-2 text-xs"></div>
-      </div>
-
-      <!-- Manuel / Belge Yükleme Kutusu -->
-      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3">
-        <div class="flex justify-between items-center border-b border-bordercol pb-2">
-          <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
-            <i class="fa-solid fa-file-arrow-up text-emerald-400"></i>
-            <span>Yeni Teklif Formu İşle (PDF / Görsel)</span>
-          </h3>
-          <input type="file" id="quote-file-input" accept="application/pdf,image/*" onchange="handleQuoteFileUpload(event)" class="hidden">
-          <button onclick="document.getElementById('quote-file-input').click()" class="px-2.5 py-1 bg-darkbg border border-bordercol text-slate-300 rounded-lg text-[10px] font-bold hover:text-white">
-            <i class="fa-solid fa-paperclip mr-1"></i>Dosya Seç
-          </button>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 text-xs">
-          <div>
-            <label class="text-slate-400 font-medium">Müşteri / Fabrika *</label>
-            <input type="text" id="man-firm" placeholder="MICBRO TEKSTİL" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
-          </div>
-          <div>
-            <label class="text-slate-400 font-medium">Ref No</label>
-            <input type="text" id="man-ref" placeholder="46189ND" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono uppercase">
-          </div>
-        </div>
-
-        <div id="man-items-container" class="space-y-2">
-          <label class="text-xs text-slate-400 font-semibold block">Teklif Edilen Parçalar *</label>
-          <div class="man-item-row grid grid-cols-12 gap-1.5 text-xs">
-            <input type="text" placeholder="Kod (41835)" class="col-span-4 bg-darkbg border border-bordercol rounded-xl px-2 py-1.5 text-white font-mono row-code">
-            <input type="text" placeholder="Ürün Adı (Apexco Salmastra)" class="col-span-6 bg-darkbg border border-bordercol rounded-xl px-2 py-1.5 text-white row-name">
-            <input type="number" value="1" min="1" class="col-span-2 bg-darkbg border border-bordercol rounded-xl px-1 py-1.5 text-white font-bold text-center row-qty">
-          </div>
-        </div>
-
-        <button onclick="addManualItemRow()" class="text-[11px] text-emerald-400 hover:underline flex items-center space-x-1">
-          <i class="fa-solid fa-plus-circle"></i>
-          <span>+ Satır Ekle (Çoklu Parça)</span>
-        </button>
-
-        <div class="pt-2 grid grid-cols-3 gap-1.5 text-[11px] font-bold">
-          <button onclick="saveQuoteWithStatus('APPROVED')" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-white">🟢 Onaylandı (Satış)</button>
-          <button onclick="saveQuoteWithStatus('WAITING')" class="py-2.5 bg-amber-600 hover:bg-amber-500 rounded-xl text-white">🟡 Bekliyor</button>
-          <button onclick="saveQuoteWithStatus('REJECTED')" class="py-2.5 bg-rose-600 hover:bg-rose-500 rounded-xl text-white">🔴 Kabul Edilmedi</button>
-        </div>
-      </div>
-
-      <!-- Bekleyen Teklifler Listesi -->
-      <div class="space-y-2">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-          <span>⏳ Bekleyen Teklifler (Açık Talepler)</span>
-          <span id="waiting-count-badge" class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-mono text-[10px]">0</span>
-        </h3>
-        <div id="waiting-quotes-list" class="space-y-2"></div>
-      </div>
-    </section>
-
-    <!-- ==================== 4. TAB: Z-RAPORU & TESİS GEÇMİŞİ ==================== -->
+    <!-- ==================== 3. TAB: Z-RAPORU & TESİS GEÇMİŞİ ==================== -->
     <section id="tab-reports" class="tab-content hidden space-y-3">
       
-      <!-- Canlı Z-Raporu Kartı -->
+      <!-- Canlı Z-Raporu Kartı (Tarih Seçicili) -->
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
         <div class="flex justify-between items-center border-b border-bordercol pb-2">
           <div>
             <h3 class="text-sm font-bold text-white flex items-center space-x-1.5">
               <i class="fa-solid fa-chart-pie text-emerald-400"></i>
-              <span>Haftalık Satış Z-Raporu</span>
+              <span>Satış Z-Raporu</span>
             </h3>
-            <p class="text-[10px] text-slate-400 mt-0.5">Otomatik: Cumartesi 12:30 • Canlı Döküm</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Tarih Aralığı Filtreli Döküm</p>
           </div>
           <button onclick="exportZReportCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-md">
             <i class="fa-solid fa-file-excel"></i>
@@ -319,9 +247,30 @@
           </button>
         </div>
 
+        <!-- TARİH SEÇİCİ BÖLÜMÜ -->
+        <div class="space-y-2 bg-darkbg p-2.5 rounded-xl border border-bordercol">
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <label class="text-slate-400 text-[10px] font-semibold block mb-1">Başlangıç Tarihi</label>
+              <input type="date" id="z-start-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
+            </div>
+            <div>
+              <label class="text-slate-400 text-[10px] font-semibold block mb-1">Bitiş Tarihi</label>
+              <input type="date" id="z-end-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
+            </div>
+          </div>
+          <!-- Hızlı Tarih Butonları -->
+          <div class="flex space-x-1.5 text-[10px]">
+            <button onclick="setDatePreset('week')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Hafta</button>
+            <button onclick="setDatePreset('month')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Ay</button>
+            <button onclick="setDatePreset('all')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Tüm Zamanlar</button>
+          </div>
+        </div>
+
+        <!-- İstatistik Kutuları -->
         <div class="grid grid-cols-2 gap-2 text-center">
           <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl">
-            <span class="text-[10px] text-slate-400 block font-medium">Toplam Satılan Parça</span>
+            <span class="text-[10px] text-slate-400 block font-medium">Seçili Dönem Satılan Parça</span>
             <span id="z-total-qty" class="text-base font-black text-emerald-400">0 ADT</span>
           </div>
           <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl">
@@ -360,7 +309,7 @@
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
         <div>
-          <h3 class="font-bold text-white text-sm" data-i18n="modal_deduct_title">Stok Çıkışı / Satış</h3>
+          <h3 class="font-bold text-white text-sm">Stok Çıkışı / Satış</h3>
           <p id="deduct-part-header" class="text-[11px] text-emerald-400 font-mono font-semibold mt-0.5"></p>
         </div>
         <button onclick="closeDeductModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
@@ -369,7 +318,7 @@
       <div>
         <div class="flex justify-between items-center text-xs">
           <label class="text-slate-400 font-semibold flex items-center">
-            <span data-i18n="lbl_deduct_qty">Düşülecek Miktar</span> <span class="text-rose-400 ml-1">*</span>
+            <span>Düşülecek Miktar</span> <span class="text-rose-400 ml-1">*</span>
           </label>
           <span id="deduct-current-stock" class="text-slate-400 font-mono"></span>
         </div>
@@ -385,7 +334,7 @@
 
       <div>
         <label class="text-xs text-slate-400 font-semibold flex items-center">
-          <span data-i18n="lbl_destination">Satılan Tesis / Müşteri</span> <span class="text-rose-400 ml-1">*</span>
+          <span>Satılan Tesis / Müşteri</span> <span class="text-rose-400 ml-1">*</span>
         </label>
         <input type="text" id="deduct-destination" placeholder="Tesis Adı" class="w-full mt-1.5 bg-darkbg border border-bordercol rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
       </div>
@@ -394,7 +343,7 @@
 
       <button onclick="confirmStockDeduction()" class="w-full bg-rose-600 hover:bg-rose-500 py-3 rounded-xl font-bold text-white text-xs shadow-lg shadow-rose-900/30 flex items-center justify-center space-x-2">
         <i class="fa-solid fa-arrow-down-from-bracket"></i>
-        <span data-i18n="btn_confirm_deduct">Stoktan Düş & Bildir</span>
+        <span>Stoktan Düş & Bildir</span>
       </button>
     </div>
   </div>
@@ -403,7 +352,7 @@
   <div id="modal-stock" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
-        <h3 class="font-bold text-white text-sm" data-i18n="modal_add_title">Yeni Endüstriyel Parça</h3>
+        <h3 class="font-bold text-white text-sm">Yeni Endüstriyel Parça</h3>
         <button onclick="closeStockModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
       
@@ -416,7 +365,7 @@
         </div>
         <div>
           <label class="text-slate-400 font-medium flex items-center">
-            <span data-i18n="lbl_category">Kategori</span> <span class="text-rose-400 ml-1">*</span>
+            <span>Kategori</span> <span class="text-rose-400 ml-1">*</span>
           </label>
           <select id="m-cat" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-2 py-2 text-white">
             <option value="KONTROL">Kontrolörler</option>
@@ -448,7 +397,7 @@
         </div>
       </div>
 
-      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30" data-i18n="btn_save_item">Stoka Kaydet & Bildir</button>
+      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Stoka Kaydet & Bildir</button>
     </div>
   </div>
 
@@ -464,7 +413,7 @@
 
     const I18N = {
       tr: {
-        nav_stock: "Stok", nav_workflow: "İş Akışı", nav_quotes: "Teklifler", nav_reports: "Rapor/Tesis",
+        nav_stock: "Stok", nav_workflow: "İş Akışı", nav_reports: "Rapor/Tesis",
         cat_all: "Tümü", cat_control: "Kontrolörler", cat_electronic: "Elektronik", cat_mechatronic: "Mekatronik",
         btn_tab_request: "Sahadan Talep", btn_tab_dispatch: "Sahaya İş Gönder",
         title_otk: "Sahadan Talep (Ömer ➔ Kamil)",
@@ -477,22 +426,14 @@
         lbl_quantity: "Miktar",
         prio_normal: "Normal Servis",
         prio_critical: "Acil (Hat Duruşu!)",
-        lbl_note_otk: "Ömer'in Notu",
         btn_send_kamil: "Kamil'e Gönder & Onay İste",
         lbl_task_free: "Görev Tipi / Başlığı",
         btn_send_omer: "Sahaya İş Gönder (Ömer'e Fırlat)",
         btn_add_part: "Yeni Parça",
-        lbl_category: "Kategori",
-        modal_add_title: "Yeni Endüstriyel Parça",
-        modal_deduct_title: "Stok Çıkışı / Satış",
-        lbl_deduct_qty: "Düşülecek Miktar",
-        lbl_destination: "Satılan Tesis / Müşteri",
-        btn_confirm_deduct: "Stoktan Düş & Bildir",
-        btn_save_item: "Stoka Kaydet & Bildir",
         shelf: "Konum"
       },
       uz: {
-        nav_stock: "Ombor", nav_workflow: "Ish Oqimi", nav_quotes: "Takliflar", nav_reports: "Hisobot",
+        nav_stock: "Ombor", nav_workflow: "Ish Oqimi", nav_reports: "Hisobot/Tesis",
         cat_all: "Hammasi", cat_control: "Kontrollerlar", cat_electronic: "Elektronika", cat_mechatronic: "Mexatronika",
         btn_tab_request: "Maydondan So'rov", btn_tab_dispatch: "Maydonga Ish",
         title_otk: "Maydondan So'rov (O'mar ➔ Komil)",
@@ -505,18 +446,10 @@
         lbl_quantity: "Miqdori",
         prio_normal: "Oddiy Servis",
         prio_critical: "Shoshilinch (Zavod To'xtadi!)",
-        lbl_note_otk: "O'marning Izohi",
         btn_send_kamil: "Komilga Yuborish & Tasdiq Olish",
         lbl_task_free: "Vazifa Turi / Mavzusi",
         btn_send_omer: "Maydonga Ish Yuborish (O'marga)",
         btn_add_part: "Yangi Qism",
-        lbl_category: "Toifa",
-        modal_add_title: "Yangi Sanoat Qismi",
-        modal_deduct_title: "Ombordan Chiqarish / Sotish",
-        lbl_deduct_qty: "Chiqariladigan Miqdor",
-        lbl_destination: "Sotilgan Korxona / Mijoz",
-        btn_confirm_deduct: "Ombordan Chiqarish & Xabar Qilish",
-        btn_save_item: "Omborga Saqlash",
         shelf: "Joy"
       }
     };
@@ -549,7 +482,7 @@
         firm: "MICBRO TEKSTİL",
         ref_no: "48200ND",
         items: [{ code: "EL-PLC-T390", name: "Eliar T390 Kontrolör", qty: 2 }],
-        status: "WAITING",
+        status: "APPROVED",
         date: "28.10.2026 17:15",
         timestamp: "2026-10-28T17:15:00"
       }
@@ -573,7 +506,6 @@
         if (I18N[lang][k]) el.innerText = I18N[lang][k];
       });
       renderStockTable();
-      renderWaitingQuotes();
       renderZReport();
     }
 
@@ -584,7 +516,6 @@
       document.getElementById('tab-btn-' + t).classList.add('bg-brand-600', 'text-white', 'shadow-md');
       document.getElementById('tab-btn-' + t).classList.remove('text-slate-400');
       
-      if (t === 'quotes') renderWaitingQuotes();
       if (t === 'reports') renderZReport();
     }
 
@@ -699,7 +630,6 @@
 
       it.qty -= qty;
       
-      // Satış defterine de ekle
       sales.unshift({
         id: "Q-" + Date.now(),
         firm: dest,
@@ -842,155 +772,56 @@
       alert("İş emri Ömer'e iletildi.");
     }
 
-    /* ---------------- TEKLİF & BELGE YÖNETİMİ (TAB 3) ---------------- */
-    function addManualItemRow() {
-      const container = document.getElementById('man-items-container');
-      const div = document.createElement('div');
-      div.className = "man-item-row grid grid-cols-12 gap-1.5 text-xs pt-1";
-      div.innerHTML = `
-        <input type="text" placeholder="Kod" class="col-span-4 bg-darkbg border border-bordercol rounded-xl px-2 py-1.5 text-white font-mono row-code">
-        <input type="text" placeholder="Ürün Adı" class="col-span-6 bg-darkbg border border-bordercol rounded-xl px-2 py-1.5 text-white row-name">
-        <input type="number" value="1" min="1" class="col-span-2 bg-darkbg border border-bordercol rounded-xl px-1 py-1.5 text-white font-bold text-center row-qty">
-      `;
-      container.appendChild(div);
-    }
+    /* ---------------- Z-RAPORU & TARİH SEÇİCİ (TAB 3) ---------------- */
+    function setDatePreset(type) {
+      const startEl = document.getElementById('z-start-date');
+      const endEl = document.getElementById('z-end-date');
+      const now = new Date();
+      
+      const toIsoDate = (d) => d.toISOString().split('T')[0];
 
-    function handleQuoteFileUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      let guessFirm = file.name.replace(/(fiyat|teklif|teklifi|\.pdf|\.jpg|\.png)/gi, "").trim();
-      if (guessFirm.length > 2) document.getElementById('man-firm').value = guessFirm;
-      document.getElementById('man-ref').value = "46189ND";
-      alert(`[${file.name}] yüklendi. Bilgileri gözden geçirip durum butonuna basabilirsiniz.`);
-    }
-
-    function saveQuoteWithStatus(status) {
-      const firm = document.getElementById('man-firm').value.trim();
-      const refNo = document.getElementById('man-ref').value.trim() || "YOK";
-      if (!firm) { alert("Müşteri / Fabrika adı zorunludur!"); return; }
-
-      const rows = document.querySelectorAll('.man-item-row');
-      const items = [];
-      rows.forEach(r => {
-        const c = r.querySelector('.row-code').value.trim();
-        const n = r.querySelector('.row-name').value.trim();
-        const q = parseInt(r.querySelector('.row-qty').value) || 1;
-        if (c) items.push({ code: c, name: n || c, qty: q });
-      });
-
-      if (items.length === 0) { alert("En az 1 parça kodu yazmalısınız!"); return; }
-
-      const quoteId = "Q-" + Date.now();
-      const nowStr = new Date().toLocaleString([], { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-
-      // Eğer onaylandıysa stoktan düş
-      if (status === 'APPROVED') {
-        items.forEach(itm => {
-          const st = stocks.find(s => s.code === itm.code);
-          if (st) st.qty = max(0, st.qty - itm.qty);
-        });
+      if (type === 'week') {
+        const weekAgo = new Date();
+        weekAgo.setDate(now.getDate() - 7);
+        startEl.value = toIsoDate(weekAgo);
+        endEl.value = toIsoDate(now);
+      } else if (type === 'month') {
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        startEl.value = toIsoDate(firstDay);
+        endEl.value = toIsoDate(now);
+      } else {
+        startEl.value = "";
+        endEl.value = "";
       }
-
-      sales.unshift({
-        id: quoteId,
-        firm, ref_no: refNo,
-        items,
-        status,
-        date: nowStr,
-        timestamp: new Date().toISOString()
-      });
-
-      persist();
-      renderStockTable();
-      renderWaitingQuotes();
       renderZReport();
-
-      // Formu temizle
-      document.getElementById('man-firm').value = "";
-      document.getElementById('man-ref').value = "";
-      alert(status === 'APPROVED' ? "Satış onaylandı ve Z-raporuna işlendi!" : "Teklif bekleme listesine eklendi.");
     }
 
-    function renderWaitingQuotes() {
-      const waiting = sales.filter(s => s.status === 'WAITING');
-      document.getElementById('waiting-count-badge').innerText = waiting.length;
-      const c = document.getElementById('waiting-quotes-list');
-      if (waiting.length === 0) {
-        c.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 bg-cardbg rounded-xl border border-bordercol">Şu an onay bekleyen açık teklif yok.</p>`;
-        return;
-      }
-
-      c.innerHTML = waiting.map(q => `
-        <div class="bg-cardbg border border-bordercol rounded-2xl p-3 text-xs space-y-2 shadow-md">
-          <div class="flex justify-between items-start">
-            <div>
-              <h4 class="font-bold text-white text-xs">${q.firm}</h4>
-              <span class="text-[10px] text-amber-400 font-mono">Ref: ${q.ref_no} • ${q.date}</span>
-            </div>
-            <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold text-[9px]">BEKLİYOR</span>
-          </div>
-          <div class="border-t border-bordercol/50 pt-1.5 space-y-0.5">
-            ${q.items.map(i => `<p class="text-[11px] text-slate-300">• <span class="font-mono text-emerald-400">${i.code}</span> — ${i.name} (<b>${i.qty} Adet</b>)</p>`).join('')}
-          </div>
-          <div class="grid grid-cols-2 gap-1.5 pt-1">
-            <button onclick="approveWaitingQuote('${q.id}')" class="py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-[11px]">🟢 Onayla (Satış)</button>
-            <button onclick="rejectWaitingQuote('${q.id}')" class="py-1.5 bg-rose-600/80 hover:bg-rose-600 text-white rounded-xl font-bold text-[11px]">🔴 İptal Et</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function approveWaitingQuote(id) {
-      const q = sales.find(s => s.id === id);
-      if (!q) return;
-      q.status = 'APPROVED';
-      q.date = new Date().toLocaleString([], { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-      // Stoktan düş
-      q.items.forEach(itm => {
-        const st = stocks.find(s => s.code === itm.code);
-        if (st) st.qty = Math.max(0, st.qty - itm.qty);
-      });
-      persist();
-      renderStockTable();
-      renderWaitingQuotes();
-      renderZReport();
-      alert("Teklif onaylandı ve Z-Raporuna satış olarak aktarıldı.");
-    }
-
-    function rejectWaitingQuote(id) {
-      const q = sales.find(s => s.id === id);
-      if (!q) return;
-      q.status = 'REJECTED';
-      persist();
-      renderWaitingQuotes();
-    }
-
-    function searchQuoteByRef() {
-      const query = document.getElementById('ref-search-input').value.trim().toUpperCase();
-      const resultBox = document.getElementById('ref-search-result');
-      if (!query) return;
-      const found = sales.find(s => s.ref_no && s.ref_no.toUpperCase() === query);
-      resultBox.classList.remove('hidden');
-      if (!found) {
-        resultBox.innerHTML = `<p class="text-rose-400 text-[11px]">Ref No [${query}] bulunamadı.</p>`;
-        return;
-      }
-      resultBox.innerHTML = `
-        <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl space-y-1">
-          <p class="font-bold text-white text-xs">${found.firm} <span class="text-emerald-400 font-mono">(${found.ref_no})</span></p>
-          <p class="text-[10px] text-slate-400">Durum: <span class="font-bold text-amber-400">${found.status}</span> • ${found.date}</p>
-          ${found.items.map(i => `<p class="text-[11px] text-slate-300">• ${i.code} — ${i.name} (${i.qty} Adet)</p>`).join('')}
-        </div>
-      `;
-    }
-
-    /* ---------------- Z-RAPORU & TESİS GEÇMİŞİ (TAB 4) ---------------- */
-    function renderZReport() {
+    function getFilteredZSales() {
       const approved = sales.filter(s => s.status === 'APPROVED');
+      const startVal = document.getElementById('z-start-date').value;
+      const endVal = document.getElementById('z-end-date').value;
+
+      if (!startVal && !endVal) return approved;
+
+      return approved.filter(s => {
+        try {
+          const sDate = s.timestamp ? s.timestamp.split('T')[0] : "";
+          if (!sDate) return true;
+          if (startVal && sDate < startVal) return false;
+          if (endVal && sDate > endVal) return false;
+          return true;
+        } catch {
+          return true;
+        }
+      });
+    }
+
+    function renderZReport() {
+      const filtered = getFilteredZSales();
       let totalQty = 0;
       const plants = new Set();
 
-      approved.forEach(s => {
+      filtered.forEach(s => {
         plants.add(s.firm);
         s.items.forEach(i => totalQty += parseInt(i.qty || 1));
       });
@@ -999,13 +830,13 @@
       document.getElementById('z-total-plants').innerText = `${plants.size} Tesis`;
 
       const listContainer = document.getElementById('z-sales-list');
-      if (approved.length === 0) {
-        listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-2">Henüz onaylı satış yok.</p>`;
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 bg-darkbg rounded-xl">Seçili tarih aralığında onaylı satış bulunamadı.</p>`;
         return;
       }
 
-      listContainer.innerHTML = approved.slice(0, 15).map((s, idx) => `
-        <div class="p-2 bg-darkbg border border-bordercol rounded-xl text-xs flex justify-between items-center">
+      listContainer.innerHTML = filtered.map((s) => `
+        <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl text-xs flex justify-between items-center">
           <div>
             <span class="font-bold text-white">${s.firm}</span>
             <span class="text-[10px] text-slate-400 font-mono block">${s.items.map(i => `${i.code} (${i.qty} Adet)`).join(', ')}</span>
@@ -1016,12 +847,12 @@
     }
 
     function exportZReportCSV() {
-      const approved = sales.filter(s => s.status === 'APPROVED');
-      if (approved.length === 0) { alert("İndirilecek onaylı satış kaydı bulunmuyor."); return; }
+      const filtered = getFilteredZSales();
+      if (filtered.length === 0) { alert("Seçili tarih aralığında indirilecek onaylı satış kaydı bulunmuyor."); return; }
       
       let csv = "\uFEFFSıra;Tarih;Ref No;Müşteri / Fabrika;Ürün Kodu;Ürün Adı;Adet;Durum\n";
       let cnt = 1;
-      approved.forEach(s => {
+      filtered.forEach(s => {
         s.items.forEach(i => {
           csv += `${cnt};${s.date};${s.ref_no || 'YOK'};${s.firm};${i.code};${i.name};${i.qty};ONAYLANDI\n`;
           cnt++;
@@ -1066,6 +897,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       setLanguage(currentLang);
+      setDatePreset('week'); // Varsayılan olarak son 7 günü seç
       switchTab('stock');
     });
   </script>
