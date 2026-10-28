@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Eliar Depo - İş Paylaşımı & Canlı Stok</title>
+  <title>Eliar Depo - Akıllı Ürün Arama & İş Paylaşımı</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -139,9 +139,32 @@
           </div>
         </div>
 
-        <div>
-          <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_select_part">İstenen Donanım / Ürün Kodu</label>
-          <select id="otk-part" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white focus:outline-none font-mono"></select>
+        <!-- ==================== CANLI ÜRÜN ARAMA & OTOMATİK TAMAMLAMA ==================== -->
+        <div class="relative">
+          <label class="text-xs text-slate-400 font-semibold flex items-center justify-between">
+            <span data-i18n="lbl_search_part">İstenen Ürün / Parça (Arayarak Seçin)</span>
+            <span id="otk-selected-badge" class="text-[10px] text-emerald-400 font-mono font-bold hidden"></span>
+          </label>
+          
+          <div class="relative mt-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-xs"></i>
+            <input type="text" id="otk-part-search" 
+              oninput="searchPartsLive(this.value)" 
+              onfocus="searchPartsLive(this.value)" 
+              placeholder="Ürün adı veya kodu yazın..." 
+              autocomplete="off" 
+              class="w-full bg-darkbg border border-bordercol rounded-xl pl-8 pr-8 py-2 text-sm text-white focus:outline-none focus:border-brand-500 font-medium">
+            
+            <button type="button" onclick="clearPartSelection()" id="otk-clear-btn" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-white text-xs">✕</button>
+          </div>
+
+          <!-- Canlı Arama Sonuç Listesi (Floating Dropdown) -->
+          <div id="otk-part-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-56 overflow-y-auto hidden divide-y divide-bordercol/50">
+            <!-- Dinamik JS Sonuçları Buraya Dolar -->
+          </div>
+
+          <!-- Seçilen Ürün Kodunu Tutan Gizli Input -->
+          <input type="hidden" id="otk-selected-code" value="">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
@@ -190,10 +213,9 @@
           </div>
         </div>
 
-        <!-- Serbest Görev Tipi Girişi (Kamil İstediğini Yazar) -->
         <div>
           <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_task_free">Görev Tipi / Başlığı (Serbest Metin)</label>
-          <input type="text" id="kto-task-type" placeholder="Örn: 2 no'lu boya kazanı inverter arızası, PLC revizyonu..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 font-medium">
+          <input type="text" id="kto-task-type" placeholder="Örn: 2 no'lu boya kazanı inverter arızası..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 font-medium">
         </div>
 
         <div>
@@ -290,7 +312,7 @@
         opt_part_req: "📦 Parça Talebi", opt_serv_req: "🛠️ Servis Talebi", opt_both_req: "⚡ Servis + Parça Talebi",
         lbl_firm_name: "Müşteri / Fabrika Adı",
         lbl_firm_contact: "Yetkili Kişi & Telefon",
-        lbl_select_part: "İstenen Donanım / Ürün Kodu",
+        lbl_search_part: "İstenen Ürün / Parça (Arayarak Seçin)",
         lbl_quantity: "Miktar",
         lbl_priority: "Öncelik Seviyesi",
         prio_normal: "Normal Servis",
@@ -318,7 +340,7 @@
         opt_part_req: "📦 Ehtiyot Qism So'rovi", opt_serv_req: "🛠️ Servis Xizmati So'rovi", opt_both_req: "⚡ Servis + Qism So'rovi",
         lbl_firm_name: "Mijoz / Fabrika Nomi",
         lbl_firm_contact: "Mas'ul Shaxs & Telefon",
-        lbl_select_part: "Kerakli Qurilma / Mahsulot Kodi",
+        lbl_search_part: "Kerakli Mahsulot (Qidirib Tanlang)",
         lbl_quantity: "Miqdori",
         lbl_priority: "Muhimlik Darajasi",
         prio_normal: "Oddiy Servis",
@@ -352,7 +374,6 @@
 
     function persist() {
       localStorage.setItem('eliar_stocks', JSON.stringify(stocks));
-      populateSelects();
     }
 
     function setLanguage(lang) {
@@ -372,7 +393,6 @@
       document.getElementById('tab-' + t).classList.remove('hidden');
       document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('bg-brand-600', 'text-white'); b.classList.add('text-slate-400'); });
       document.getElementById('tab-btn-' + t).classList.add('bg-brand-600', 'text-white');
-      if (t === 'workflow') populateSelects();
     }
 
     function setWorkflowDirection(dir) {
@@ -454,7 +474,6 @@
       `).join('');
     }
 
-    /* ==================== STOKTAN ÇIKARILIRKEN NEREYE SATILDIĞINI SORAN MOTOR ==================== */
     function changeStock(id, delta) {
       const it = stocks.find(x => x.id === id);
       if (!it) return;
@@ -465,7 +484,6 @@
 
       let destination = "";
 
-      // Parça çıkarılıyorsa nereye satıldığını ZORUNLU olarak sor
       if (delta < 0) {
         destination = prompt(`[${it.code}] ${it.name} stoktan düşülüyor.\n\nBu parça NEREYE SATILDI / Hangi tesise kullanıldı? (Zorunlu):`);
         
@@ -497,19 +515,79 @@
       if (tg?.sendData) {
         tg.sendData(JSON.stringify(payload));
       } else {
-        alert(`[Test Modu] ${it.code} stok güncellendi: ${it.qty} Adet. Hedef Tesis: ${destination || 'Yok'}`);
+        alert(`[Test Modu] ${it.code} stok güncellendi: ${it.qty} Adet. Hedef: ${destination || 'Yok'}`);
       }
     }
 
-    function populateSelects() {
-      const partOptions = stocks.map(p => `<option value="${p.code}">[${p.code}] ${p.name} (Stok: ${p.qty})</option>`).join('');
-      document.getElementById('otk-part').innerHTML = partOptions;
+    /* ==================== AKILLI CANLI ÜRÜN ARAMA MOTORU ==================== */
+    function searchPartsLive(query) {
+      const dropdown = document.getElementById('otk-part-dropdown');
+      const q = (query || "").trim().toLowerCase();
+
+      // İsme veya koda göre filtrele
+      const matches = stocks.filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        p.code.toLowerCase().includes(q)
+      );
+
+      if (matches.length === 0) {
+        dropdown.innerHTML = `<div class="p-3 text-xs text-slate-400 text-center">Eşleşen parça bulunamadı.</div>`;
+        dropdown.classList.remove('hidden');
+        return;
+      }
+
+      dropdown.innerHTML = matches.map(p => `
+        <div onclick="selectPart('${p.code}', '${p.name.replace(/'/g, "\\'")}', '${p.qty}')" 
+          class="p-2.5 hover:bg-slate-800/80 cursor-pointer transition flex items-center justify-between">
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <span class="text-[10px] font-mono font-bold bg-darkbg border border-bordercol px-1.5 py-0.5 rounded text-emerald-400">${p.code}</span>
+              <span class="text-[9px] text-slate-400 font-semibold">[${p.cat}]</span>
+            </div>
+            <p class="text-xs font-semibold text-white mt-1 leading-snug">${p.name}</p>
+          </div>
+          <div class="text-right pl-2">
+            <span class="text-xs font-bold text-emerald-400 block">${p.qty} ADT</span>
+            <span class="text-[10px] text-slate-400 font-mono">${p.price} ${p.curr}</span>
+          </div>
+        </div>
+      `).join('');
+
+      dropdown.classList.remove('hidden');
     }
+
+    function selectPart(code, name, qty) {
+      document.getElementById('otk-selected-code').value = code;
+      document.getElementById('otk-part-search').value = `${name} [${code}]`;
+      
+      const badge = document.getElementById('otk-selected-badge');
+      badge.innerText = `✓ Kod: ${code} (Stok: ${qty} ADT)`;
+      badge.classList.remove('hidden');
+
+      document.getElementById('otk-clear-btn').classList.remove('hidden');
+      document.getElementById('otk-part-dropdown').classList.add('hidden');
+    }
+
+    function clearPartSelection() {
+      document.getElementById('otk-selected-code').value = "";
+      document.getElementById('otk-part-search').value = "";
+      document.getElementById('otk-selected-badge').classList.add('hidden');
+      document.getElementById('otk-clear-btn').classList.add('hidden');
+      document.getElementById('otk-part-dropdown').classList.add('hidden');
+    }
+
+    // Arama kutusu dışına tıklandığında dropdown'ı kapat
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('otk-part-dropdown');
+      const searchInput = document.getElementById('otk-part-search');
+      if (dropdown && !dropdown.contains(e.target) && e.target !== searchInput) {
+        dropdown.classList.add('hidden');
+      }
+    });
 
     function openStockModal() { document.getElementById('modal-stock').classList.remove('hidden'); document.getElementById('modal-stock').classList.add('flex'); }
     function closeStockModal() { document.getElementById('modal-stock').classList.add('hidden'); document.getElementById('modal-stock').classList.remove('flex'); }
 
-    /* ==================== KODSUZ ÜRÜN EKLETİLMEYEN KAYIT FONKSİYONU ==================== */
     function saveStockItem() {
       const code = document.getElementById('m-code').value.trim();
       const cat = document.getElementById('m-cat').value;
@@ -519,7 +597,6 @@
       const curr = document.getElementById('m-curr').value;
       const loc = document.getElementById('m-loc').value.trim() || 'ÖMER-ARAÇ';
       
-      // KESİN KURAL: Ürün kodsuz ürün olamaz!
       if (!code) {
         alert("⛔ HATA: Ürün kodu zorunludur! Ürün kodsuz parça sisteme kaydedilemez.");
         document.getElementById('m-code').focus();
@@ -531,7 +608,6 @@
         return;
       }
 
-      // Aynı koddan parça var mı kontrolü
       const existing = stocks.find(p => p.code.toLowerCase() === code.toLowerCase());
       if (existing) {
         alert(`⛔ HATA: '${code}' ürün koduna sahip başka bir ürün zaten mevcut!`);
@@ -557,23 +633,27 @@
 
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
       
-      // Formu temizle
       document.getElementById('m-code').value = "";
       document.getElementById('m-name').value = "";
     }
 
-    /* SAHADAN TALEP (ÖMER ➔ KAMİL) */
     function dispatchOmerToKamil() {
       const firmName = document.getElementById('otk-firm-name').value.trim();
       const firmContact = document.getElementById('otk-firm-contact').value.trim();
       const reqType = document.getElementById('otk-req-type').value;
+      const partCode = document.getElementById('otk-selected-code').value;
 
       if (!firmName) {
         alert("Lütfen Müşteri / Fabrika Adını yazın!");
         return;
       }
 
-      const partCode = document.getElementById('otk-part').value;
+      if (!partCode) {
+        alert("Lütfen arama kutusuna yazarak talep edilecek ürünü listeden seçin!");
+        document.getElementById('otk-part-search').focus();
+        return;
+      }
+
       const partObj = stocks.find(p => p.code === partCode);
 
       const payload = {
@@ -592,7 +672,6 @@
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
 
-    /* SAHAYA İŞ GÖNDER (KAMİL ➔ ÖMER) */
     function dispatchKamilToOmer() {
       const firmName = document.getElementById('kto-firm-name').value.trim();
       const firmContact = document.getElementById('kto-firm-contact').value.trim();
@@ -623,7 +702,6 @@
       setLanguage(currentLang);
       switchTab('stock');
       filterCategory('ALL');
-      populateSelects();
     });
   </script>
 </body>
