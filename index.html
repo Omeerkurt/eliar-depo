@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Eliar Depo & Saha Santrali</title>
+  <title>Eliar Depo & Hızlı Saha</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -38,7 +38,7 @@
       </div>
       <div>
         <h1 class="text-base font-bold tracking-wide text-white leading-tight">ELIAR SAHA</h1>
-        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ÖMER ⇄ KAMİL KÖPRÜSÜ</p>
+        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ÖMER ⇄ KAMİL HIZLI İLETİŞİM</p>
       </div>
     </div>
 
@@ -52,19 +52,15 @@
   <!-- ==================== ANA ALAN ==================== -->
   <main class="p-4 max-w-2xl mx-auto space-y-4">
 
-    <!-- 3'LÜ SEKMELER (Defter Kaldırıldı) -->
-    <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
-      <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-2.5 rounded-xl transition-all flex flex-col items-center justify-center space-y-1">
+    <!-- 2'Lİ ANA MENÜ (Stok & İş Akışı) -->
+    <div class="grid grid-cols-2 gap-2 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
+      <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl transition-all flex items-center justify-center space-x-2 bg-brand-600 text-white shadow-md">
         <i class="fa-solid fa-boxes-stacked text-sm"></i>
-        <span data-i18n="nav_stock">Stok</span>
+        <span data-i18n="nav_stock">Stok Yönetimi</span>
       </button>
-      <button onclick="switchTab('suppliers')" id="tab-btn-suppliers" class="tab-btn py-2.5 rounded-xl transition-all flex flex-col items-center justify-center space-y-1">
-        <i class="fa-solid fa-industry text-sm"></i>
-        <span data-i18n="nav_crm">Müşteriler</span>
-      </button>
-      <button onclick="switchTab('workflow')" id="tab-btn-workflow" class="tab-btn py-2.5 rounded-xl transition-all flex flex-col items-center justify-center space-y-1">
+      <button onclick="switchTab('workflow')" id="tab-btn-workflow" class="tab-btn py-3 rounded-xl transition-all flex items-center justify-center space-x-2 text-slate-400">
         <i class="fa-solid fa-repeat text-sm"></i>
-        <span data-i18n="nav_workflow">İş Akışı</span>
+        <span data-i18n="nav_workflow">Hızlı İş Akışı</span>
       </button>
     </div>
 
@@ -78,26 +74,14 @@
         </div>
         <button onclick="openStockModal()" class="px-4 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1.5 text-xs shadow-md">
           <i class="fa-solid fa-plus"></i>
-          <span data-i18n="btn_add_part">Ekle</span>
+          <span data-i18n="btn_add_part">Yeni Parça</span>
         </button>
       </div>
 
       <div id="stock-list" class="space-y-2"></div>
     </section>
 
-    <!-- ==================== 2. TAB: MÜŞTERİLER / TESİSLER ==================== -->
-    <section id="tab-suppliers" class="tab-content hidden space-y-3">
-      <div class="flex justify-between items-center">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="title_crm">Kayıtlı Fabrika & Tesisler</h3>
-        <button onclick="openSupplierModal()" class="px-3 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1 text-xs shadow-md">
-          <i class="fa-solid fa-building-circle-check"></i>
-          <span data-i18n="btn_add_crm">Müşteri Ekle</span>
-        </button>
-      </div>
-      <div id="supplier-list" class="space-y-2"></div>
-    </section>
-
-    <!-- ==================== 3. TAB: ÇİFT YÖNLÜ İŞ AKIŞI ==================== -->
+    <!-- ==================== 2. TAB: ÇİFT YÖNLÜ İŞ AKIŞI ==================== -->
     <section id="tab-workflow" class="tab-content hidden space-y-4">
       
       <!-- AKIŞ SEÇİCİ -->
@@ -124,14 +108,23 @@
           <p class="text-[11px] text-slate-400 mt-0.5" data-i18n="desc_otk">Parça talebi Kamil'e interaktif butonlu bildirim olarak düşer.</p>
         </div>
 
-        <div>
-          <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_target_firm">Müşteri / Tesis</label>
-          <select id="otk-supplier" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white focus:outline-none"></select>
+        <!-- ELLE GİRİLEN MÜŞTERİ BİLGİLERİ -->
+        <div class="space-y-2">
+          <div>
+            <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_firm_name">Müşteri / Fabrika Adı</label>
+            <input type="text" id="otk-firm-name" placeholder="Örn: Taşkent İplik Fabrikası" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_firm_contact">Yetkili Kişi & Telefon</label>
+            <input type="text" id="otk-firm-contact" placeholder="Örn: Bekzod Usta (+998 90 123 45 67)" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+          </div>
         </div>
+
         <div>
-          <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_select_part">İstenen Donanım / Parça</label>
+          <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_select_part">İstenen Donanım / Parça (Stoktan)</label>
           <select id="otk-part" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white focus:outline-none"></select>
         </div>
+
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_quantity">Miktar</label>
@@ -147,7 +140,7 @@
         </div>
         <div>
           <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_note_otk">Ömer'in Teknik Notu</label>
-          <textarea id="otk-notes" rows="2" placeholder="Örn: 2 no'lu panodaki ana CPU yandı..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white placeholder-slate-600"></textarea>
+          <textarea id="otk-notes" rows="2" placeholder="Örn: 2 no'lu panodaki ana CPU yandı, acil değişim gerekli..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white placeholder-slate-600"></textarea>
         </div>
         <button onclick="dispatchOmerToKamil()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-sm shadow-lg shadow-emerald-900/30">
           <i class="fa-brands fa-telegram text-base"></i>
@@ -165,10 +158,18 @@
           <p class="text-[11px] text-slate-400 mt-0.5" data-i18n="desc_kto">Ömer'in telefonuna bildirim gider, tek tıkla canlı telemetri döner.</p>
         </div>
 
-        <div>
-          <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_target_firm">Gidilecek Müşteri / Tesis</label>
-          <select id="kto-supplier" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white focus:outline-none"></select>
+        <!-- ELLE GİRİLEN HEDEF MÜŞTERİ BİLGİLERİ -->
+        <div class="space-y-2">
+          <div>
+            <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_firm_name">Gidilecek Müşteri / Tesis Adı</label>
+            <input type="text" id="kto-firm-name" placeholder="Örn: Samarkand Tekstil Boyahane" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_firm_contact">Tesis Sorumlusu & Telefon</label>
+            <input type="text" id="kto-firm-contact" placeholder="Örn: Farhod Bey (+998 93 450 11 22)" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+          </div>
         </div>
+
         <div>
           <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_task_type">Görev Tipi</label>
           <select id="kto-task-type" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white">
@@ -183,7 +184,7 @@
         </div>
         <div>
           <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_instructions">Kamil'in Talimatı</label>
-          <textarea id="kto-instructions" rows="2" placeholder="Örn: Ali Bey ile görüş, boya kazanındaki inverteri kontrol et..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white placeholder-slate-600"></textarea>
+          <textarea id="kto-instructions" rows="2" placeholder="Örn: İnverter parametrelerini kontrol et, gerekirse sürücüyü değiştir..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white placeholder-slate-600"></textarea>
         </div>
         <button onclick="dispatchKamilToOmer()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-sm shadow-lg shadow-cyan-900/30">
           <i class="fa-solid fa-paper-plane text-base"></i>
@@ -232,30 +233,7 @@
         <label class="text-xs text-slate-400 font-medium">Araç İçi Raf / Konum</label>
         <input type="text" id="m-loc" placeholder="Örn: ÖMER-ARAÇ-RAF1" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white">
       </div>
-      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-sm" data-i18n="btn_save_item">Stoka Kaydet</button>
-    </div>
-  </div>
-
-  <!-- ==================== MODAL: YENİ MÜŞTERİ / TESİS EKLE ==================== -->
-  <div id="modal-supplier" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
-      <div class="flex justify-between items-center border-b border-bordercol pb-2">
-        <h3 class="font-bold text-white text-sm" data-i18n="modal_add_crm_title">Yeni Müşteri / Tesis Ekle</h3>
-        <button onclick="closeSupplierModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 font-medium">Firma / Tesis Adı</label>
-        <input type="text" id="mc-name" placeholder="Örn: Fergana Tekstil Fabrikası" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 font-medium">Teknik Sorumlu / Kontak</label>
-        <input type="text" id="mc-contact" placeholder="Örn: Bekzod Bey" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 font-medium">Telefon Numarası</label>
-        <input type="text" id="mc-phone" placeholder="+998 90 123 45 67" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-sm text-white">
-      </div>
-      <button onclick="saveSupplierItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-sm" data-i18n="btn_save_crm">Müşteriyi Kaydet</button>
+      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-sm" data-i18n="btn_save_item">Stoka Kaydet & Bildir</button>
     </div>
   </div>
 
@@ -271,13 +249,13 @@
 
     const I18N = {
       tr: {
-        nav_stock: "Stok", nav_crm: "Müşteriler", nav_workflow: "İş Akışı",
-        title_crm: "Kayıtlı Fabrika & Tesisler",
+        nav_stock: "Stok Yönetimi", nav_workflow: "Hızlı İş Akışı",
         title_otk: "Sahadan Talep (Ömer ➔ Kamil)",
         desc_otk: "Parça talebi Kamil'e interaktif butonlu bildirim olarak düşer.",
         title_kto: "Sahaya Görev & İş Emri (Kamil ➔ Ömer)",
         desc_kto: "Ömer'in telefonuna bildirim gider, tek tıkla canlı telemetri döner.",
-        lbl_target_firm: "Müşteri / Tesis",
+        lbl_firm_name: "Müşteri / Fabrika Adı",
+        lbl_firm_contact: "Yetkili Kişi & Telefon",
         lbl_select_part: "İstenen Donanım / Parça",
         lbl_quantity: "Miktar",
         lbl_priority: "Öncelik Seviyesi",
@@ -289,19 +267,19 @@
         lbl_dispatch_part: "Yanına Alması Gereken Donanım",
         lbl_instructions: "Kamil'in Talimatı",
         btn_send_omer: "Ömer'e Sahaya İş Emri Fırlat",
-        btn_add_part: "Ekle", btn_add_crm: "Müşteri Ekle",
-        modal_add_title: "Yeni Endüstriyel Parça", modal_add_crm_title: "Yeni Müşteri / Tesis Ekle",
-        btn_save_item: "Stoka Kaydet", btn_save_crm: "Müşteriyi Kaydet",
+        btn_add_part: "Yeni Parça",
+        modal_add_title: "Yeni Endüstriyel Parça",
+        btn_save_item: "Stoka Kaydet & Bildir",
         shelf: "Konum", stock_status: "Mevcut:"
       },
       uz: {
-        nav_stock: "Ombor", nav_crm: "Mijozlar", nav_workflow: "Ish Oqimi",
-        title_crm: "Ro'yxatdagi Fabrikalar",
+        nav_stock: "Ombor Boshqaruvi", nav_workflow: "Tezkor Ish Oqimi",
         title_otk: "Maydondan So'rov (O'mar ➔ Komil)",
         desc_otk: "Qism so'rovi Komilga tasdiq tugmasi bilan boradi.",
         title_kto: "Ish Buyrug'i (Komil ➔ O'mar)",
         desc_kto: "O'marning telefoniga boradi, bir bosishda javob qaytadi.",
-        lbl_target_firm: "Mijoz / Fabrika",
+        lbl_firm_name: "Mijoz / Fabrika Nomi",
+        lbl_firm_contact: "Mas'ul Shaxs & Telefon",
         lbl_select_part: "Kerakli Qurilma / Qism",
         lbl_quantity: "Miqdori",
         lbl_priority: "Muhimlik Darajasi",
@@ -313,9 +291,9 @@
         lbl_dispatch_part: "Olinishi Kerak Bo'lgan Qism",
         lbl_instructions: "Komilning Ko'rsatmasi",
         btn_send_omer: "O'marga Ish Buyrug'ini Yuborish",
-        btn_add_part: "Qo'shish", btn_add_crm: "Mijoz Qo'shish",
-        modal_add_title: "Yangi Sanoat Qismi", modal_add_crm_title: "Yangi Mijoz / Korxona Qo'shish",
-        btn_save_item: "Omborga Saqlash", btn_save_crm: "Mijozni Saqlash",
+        btn_add_part: "Yangi Qism",
+        modal_add_title: "Yangi Sanoat Qismi",
+        btn_save_item: "Omborga Saqlash & Xabar Qilish",
         shelf: "Joy", stock_status: "Mavjud:"
       }
     };
@@ -323,24 +301,16 @@
     let currentLang = localStorage.getItem('eliar_lang') || 'tr';
     let currentFlow = 'OMER_TO_KAMIL';
 
-    // Veri Depolama (localStorage)
     const DEFAULT_STOCKS = [
       { id: "1", code: "EL-PLC-T390", name: "Eliar T390 Boya Kontrolörü", qty: 6, price: 1250, curr: "USD", loc: "ÖMER-ARAÇ-RAF1" },
       { id: "2", code: "IO-MOD-16DI", name: "16 Kanal Giriş Kartı", qty: 18, price: 180, curr: "USD", loc: "ÖMER-ARAÇ-RAF2" },
       { id: "3", code: "EL-VLV-3W", name: "Buhar Vanası DN25", qty: 3, price: 5400000, curr: "UZS", loc: "MERKEZ-DEPO" }
     ];
 
-    const DEFAULT_SUPPLIERS = [
-      { id: "1", name: "Samarkand Textile Group", contact: "Farhod Karimov", phone: "+998 93 450 11 22" },
-      { id: "2", name: "Toshkent Bo'yoq Fabrikasi", contact: "Otabek Umarov", phone: "+998 90 998 77 66" }
-    ];
-
     let stocks = JSON.parse(localStorage.getItem('eliar_stocks')) || DEFAULT_STOCKS;
-    let suppliers = JSON.parse(localStorage.getItem('eliar_suppliers')) || DEFAULT_SUPPLIERS;
 
     function persist() {
       localStorage.setItem('eliar_stocks', JSON.stringify(stocks));
-      localStorage.setItem('eliar_suppliers', JSON.stringify(suppliers));
       populateSelects();
     }
 
@@ -354,7 +324,6 @@
         if (I18N[lang][k]) el.innerText = I18N[lang][k];
       });
       renderStockTable();
-      renderSuppliers();
     }
 
     function switchTab(t) {
@@ -392,51 +361,56 @@
           <div class="flex items-center space-x-2">
             <span class="text-sm font-black text-emerald-400">${i.qty} ADT</span>
             <div class="flex flex-col space-y-1">
-              <button onclick="changeStock('${i.id}', 1)" class="w-6 h-6 bg-darkbg border border-bordercol rounded text-xs text-emerald-400 flex items-center justify-center">+</button>
-              <button onclick="changeStock('${i.id}', -1)" class="w-6 h-6 bg-darkbg border border-bordercol rounded text-xs text-rose-400 flex items-center justify-center">-</button>
+              <button onclick="changeStock('${i.id}', 1)" title="1 Adet Ekle ve Bildir" class="w-7 h-7 bg-darkbg border border-bordercol hover:bg-emerald-950 text-emerald-400 rounded-lg text-xs font-bold flex items-center justify-center active:scale-95">+</button>
+              <button onclick="changeStock('${i.id}', -1)" title="1 Adet Düş ve Bildir" class="w-7 h-7 bg-darkbg border border-bordercol hover:bg-rose-950 text-rose-400 rounded-lg text-xs font-bold flex items-center justify-center active:scale-95">-</button>
             </div>
           </div>
         </div>
       `).join('');
     }
 
-    function changeStock(id, d) {
+    function changeStock(id, delta) {
       const it = stocks.find(x => x.id === id);
-      if (it && it.qty + d >= 0) {
-        it.qty += d;
-        persist();
-        renderStockTable();
+      if (!it) return;
+      if (it.qty + delta < 0) {
+        alert("Stok adedi 0'ın altına düşemez!");
+        return;
+      }
+
+      const actionText = delta < 0 ? "1 ADET KULLANILDI / DÜŞÜLDÜ" : "1 ADET EKLENDİ";
+      const confirmMsg = `${it.code} (${it.name})\nİşlem: ${actionText}\n\nBu işlem Ömer ve Kamil'e Telegram'dan anlık olarak bildirilsin mi?`;
+      
+      if (!confirm(confirmMsg)) return;
+
+      it.qty += delta;
+      persist();
+      renderStockTable();
+
+      const payload = {
+        direction: "STOCK_CHANGE",
+        action: delta < 0 ? "DECREASE" : "INCREASE",
+        delta: Math.abs(delta),
+        code: it.code,
+        name: it.name,
+        current_qty: it.qty,
+        loc: it.loc
+      };
+
+      if (tg?.sendData) {
+        tg.sendData(JSON.stringify(payload));
+      } else {
+        alert(`[Test Modu] ${it.code} güncellendi: ${it.qty} Adet. Telegram'da Ömer ve Kamil'e mesaj atıldı.`);
       }
     }
 
-    function renderSuppliers() {
-      document.getElementById('supplier-list').innerHTML = suppliers.map(s => `
-        <div class="bg-cardbg border border-bordercol rounded-2xl p-3.5 flex justify-between items-center">
-          <div>
-            <h4 class="text-sm font-bold text-white">${s.name}</h4>
-            <p class="text-xs text-slate-400 mt-0.5"><i class="fa-solid fa-user text-slate-500 mr-1 text-[10px]"></i>${s.contact}</p>
-          </div>
-          <a href="tel:${s.phone}" class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
-            <i class="fa-solid fa-phone text-xs"></i>
-          </a>
-        </div>
-      `).join('');
-    }
-
     function populateSelects() {
-      const supOptions = suppliers.map(s => `<option value="${s.name}">${s.name} (${s.contact})</option>`).join('');
       const partOptions = stocks.map(p => `<option value="${p.code}">${p.code} - ${p.name} (${p.qty} Adet)</option>`).join('');
-      document.getElementById('otk-supplier').innerHTML = supOptions;
-      document.getElementById('kto-supplier').innerHTML = supOptions;
       document.getElementById('otk-part').innerHTML = partOptions;
       document.getElementById('kto-part').innerHTML = `<option value="YOK">Donanım Gerekmiyor</option>` + partOptions;
     }
 
-    // Modal Fonksiyonları
     function openStockModal() { document.getElementById('modal-stock').classList.remove('hidden'); document.getElementById('modal-stock').classList.add('flex'); }
     function closeStockModal() { document.getElementById('modal-stock').classList.add('hidden'); document.getElementById('modal-stock').classList.remove('flex'); }
-    function openSupplierModal() { document.getElementById('modal-supplier').classList.remove('hidden'); document.getElementById('modal-supplier').classList.add('flex'); }
-    function closeSupplierModal() { document.getElementById('modal-supplier').classList.add('hidden'); document.getElementById('modal-supplier').classList.remove('flex'); }
 
     function saveStockItem() {
       const code = document.getElementById('m-code').value.trim();
@@ -445,53 +419,78 @@
       const price = parseFloat(document.getElementById('m-price').value) || 0;
       const curr = document.getElementById('m-curr').value;
       const loc = document.getElementById('m-loc').value.trim() || 'ÖMER-ARAÇ';
+      
       if (!code || !name) { alert("Kod ve isim zorunludur."); return; }
+      
       stocks.unshift({ id: Date.now().toString(), code, name, qty, price, curr, loc });
       persist();
       closeStockModal();
       renderStockTable();
+
+      const payload = {
+        direction: "STOCK_CHANGE",
+        action: "NEW_ITEM",
+        code: code,
+        name: name,
+        qty: qty,
+        price: price,
+        curr: curr,
+        loc: loc
+      };
+
+      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
 
-    function saveSupplierItem() {
-      const name = document.getElementById('mc-name').value.trim();
-      const contact = document.getElementById('mc-contact').value.trim();
-      const phone = document.getElementById('mc-phone').value.trim();
-      if (!name) { alert("Firma adı zorunludur."); return; }
-      suppliers.unshift({ id: Date.now().toString(), name, contact, phone });
-      persist();
-      closeSupplierModal();
-      renderSuppliers();
-    }
-
-    // Gönderim Fonksiyonları
+    /* ELLE GİRİLEN MÜŞTERİ VERİSİ İLE ÖMER ➔ KAMİL */
     function dispatchOmerToKamil() {
+      const firmName = document.getElementById('otk-firm-name').value.trim();
+      const firmContact = document.getElementById('otk-firm-contact').value.trim();
+
+      if (!firmName) {
+        alert("Lütfen Müşteri / Fabrika Adını yazın!");
+        return;
+      }
+
       const payload = {
         direction: "OMER_TO_KAMIL",
-        firm: document.getElementById('otk-supplier').value,
+        firm: firmName,
+        contact: firmContact || "Belirtilmedi",
         part_code: document.getElementById('otk-part').value,
         quantity: document.getElementById('otk-qty').value,
         priority: document.getElementById('otk-priority').value,
         notes: document.getElementById('otk-notes').value
       };
+
       if (tg?.sendData) {
         tg.sendData(JSON.stringify(payload));
       } else {
-        alert("Telegram WebApp algılanamadı (Test ortamı).");
+        alert(`[Test Modu] ${firmName} için talep Kamil'e iletildi.`);
       }
     }
 
+    /* ELLE GİRİLEN MÜŞTERİ VERİSİ İLE KAMİL ➔ ÖMER */
     function dispatchKamilToOmer() {
+      const firmName = document.getElementById('kto-firm-name').value.trim();
+      const firmContact = document.getElementById('kto-firm-contact').value.trim();
+
+      if (!firmName) {
+        alert("Lütfen Gidilecek Müşteri / Tesis Adını yazın!");
+        return;
+      }
+
       const payload = {
         direction: "KAMIL_TO_OMER",
-        firm: document.getElementById('kto-supplier').value,
+        firm: firmName,
+        contact: firmContact || "Belirtilmedi",
         task_type: document.getElementById('kto-task-type').value,
         dispatch_part: document.getElementById('kto-part').value,
         instructions: document.getElementById('kto-instructions').value
       };
+
       if (tg?.sendData) {
         tg.sendData(JSON.stringify(payload));
       } else {
-        alert("Telegram WebApp algılanamadı (Test ortamı).");
+        alert(`[Test Modu] ${firmName} iş emri Ömer'e iletildi.`);
       }
     }
 
