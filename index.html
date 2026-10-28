@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Eliar Depo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        tg: {
+                            bg: '#18222d', // Telegram dark theme background vibe
+                            secondary: '#232e3c', // Card background
+                            primary: '#2b5278', // Accent color
+                            text: '#f5f5f5',
+                            hint: '#8e969f',
+                            button: '#3390ec',
+                            success: '#4ade80',
+                            warning: '#facc15',
+                            danger: '#f87171'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #18222d;
+            color: #f5f5f5;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
+        }
+        /* Hide scrollbar for a cleaner mobile app look */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-tg-secondary px-4 py-4 shadow-md flex justify-between items-center z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-tg-button flex items-center justify-center shadow-lg">
+                <i class="fa-solid fa-industry text-white text-sm"></i>
+            </div>
+            <h1 class="text-lg font-semibold tracking-wide">Eliar Depo</h1>
+        </div>
+        <button onclick="showToast('Senkronizasyon başarılı!')" class="text-tg-hint hover:text-white transition">
+            <i class="fa-solid fa-rotate"></i>
+        </button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto hide-scrollbar p-4 pb-24 relative" id="main-container">
+        
+        <!-- TAB 1: ÖZET (DASHBOARD) -->
+        <div id="tab-ozet" class="tab-content active">
+            <h2 class="text-xl font-semibold mb-4 text-gray-200">Sistem Özeti</h2>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="bg-tg-secondary p-4 rounded-xl shadow border border-gray-700/50">
+                    <p class="text-tg-hint text-xs uppercase tracking-wider mb-1">Toplam Ürün Çeşidi</p>
+                    <p class="text-2xl font-bold" id="stat-urun">4</p>
+                </div>
+                <div class="bg-tg-secondary p-4 rounded-xl shadow border border-gray-700/50">
+                    <p class="text-tg-hint text-xs uppercase tracking-wider mb-1">Kayıtlı Firma</p>
+                    <p class="text-2xl font-bold" id="stat-firma">3</p>
+                </div>
+                <div class="bg-tg-secondary p-4 rounded-xl shadow border border-gray-700/50 col-span-2 flex items-center justify-between">
+                    <div>
+                        <p class="text-tg-hint text-xs uppercase tracking-wider mb-1">Bekleyen Teklifler</p>
+                        <p class="text-2xl font-bold text-tg-warning" id="stat-teklif">2</p>
+                    </div>
+                    <i class="fa-solid fa-file-signature text-3xl text-tg-warning/30"></i>
+                </div>
+            </div>
+            <div class="bg-tg-primary/20 border border-tg-primary/30 p-4 rounded-xl mb-4">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fa-solid fa-circle-info text-tg-button"></i>
+                    <h3 class="font-medium text-tg-button">Sistem Durumu</h3>
+                </div>
+                <p class="text-sm text-gray-300">Tüm sistemler aktif. Son senkronizasyon: 2 dakika önce.</p>
+            </div>
+        </div>
+
+        <!-- TAB 2: STOK -->
+        <div id="tab-stok" class="tab-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-200">Stok Yönetimi</h2>
+                <div class="bg-tg-secondary px-3 py-1 rounded-full text-xs text-tg-hint border border-gray-700/50">
+                    <i class="fa-solid fa-magnifying-glass mr-1"></i> Ara
+                </div>
+            </div>
+            
+            <!-- Kategori Filtreleri -->
+            <div class="flex gap-2 mb-4 overflow-x-auto hide-scrollbar pb-1">
+                <button onclick="filterCategory('Tümü', this)" class="cat-btn active bg-tg-button text-white px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors">Tümü</button>
+                <button onclick="filterCategory('Kontrolörler', this)" class="cat-btn bg-tg-secondary text-tg-hint border border-gray-700/50 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors">Kontrolörler</button>
+                <button onclick="filterCategory('Elektronik', this)" class="cat-btn bg-tg-secondary text-tg-hint border border-gray-700/50 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors">Elektronik</button>
+                <button onclick="filterCategory('Mekatronik', this)" class="cat-btn bg-tg-secondary text-tg-hint border border-gray-700/50 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors">Mekatronik</button>
+            </div>
+
+            <div id="stock-list" class="space-y-3">
+                <!-- Stock items injected via JS -->
+            </div>
+        </div>
+
+        <!-- TAB 3: FİRMALAR -->
+        <div id="tab-firmalar" class="tab-content">
+            <h2 class="text-xl font-semibold mb-4 text-gray-200">Müşteri / Firmalar</h2>
+            <button onclick="showToast('Yeni firma ekleme penceresi açılıyor...')" class="w-full bg-tg-button text-white py-3 rounded-xl font-medium shadow-lg mb-4 active:scale-95 transition-transform flex justify-center items-center gap-2">
+                <i class="fa-solid fa-plus"></i> Yeni Firma Ekle
+            </button>
+            <div id="company-list" class="space-y-3">
+                <!-- Company items injected via JS -->
+            </div>
+        </div>
+
+        <!-- TAB 4: TEKLİFLER -->
+        <div id="tab-teklifler" class="tab-content">
+            <h2 class="text-xl font-semibold mb-4 text-gray-200">Teklif Geçmişi</h2>
+            <div id="proposal-list" class="space-y-3">
+                <!-- Proposal items injected via JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bg-tg-secondary border-t border-gray-700/50 fixed bottom-0 w-full h-16 flex justify-around items-center px-2 z-50">
+        <button onclick="switchTab('ozet', this)" class="nav-btn active flex flex-col items-center justify-center w-full h-full text-tg-button transition-colors">
+            <i class="fa-solid fa-chart-pie text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Özet</span>
+        </button>
+        <button onclick="switchTab('stok', this)" class="nav-btn flex flex-col items-center justify-center w-full h-full text-tg-hint hover:text-gray-300 transition-colors">
+            <i class="fa-solid fa-boxes-stacked text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Stok</span>
+        </button>
+        <button onclick="switchTab('firmalar', this)" class="nav-btn flex flex-col items-center justify-center w-full h-full text-tg-hint hover:text-gray-300 transition-colors">
+            <i class="fa-solid fa-building text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Firmalar</span>
+        </button>
+        <button onclick="switchTab('teklifler', this)" class="nav-btn flex flex-col items-center justify-center w-full h-full text-tg-hint hover:text-gray-300 transition-colors">
+            <i class="fa-solid fa-file-invoice-dollar text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Teklifler</span>
+        </button>
+    </nav>
+
+    <!-- Toast Notification (Replaces Alert) -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full shadow-2xl opacity-0 translate-y-[-20px] transition-all duration-300 z-50 text-sm flex items-center gap-2 pointer-events-none border border-gray-600">
+        <i class="fa-solid fa-circle-check text-tg-success"></i>
+        <span id="toast-msg">Bildirim</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- DUMMY DATA ---
+        let inventory = [
+            { id: 1, code: 'EL-T7000', name: 'T7000 Tekstil Boyama Kontrolörü', category: 'Kontrolörler', stock: 12, price: 850.00, currency: '$' },
+            { id: 2, code: 'OMR-CJ2M', name: 'Omron CJ2M PLC', category: 'Kontrolörler', stock: 5, price: 1200.00, currency: '€' },
+            { id: 3, code: 'INV-SV660', name: 'Inovance SV660N EtherCAT Servo Sürücü', category: 'Mekatronik', stock: 8, price: 450.00, currency: '$' },
+            { id: 4, code: 'DFS-PRS', name: 'Danfoss Presostat (Basınç Şalteri)', category: 'Elektronik', stock: 45, price: 35.50, currency: '$' },
+            { id: 5, code: 'SENS-IND', name: 'Endüktif Sensör', category: 'Elektronik', stock: 120, price: 12.00, currency: '$' }
+        ];
+
+        let companies = [
+            { id: 1, name: 'Otomasyon A.Ş.', contact: 'Ahmet Yılmaz', phone: '0532 111 22 33', sector: 'Makine İmalat' },
+            { id: 2, name: 'Tekno Makine Ltd.', contact: 'Mehmet Demir', phone: '0555 444 55 66', sector: 'Gıda İşleme' },
+            { id: 3, name: 'Delta Tekstil', contact: 'Ayşe Kaya', phone: '0544 333 22 11', sector: 'Tekstil' }
+        ];
+
+        let proposals = [
+            { id: 101, company: 'Otomasyon A.Ş.', product: 'Inovance SV660N EtherCAT Sürücü', qty: 2, price: 460.00, currency: '$', status: 'Beklemede', date: '2026-10-28' },
+            { id: 102, company: 'Tekno Makine Ltd.', product: 'Presostat', qty: 10, price: 34.00, currency: '$', status: 'Onaylandı', date: '2026-10-25' },
+            { id: 103, company: 'Delta Tekstil', product: 'Eliar T7000 Kontrolör', qty: 1, price: 900.00, currency: '$', status: 'Reddedildi', date: '2026-10-10' }
+        ];
+
+        // --- RENDER FUNCTIONS ---
+        let currentCategory = 'Tümü';
+
+        function renderStock() {
+            const container = document.getElementById('stock-list');
+            container.innerHTML = '';
+            
+            const filteredInventory = currentCategory === 'Tümü' 
+                ? inventory 
+                : inventory.filter(item => item.category === currentCategory);
+
+            filteredInventory.forEach((item) => {
+                const index = inventory.findIndex(invItem => invItem.id === item.id);
+                
+                let catColor = 'bg-gray-700 text-gray-300';
+                if(item.category === 'Kontrolörler') catColor = 'bg-blue-900/50 text-blue-300 border border-blue-700/50';
+                else if(item.category === 'Elektronik') catColor = 'bg-green-900/50 text-green-300 border border-green-700/50';
+                else if(item.category === 'Mekatronik') catColor = 'bg-purple-900/50 text-purple-300 border border-purple-700/50';
+
+                const card = document.createElement('div');
+                card.className = 'bg-tg-secondary p-4 rounded-xl border border-gray-700/50 shadow-sm';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[10px] bg-gray-700 px-2 py-0.5 rounded text-gray-300 font-mono tracking-wider">${item.code}</span>
+                                <span class="text-[9px] px-2 py-0.5 rounded ${catColor}">${item.category}</span>
+                            </div>
+                            <h3 class="font-medium mt-1 leading-tight text-[15px] pr-2">${item.name}</h3>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-tg-success font-bold text-lg">${item.price.toFixed(2)}${item.currency}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="flex items-center bg-gray-800 rounded-lg p-1 border border-gray-700">
+                            <button onclick="updateStock(${index}, -1)" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white active:bg-gray-700 rounded-md transition"><i class="fa-solid fa-minus text-sm"></i></button>
+                            <span class="w-10 text-center font-bold text-lg">${item.stock}</span>
+                            <button onclick="updateStock(${index}, 1)" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white active:bg-gray-700 rounded-md transition"><i class="fa-solid fa-plus text-sm"></i></button>
+                        </div>
+                        <button onclick="updatePrice('${item.code}')" class="text-sm bg-gray-800 border border-gray-600 hover:border-tg-button text-gray-300 px-3 py-2 rounded-lg transition active:scale-95 flex items-center gap-2">
+                            <i class="fa-solid fa-tag text-xs text-tg-hint"></i> Fiyat Güncelle
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+            // İstatistikleri de dinamik olarak güncelliyoruz
+            document.getElementById('stat-urun').textContent = inventory.length;
+        }
+
+        function filterCategory(category, btnElement) {
+            currentCategory = category;
+            
+            // Buton stillerini güncelle
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-tg-button', 'text-white');
+                btn.classList.add('bg-tg-secondary', 'text-tg-hint', 'border', 'border-gray-700/50');
+            });
+            
+            btnElement.classList.remove('bg-tg-secondary', 'text-tg-hint', 'border', 'border-gray-700/50');
+            btnElement.classList.add('bg-tg-button', 'text-white');
+            
+            renderStock();
+        }
+
+        function renderCompanies() {
+            const container = document.getElementById('company-list');
+            container.innerHTML = '';
+            companies.forEach(company => {
+                const card = document.createElement('div');
+                card.className = 'bg-tg-secondary p-4 rounded-xl border border-gray-700/50 shadow-sm flex items-center justify-between';
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-tg-hint">
+                            <i class="fa-solid fa-industry"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-[15px]">${company.name}</h3>
+                            <p class="text-xs text-tg-hint">${company.contact} &bull; ${company.sector}</p>
+                        </div>
+                    </div>
+                    <a href="tel:${company.phone.replace(/\s/g, '')}" class="w-10 h-10 rounded-full bg-tg-button/10 text-tg-button flex items-center justify-center active:bg-tg-button active:text-white transition">
+                        <i class="fa-solid fa-phone"></i>
+                    </a>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderProposals() {
+            const container = document.getElementById('proposal-list');
+            container.innerHTML = '';
+            proposals.forEach(prop => {
+                // Status Badge styling
+                let statusClass = '';
+                let icon = '';
+                if(prop.status === 'Beklemede') { statusClass = 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30'; icon = 'fa-clock'; }
+                else if(prop.status === 'Onaylandı') { statusClass = 'bg-green-500/20 text-green-400 border-green-500/30'; icon = 'fa-check-double'; }
+                else { statusClass = 'bg-red-500/20 text-red-400 border-red-500/30'; icon = 'fa-xmark'; }
+
+                const card = document.createElement('div');
+                card.className = 'bg-tg-secondary p-4 rounded-xl border border-gray-700/50 shadow-sm relative overflow-hidden';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-semibold text-sm text-tg-button">${prop.company}</h3>
+                        <span class="text-[10px] text-tg-hint">${prop.date}</span>
+                    </div>
+                    <p class="text-[13px] text-gray-300 leading-snug mb-3">${prop.qty}x ${prop.product}</p>
+                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-700/50">
+                        <span class="font-bold">${prop.price.toFixed(2)}${prop.currency} <span class="text-xs font-normal text-tg-hint">/br</span></span>
+                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded border text-[11px] font-medium ${statusClass}">
+                            <i class="fa-solid ${icon}"></i> ${prop.status}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- INTERACTION LOGIC ---
+        function switchTab(tabId, btnElement) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Show selected tab
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            // Reset navigation styling
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-tg-button');
+                btn.classList.add('text-tg-hint');
+            });
+            // Activate selected nav button
+            btnElement.classList.remove('text-tg-hint');
+            btnElement.classList.add('text-tg-button');
+        }
+
+        function updateStock(index, change) {
+            let newStock = inventory[index].stock + change;
+            if(newStock < 0) newStock = 0; // Prevent negative stock
+            inventory[index].stock = newStock;
+            renderStock(); // Re-render the list
+            showToast(`${inventory[index].code} stok güncellendi.`);
+        }
+
+        function updatePrice(code) {
+            // In a real app, this would open a modal with a numpad. 
+            // For this demo, we simulate opening a modal with a toast.
+            showToast(`${code} için fiyat güncelleme modülü açılıyor...`);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-msg');
+            msgEl.textContent = message;
+            
+            toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-[-20px]', 'opacity-0');
+            }, 2500);
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            renderStock();
+            renderCompanies();
+            renderProposals();
+        };
+    </script>
+</body>
+</html>
