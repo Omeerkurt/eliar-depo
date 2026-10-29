@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Eliar - Elips İş Santrali</title>
+  <title>Eliar Depo - Gerçek Envanter & İş Paylaşımı</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,7 +30,7 @@
 </head>
 <body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
 
-  <!-- ==================== HEADER ==================== -->
+  <!-- HEADER -->
   <header class="sticky top-0 z-40 bg-cardbg/95 backdrop-blur border-b border-bordercol px-4 py-3 flex items-center justify-between shadow-lg">
     <div class="flex items-center space-x-3">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-md shadow-brand-500/20">
@@ -38,13 +38,13 @@
       </div>
       <div>
         <h1 class="text-base font-bold tracking-wide text-white leading-tight">ELIAR DEPO</h1>
-        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">RD96 SIVI KİMYASAL DAĞITIM</p>
+        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">GÜNCEL DEPO ENVANTERİ</p>
       </div>
     </div>
 
     <!-- Dil Değiştirici & Kataloğu Sıfırlama Butonu -->
     <div class="flex items-center space-x-1.5">
-      <button onclick="forceResetToCatalog()" title="Kataloğu Sıfırla ve Yeniden Yükle" class="px-2 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
+      <button onclick="forceResetToCatalog()" title="Stokları Sıfırla ve Yeniden Yükle" class="px-2 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
         <i class="fa-solid fa-arrows-rotate"></i>
         <span class="text-[10px] hidden sm:inline">Sıfırla</span>
       </button>
@@ -55,43 +55,43 @@
     </div>
   </header>
 
-  <!-- ==================== ANA ALAN ==================== -->
+  <!-- ANA ALAN -->
   <main class="p-3.5 max-w-2xl mx-auto space-y-4">
 
     <!-- 3'LÜ ANA MENÜ -->
     <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
       <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
         <i class="fa-solid fa-boxes-stacked text-sm"></i>
-        <span data-i18n="nav_stock">Katalog & Stok</span>
+        <span>Depo Stok</span>
       </button>
       <button onclick="switchTab('workflow')" id="tab-btn-workflow" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
         <i class="fa-solid fa-share-nodes text-sm"></i>
-        <span data-i18n="nav_workflow">İş Akışı / Talep</span>
+        <span>İş Akışı / Talep</span>
       </button>
       <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
         <i class="fa-solid fa-chart-line text-sm"></i>
-        <span data-i18n="nav_reports">Rapor & Tesis</span>
+        <span>Rapor & Tesis</span>
       </button>
     </div>
 
-    <!-- ==================== 1. TAB: KATEGORİZE STOK ==================== -->
+    <!-- 1. TAB: GERÇEK DEPO STOKLARI -->
     <section id="tab-stock" class="tab-content space-y-3">
       <div class="flex space-x-2">
         <div class="relative flex-1">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-          <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Sipariş kodu (91514) veya parça adı ara..." 
+          <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Kod (90880) veya isimle ara (diyafram, teflon)..." 
             class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-brand-500 text-white placeholder-slate-500 shadow-inner">
         </div>
         <button onclick="openStockModal()" class="px-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1 text-xs shadow-md">
           <i class="fa-solid fa-plus"></i>
-          <span data-i18n="btn_new">Yeni</span>
+          <span>Yeni</span>
         </button>
       </div>
 
       <!-- Kategori Filtre Butonları -->
       <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
         <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white shadow-sm whitespace-nowrap">Tümü (<span id="count-all">0</span>)</button>
-        <button onclick="filterCategory('KONTROL')" id="pill-KONTROL" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Kontrolörler (<span id="count-kontrol">0</span>)</button>
+        <button onclick="filterCategory('KONTROL')" id="pill-KONTROL" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Kontrolör (<span id="count-kontrol">0</span>)</button>
         <button onclick="filterCategory('ELEKTRONIK')" id="pill-ELEKTRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Elektronik (<span id="count-elektronik">0</span>)</button>
         <button onclick="filterCategory('MEKATRONIK')" id="pill-MEKATRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Mekatronik (<span id="count-mekatronik">0</span>)</button>
       </div>
@@ -99,18 +99,18 @@
       <div id="stock-list" class="space-y-2"></div>
     </section>
 
-    <!-- ==================== 2. TAB: İŞ AKIŞI & TALEP FORMU ==================== -->
+    <!-- 2. TAB: İŞ AKIŞI & TALEP FORMU -->
     <section id="tab-workflow" class="tab-content hidden space-y-3">
       <div class="grid grid-cols-2 p-1 bg-darkbg border border-bordercol rounded-2xl gap-1">
         <button onclick="setWorkflowDirection('OMER_TO_KAMIL')" id="btn-flow-otk" 
           class="py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md">
           <i class="fa-solid fa-user-gear"></i>
-          <span data-i18n="btn_flow_otk">Sahadan Talep</span>
+          <span>Sahadan Talep</span>
         </button>
         <button onclick="setWorkflowDirection('KAMIL_TO_OMER')" id="btn-flow-kto" 
           class="py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white">
           <i class="fa-solid fa-paper-plane"></i>
-          <span data-i18n="btn_flow_kto">Sahaya İş Gönder</span>
+          <span>Sahaya İş Gönder</span>
         </button>
       </div>
 
@@ -119,34 +119,34 @@
         <div class="border-b border-bordercol pb-2">
           <h2 class="text-sm font-bold text-white flex items-center space-x-2">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-            <span data-i18n="title_otk">Sahadan Talep (Ömer ➔ Kamil)</span>
+            <span>Sahadan Talep (Ömer ➔ Kamil)</span>
           </h2>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
             <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span data-i18n="lbl_firm">Müşteri / Firma İsmi</span> <span class="text-rose-400 ml-1">*</span>
+              <span>Müşteri / Firma İsmi</span> <span class="text-rose-400 ml-1">*</span>
             </label>
-            <input type="text" id="otk-firm-name" placeholder="Örn: TERRY JAR TEKSTİL" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+            <input type="text" id="otk-firm-name" placeholder="Örn: MARK FORMELLE" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
           </div>
           <div>
             <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span data-i18n="lbl_contact">İlgili Kişi & Telefon</span> <span class="text-rose-400 ml-1">*</span>
+              <span>İlgili Kişi & Telefon</span> <span class="text-rose-400 ml-1">*</span>
             </label>
-            <input type="text" id="otk-firm-contact" placeholder="Örn: Ahmet Bey - 0532..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+            <input type="text" id="otk-firm-contact" placeholder="Örn: +998 88 984 5595" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
           </div>
         </div>
 
-        <!-- Akıllı Parça Arama (Kod veya İsim) -->
+        <!-- Akıllı Parça Arama -->
         <div class="relative">
           <label class="text-xs text-slate-400 font-semibold flex items-center justify-between">
-            <span class="flex items-center"><span data-i18n="lbl_search_part">İstenen Parça (Kod veya İsim)</span> <span class="text-rose-400 ml-1">*</span></span>
+            <span class="flex items-center"><span>İstenen Parça (Kod veya İsim)</span> <span class="text-rose-400 ml-1">*</span></span>
             <span id="otk-selected-badge" class="text-[10px] text-emerald-400 font-mono font-bold hidden"></span>
           </label>
           <div class="relative mt-1">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-            <input type="text" id="otk-part-search" oninput="searchPartsLive(this.value)" onfocus="searchPartsLive(this.value)" placeholder="Sipariş kodu (91514) veya parça adı yazın..." autocomplete="off" class="w-full bg-darkbg border border-bordercol rounded-xl pl-8 pr-8 py-2 text-xs text-white focus:outline-none">
+            <input type="text" id="otk-part-search" oninput="searchPartsLive(this.value)" onfocus="searchPartsLive(this.value)" placeholder="Kod (90880) veya isim yazın..." autocomplete="off" class="w-full bg-darkbg border border-bordercol rounded-xl pl-8 pr-8 py-2 text-xs text-white focus:outline-none">
             <button type="button" onclick="clearPartSelection()" id="otk-clear-btn" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-white text-xs">✕</button>
           </div>
           <div id="otk-part-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-52 overflow-y-auto hidden divide-y divide-bordercol/50"></div>
@@ -157,27 +157,27 @@
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span data-i18n="lbl_qty">Miktar (Adet)</span> <span class="text-rose-400 ml-1">*</span>
+              <span>Miktar (Adet)</span> <span class="text-rose-400 ml-1">*</span>
             </label>
             <input type="number" id="otk-qty" value="1" min="1" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white font-bold">
           </div>
           <div>
-            <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_priority">Öncelik / Aciliyet</label>
+            <label class="text-xs text-slate-400 font-semibold">Öncelik / Aciliyet</label>
             <select id="otk-priority" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-              <option value="NORMAL" data-i18n="prio_normal">Normal Servis / Talep</option>
-              <option value="KRITIK" class="text-rose-400" data-i18n="prio_critical">🚨 Acil (Hat Duruşu!)</option>
+              <option value="NORMAL">Normal Servis / Talep</option>
+              <option value="KRITIK" class="text-rose-400">🚨 Acil (Hat Duruşu!)</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_notes">Talep Notu & Detay</label>
-          <textarea id="otk-notes" rows="2" placeholder="Arıza detayları, teslimat notu..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
+          <label class="text-xs text-slate-400 font-semibold">Talep Notu & Detay</label>
+          <textarea id="otk-notes" rows="2" placeholder="Not veya detay..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
         </div>
 
         <button onclick="dispatchOmerToKamil()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg shadow-emerald-900/30">
           <i class="fa-brands fa-telegram text-sm"></i>
-          <span data-i18n="btn_send_kamil">Kamil'e Gönder & Onay İste</span>
+          <span>Kamil'e Gönder & Onay İste</span>
         </button>
       </div>
 
@@ -186,20 +186,20 @@
         <div class="border-b border-bordercol pb-2">
           <h2 class="text-sm font-bold text-white flex items-center space-x-2">
             <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
-            <span data-i18n="title_kto">Sahaya İş Gönder (Kamil ➔ Ömer)</span>
+            <span>Sahaya İş Gönder (Kamil ➔ Ömer)</span>
           </h2>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
             <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span data-i18n="lbl_target_firm">Gidilecek Firma İsmi</span> <span class="text-rose-400 ml-1">*</span>
+              <span>Gidilecek Firma İsmi</span> <span class="text-rose-400 ml-1">*</span>
             </label>
             <input type="text" id="kto-firm-name" placeholder="Firma / Tesis Adı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
           </div>
           <div>
             <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span data-i18n="lbl_contact">İlgili Kişi & Telefon</span>
+              <span>İlgili Kişi & Telefon</span>
             </label>
             <input type="text" id="kto-firm-contact" placeholder="Tesis Sorumlusu & Telefon" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
           </div>
@@ -207,24 +207,24 @@
 
         <div>
           <label class="text-xs text-slate-400 font-semibold flex items-center">
-            <span data-i18n="lbl_task_title">Görev Başlığı</span> <span class="text-rose-400 ml-1">*</span>
+            <span>Görev Başlığı</span> <span class="text-rose-400 ml-1">*</span>
           </label>
           <input type="text" id="kto-task-type" placeholder="Örn: Dozajlama Pompası Bakımı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
         </div>
 
         <div>
-          <label class="text-xs text-slate-400 font-semibold" data-i18n="lbl_instructions">Özel Talimatlar</label>
+          <label class="text-xs text-slate-400 font-semibold">Özel Talimatlar</label>
           <textarea id="kto-instructions" rows="2" placeholder="Ömer'e talimatlar..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
         </div>
 
         <button onclick="dispatchKamilToOmer()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg shadow-cyan-900/30">
           <i class="fa-solid fa-paper-plane text-sm"></i>
-          <span data-i18n="btn_send_omer">Sahaya Görev Olarak İlet (Ömer'e Bildir)</span>
+          <span>Sahaya Görev Olarak İlet (Ömer'e Bildir)</span>
         </button>
       </div>
     </section>
 
-    <!-- ==================== 3. TAB: Z-RAPORU & TESİS GEÇMİŞİ ==================== -->
+    <!-- 3. TAB: Z-RAPORU & TESİS GEÇMİŞİ -->
     <section id="tab-reports" class="tab-content hidden space-y-3">
       
       <!-- Canlı Z-Raporu Kartı -->
@@ -233,7 +233,7 @@
           <div>
             <h3 class="text-sm font-bold text-white flex items-center space-x-1.5">
               <i class="fa-solid fa-chart-pie text-emerald-400"></i>
-              <span data-i18n="title_zreport">Satış & Çıkış Z-Raporu</span>
+              <span>Satış & Çıkış Z-Raporu</span>
             </h3>
             <p class="text-[10px] text-slate-400 mt-0.5">Tarih Aralıklı Canlı Döküm</p>
           </div>
@@ -263,9 +263,9 @@
             </div>
           </div>
           <div class="flex space-x-1.5 text-[10px]">
-            <button onclick="setDatePreset('week')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Hafta</button>
-            <button onclick="setDatePreset('month')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Ay</button>
             <button onclick="setDatePreset('all')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Tüm Zamanlar</button>
+            <button onclick="setDatePreset('month')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Ay</button>
+            <button onclick="setDatePreset('week')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Hafta</button>
           </div>
         </div>
 
@@ -289,12 +289,12 @@
         <div class="border-b border-bordercol pb-2">
           <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
             <i class="fa-solid fa-industry text-cyan-400"></i>
-            <span data-i18n="title_history">Tesis Parça Geçmişi ("Bu Müşteriye Ne Verdik?")</span>
+            <span>Tesis Parça Geçmişi ("Bu Müşteriye Ne Verdik?")</span>
           </h3>
         </div>
 
         <div class="flex space-x-2">
-          <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Firma Adı Yazın (TERRY JAR, MICBRO)..." class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
+          <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Firma Adı Yazın (TERRY JAR, ASAKA, ZELAL)..." class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
         </div>
 
         <div id="facility-history-results" class="space-y-1.5 max-h-60 overflow-y-auto text-xs">
@@ -306,12 +306,12 @@
 
   </main>
 
-  <!-- ==================== MODAL: HIZLI STOK ÇIKIŞI / SATIŞ ==================== -->
+  <!-- MODAL: HIZLI STOK ÇIKIŞI / SATIŞ -->
   <div id="modal-deduct" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3 shadow-2xl">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
         <div>
-          <h3 class="font-bold text-white text-sm" data-i18n="title_deduct">Stok Çıkışı / Satış</h3>
+          <h3 class="font-bold text-white text-sm">Stok Çıkışı / Satış</h3>
           <p id="deduct-part-header" class="text-[11px] text-emerald-400 font-mono font-semibold mt-0.5"></p>
         </div>
         <button onclick="closeDeductModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
@@ -319,22 +319,22 @@
 
       <div>
         <label class="text-xs text-slate-400 font-semibold flex items-center">
-          <span data-i18n="lbl_firm">Firma İsmi (Müşteri / Fabrika)</span> <span class="text-rose-400 ml-1">*</span>
+          <span>Firma İsmi (Müşteri / Fabrika)</span> <span class="text-rose-400 ml-1">*</span>
         </label>
-        <input type="text" id="deduct-destination" placeholder="Örn: TERRY JAR TEKSTİL" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+        <input type="text" id="deduct-destination" placeholder="Örn: MARK FORMELLE" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
       </div>
 
       <div>
         <label class="text-xs text-slate-400 font-semibold flex items-center">
-          <span data-i18n="lbl_contact">İlgili Kişi & Telefon</span>
+          <span>İlgili Kişi & Telefon</span>
         </label>
-        <input type="text" id="deduct-contact" placeholder="Örn: Ali Bey (0532...)" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+        <input type="text" id="deduct-contact" placeholder="Örn: +998 88 984 5595" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
       </div>
 
       <div>
         <div class="flex justify-between items-center text-xs">
           <label class="text-slate-400 font-semibold flex items-center">
-            <span data-i18n="lbl_deduct_qty">Düşülecek Miktar</span> <span class="text-rose-400 ml-1">*</span>
+            <span>Düşülecek Miktar</span> <span class="text-rose-400 ml-1">*</span>
           </label>
           <span id="deduct-current-stock" class="text-slate-400 font-mono"></span>
         </div>
@@ -352,29 +352,29 @@
 
       <button onclick="confirmStockDeduction()" class="w-full bg-rose-600 hover:bg-rose-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-rose-900/30 flex items-center justify-center space-x-2">
         <i class="fa-solid fa-arrow-down-from-bracket"></i>
-        <span data-i18n="btn_confirm_deduct">Stoktan Düş & Herkese Bildir</span>
+        <span>Stoktan Düş & Herkese Bildir</span>
       </button>
     </div>
   </div>
 
-  <!-- ==================== MODAL: YENİ PARÇA EKLE ==================== -->
+  <!-- MODAL: YENİ PARÇA EKLE -->
   <div id="modal-stock" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
-        <h3 class="font-bold text-white text-sm" data-i18n="title_new_part">Yeni Parça Tanımla</h3>
+        <h3 class="font-bold text-white text-sm">Yeni Parça Tanımla</h3>
         <button onclick="closeStockModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
       
       <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
           <label class="text-slate-400 font-medium flex items-center">
-            <span data-i18n="lbl_code">Ürün Kodu</span> <span class="text-rose-400 ml-1">*</span>
+            <span>Ürün Kodu</span> <span class="text-rose-400 ml-1">*</span>
           </label>
-          <input type="text" id="m-code" placeholder="Örn: 91514" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono focus:border-brand-500">
+          <input type="text" id="m-code" placeholder="Örn: 90880" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono focus:border-brand-500">
         </div>
         <div>
           <label class="text-slate-400 font-medium flex items-center">
-            <span data-i18n="lbl_category">Kategori</span> <span class="text-rose-400 ml-1">*</span>
+            <span>Kategori</span> <span class="text-rose-400 ml-1">*</span>
           </label>
           <select id="m-cat" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-2 py-2 text-white">
             <option value="MEKATRONIK">Mekatronik</option>
@@ -386,31 +386,30 @@
 
       <div class="text-xs">
         <label class="text-slate-400 font-medium flex items-center">
-          <span data-i18n="lbl_part_name">Ürün İsmi / Tanımı</span> <span class="text-rose-400 ml-1">*</span>
+          <span>Ürün İsmi / Tanımı</span> <span class="text-rose-400 ml-1">*</span>
         </label>
-        <input type="text" id="m-name" placeholder="Örn: SLR1-40 AISI 316L Loblu Pompa" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white focus:border-brand-500">
+        <input type="text" id="m-name" placeholder="Örn: DST Çekvalf Teflonu" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white focus:border-brand-500">
       </div>
       
       <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
           <label class="text-slate-400 font-medium flex items-center">
-            <span data-i18n="lbl_init_qty">Başlangıç Adedi</span> <span class="text-rose-400 ml-1">*</span>
+            <span>Başlangıç Adedi</span> <span class="text-rose-400 ml-1">*</span>
           </label>
           <input type="number" id="m-qty" value="0" min="0" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
         </div>
         <div>
           <label class="text-slate-400 font-medium flex items-center">
-            <span data-i18n="lbl_loc">Depo / Raf Konumu</span> <span class="text-rose-400 ml-1">*</span>
+            <span>Depo / Raf Konumu</span> <span class="text-rose-400 ml-1">*</span>
           </label>
           <input type="text" id="m-loc" value="MERKEZ-DEPO" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white focus:border-brand-500">
         </div>
       </div>
 
-      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30" data-i18n="btn_save_sync">Kaydet & Senkronize Et</button>
+      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Kaydet & Senkronize Et</button>
     </div>
   </div>
 
-  <!-- ==================== UYGULAMA MOTORU ==================== -->
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) {
@@ -420,326 +419,181 @@
       tg.setBackgroundColor('#0B0F19');
     }
 
-    const I18N = {
-      tr: {
-        nav_stock: "Katalog & Stok", nav_workflow: "İş Akışı / Talep", nav_reports: "Rapor & Tesis",
-        btn_new: "Yeni", btn_flow_otk: "Sahadan Talep", btn_flow_kto: "Sahaya İş Gönder",
-        title_otk: "Sahadan Talep (Ömer ➔ Kamil)", title_kto: "Sahaya İş Gönder (Kamil ➔ Ömer)",
-        lbl_firm: "Müşteri / Firma İsmi", lbl_contact: "İlgili Kişi & Telefon",
-        lbl_search_part: "İstenen Parça (Kod veya İsim)", lbl_qty: "Miktar (Adet)",
-        lbl_priority: "Öncelik / Aciliyet", prio_normal: "Normal Servis / Talep", prio_critical: "🚨 Acil (Hat Duruşu!)",
-        lbl_notes: "Talep Notu & Detay", btn_send_kamil: "Kamil'e Gönder & Onay İste",
-        lbl_target_firm: "Gidilecek Firma İsmi", lbl_task_title: "Görev Başlığı",
-        lbl_instructions: "Özel Talimatlar", btn_send_omer: "Sahaya Görev Olarak İlet (Ömer'e Bildir)",
-        title_zreport: "Satış & Çıkış Z-Raporu", title_history: "Tesis Parça Geçmişi (\"Bu Müşteriye Ne Verdik?\")",
-        title_deduct: "Stok Çıkışı / Satış", lbl_deduct_qty: "Düşülecek Miktar", btn_confirm_deduct: "Stoktan Düş & Herkese Bildir",
-        title_new_part: "Yeni Parça Tanımla", lbl_code: "Ürün Kodu", lbl_category: "Kategori",
-        lbl_part_name: "Ürün İsmi / Tanımı", lbl_init_qty: "Başlangıç Adedi", lbl_loc: "Depo / Raf Konumu",
-        btn_save_sync: "Kaydet & Senkronize Et"
-      },
-      uz: {
-        nav_stock: "Katalog & Ombor", nav_workflow: "Ish Oqimi / So'rov", nav_reports: "Hisobot & Tesis",
-        btn_new: "Yangi", btn_flow_otk: "Maydondan So'rov", btn_flow_kto: "Maydonga Ish",
-        title_otk: "Maydondan So'rov (O'mar ➔ Komil)", title_kto: "Maydonga Ish Yuborish (Komil ➔ O'mar)",
-        lbl_firm: "Mijoz / Fabrika Nomi", lbl_contact: "Mas'ul Shaxs & Telefon",
-        lbl_search_part: "Kerakli Qism (Kod yoki Nom)", lbl_qty: "Miqdori (Dona)",
-        lbl_priority: "Muhimlik Darajasi", prio_normal: "Oddiy Servis / So'rov", prio_critical: "🚨 Shoshilinch (Zavod To'xtadi!)",
-        lbl_notes: "Izoh & Tafsilotlar", btn_send_kamil: "Komilga Yuborish & Tasdiq Olish",
-        lbl_target_firm: "Boriladigan Fabrika Nomi", lbl_task_title: "Vazifa Mavzusi",
-        lbl_instructions: "Maxsus Ko'rsatmalar", btn_send_omer: "Maydonga Ish Yuborish (O'marga)",
-        title_zreport: "Sotuv & Chiqim Z-Hisoboti", title_history: "Tesis Tarixi (\"Bu Zavodga Nima Berdik?\")",
-        title_deduct: "Ombordan Chiqarish / Sotuv", lbl_deduct_qty: "Chiqariladigan Miqdor", btn_confirm_deduct: "Ombordan Chiqarish & Bildirish",
-        title_new_part: "Yangi Qism Qo'shish", lbl_code: "Mahsulot Kodi", lbl_category: "Kategoriya",
-        lbl_part_name: "Qism Nomi / Tavsifi", lbl_init_qty: "Boshlang'ich Soni", lbl_loc: "Joy / Javon",
-        btn_save_sync: "Saqlash & Yangilash"
-      }
-    };
-
-    // RD96 KATALOĞUNDAKİ TÜM PARÇALAR
-    const RD96_MASTER_CATALOG = [
-      { id: "1", code: "91661", name: "Sürücü: VZAB2P2BAA V1000 3/2,2 kW", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "2", code: "40642", name: "PLC CPU: CJ1M-CPU21", cat: "KONTROL", qty: 1, loc: "MERKEZ-DEPO" },
-      { id: "3", code: "40645", name: "Güç kaynağı: CJ1W-PA202", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "4", code: "40643", name: "Dijital giriş modülü: CJ1W-ID211", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "5", code: "40644", name: "Dijital çıkış modülü: CJ1W-OC211", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "6", code: "90802", name: "Güç Kaynağı: CQM1-PA203 (omron)", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "7", code: "41370", name: "Plc Çıkış Modülü: CQM1-OC222 (Omron)", cat: "ELEKTRONIK", qty: 1, loc: "MERKEZ-DEPO" },
-      { id: "8", code: "41381", name: "Rd96 22 Li Pompa Altı Paslanmaz Tava", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
-      { id: "9", code: "91514", name: "Rd96 SLR1-40 AISI 316L Loblu Pompa", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "10", code: "91410", name: "Wat 3 faz Motor 2,2 kW 3 HP 1000 d/d", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "11", code: "91411", name: "WAT Motor Ayağı (Q2E112M6C)", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "12", code: "41436", name: "Rd96 SLR1-40 Pompa Çıkış Bağlantı Rakor ve Dirsekleri", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
-      { id: "13", code: "41435", name: "Rd96 SLR1-40 Pompa Giriş Bağlantı Rakor ve Dirsekleri", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
-      { id: "14", code: "96469", name: "Rakor Contası - Gasket - Nw 40 Dın - EPDM", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "15", code: "60002", name: "Klemp Contası: EPDM (DN25) 1''- Ø33.7mm", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
-      { id: "16", code: "90338", name: "SLR1-40 ASI 316L Salmastra Bileziği (Part No 13)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "17", code: "91128", name: "SLR 1-40 Mec. Seal Si.Carbon/Si.Carbide (Part 8-8A)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "18", code: "91516", name: "SLR1-40 NBR O-Ring (Part No 80D)", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "19", code: "41538", name: "SLR1-40 Cover Seal (Part No: 09) (AISI-304)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "20", code: "41407", name: "SLR1-40 Pump Housing (Part No: 01) (CF-8M)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "21", code: "41420", name: "SLR1-40 Allen Screw (Part No: 51B) (A2)", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "22", code: "93041", name: "SLR1-40 Brass Flanş Burcu (Part No 35)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "23", code: "93035", name: "SLR1-40 AISI 431 Wedge Lobe (Part No 2)", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "24", code: "60020", name: "SLR1-40 AISI 316 Lobe Screw (Part No 25)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "25", code: "91517", name: "SLR1-40 NBR O-Ring (Part No 80)", cat: "MEKATRONIK", qty: 18, loc: "MERKEZ-DEPO" },
-      { id: "26", code: "41430", name: "SLR1-40 O-ring (Part No: 80A) (EPDM)", cat: "MEKATRONIK", qty: 16, loc: "MERKEZ-DEPO" },
-      { id: "27", code: "41408", name: "SLR1-40 Pump Cover (Part No: 03) (AISI-316)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "28", code: "41415", name: "SLR1-40 Wing Nut (Part No: 45) (AISI 316)", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "29", code: "41419", name: "SLR1-40 Allen Screw (Part No: 51A) (8.8)", cat: "MEKATRONIK", qty: 24, loc: "MERKEZ-DEPO" },
-      { id: "30", code: "41414", name: "SLR1-40 Dragging Bushing (Part No: 17B)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "31", code: "41425", name: "SLR1-40 Safety Nut (Part No: 62) (Steel)", cat: "MEKATRONIK", qty: 14, loc: "MERKEZ-DEPO" },
-      { id: "32", code: "41427", name: "SLR1-40 Conical Tightening Ring (Part No: 65A)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "33", code: "41426", name: "SLR1-40 Safety Washer (Part No: 63) (Steel)", cat: "MEKATRONIK", qty: 14, loc: "MERKEZ-DEPO" },
-      { id: "34", code: "93039", name: "SLR1-40 F 154 Motor Shaft Dişlisi (Part No 19)", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "35", code: "93040", name: "SLR1-40 F-154 Tahrik Shaft Dişlisi (Part No 19A)", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "36", code: "41413", name: "SLR1-40 Drive Shaft Bushing (Part No:17)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "37", code: "41418", name: "SLR1-40 Allen Screw (Part No: 51) (8.8)", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "38", code: "41411", name: "SLR1-40 Bearing Stop Flange (Part No: 12A)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "39", code: "41428", name: "SLR1-40 Ball Bearing (Part No: 70) (Steel)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "40", code: "41429", name: "SLR1-40 Needle Bearing (Part No: 70A) (Steel)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "41", code: "93043", name: "SLR1-40 Steel Tahrik Shaft Mili Kaması (Part 61A)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "42", code: "93042", name: "SLR1-40 Steel Motor Shaft Mili Kaması (Part 61)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "43", code: "93037", name: "SLR1-40 AISI 329 Tahrik Shaft (Part No 05A)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "44", code: "93036", name: "SLR1-40 AISI 329 Motor Shaft (Part No 5)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "45", code: "60044", name: "SLR1-40 NBR Keçe (Part No 88)", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "46", code: "41434", name: "SLR1-40 Bleeder (Part No: 87) (Plastic)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "47", code: "90946", name: "SLR1-40 Filtre", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "48", code: "41432", name: "SLR1-40 Oil Plug (Part No: 85) (Plastic)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "49", code: "41409", name: "SLR1-40 Support (Part No: 06) (GG-15)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "50", code: "41424", name: "SLR1-40 Pin (Part No: 56) (F-522)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "51", code: "41433", name: "SLR1-40 Peephole (Part No: 86) (Plastic)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "52", code: "41416", name: "SLR1-40 Protector (Part No: 47A) (Plastic)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "53", code: "41417", name: "SLR1-40 Screw (Part No: 50) (A2)", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "54", code: "41533", name: "SLR1-40 Part 18A (Gasket)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "55", code: "96541", name: "23-35 Paslanmaz Hortum Kelepçesi", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "56", code: "EE-ERBI-1", name: "13-19 mm Paslanmaz Hortum Kelepçesi", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "57", code: "90951", name: "Rd96 Fip25 Pompa + Motor+ Flanş (Takım)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "58", code: "41384", name: "R96 Fip 25 Pompa Bağlantı Çıkış Rakoru ve Dirseği", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "59", code: "41383", name: "R96 Fip 25 Pompa Bağlantı Giriş Rakoru ve Dirseği", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "60", code: "90310", name: "Fip25 1\"/1\" Esnek Çarklı Pompa (Motorsuz)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "61", code: "90952", name: "Fip25 Pompa Gövde+Kapak+Oring", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "62", code: "90332", name: "Fip25 Pompa Mili (01-46634) (Part of 7)", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "63", code: "90328", name: "Fip25 Maşon (Sleeve 01-45214) (Part of 15)", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
-      { id: "64", code: "90949", name: "Fip25 Maşon Alyan Vida (0.0300.943)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "65", code: "90947", name: "Fip25 Salmastra Sacı (Washer 01-45782)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "66", code: "90321", name: "Fip25 Saç Vidası (0.0150.001) (Part No 12)", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "67", code: "16073", name: "Fip25 M8 Pul (Washer 0.0350.11) (Part No 11)", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
-      { id: "68", code: "90490", name: "Fip25 Kapak Civatası Screw 4-20x8", cat: "MEKATRONIK", qty: 16, loc: "MERKEZ-DEPO" },
-      { id: "69", code: "91238", name: "Fip25 O-ring (0-2173.523) FDA", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "70", code: "90333", name: "Fip25 Kapak Pimi (Screw Stud 01-46638)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "71", code: "90948", name: "Fip25 Bakalit Flanş (Motor Flange 01-24252)", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "72", code: "91407", name: "Fip25 Salmastra (09-46686-04) Si&Si", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "73", code: "93008", name: "Fip25 Pompa Gövdesi 09-46687-07 SH-DIN", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "74", code: "90345", name: "Fip25 FDA,EPDM (Impeller)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "75", code: "90325", name: "Fip25 Pompa Kapağı (01-35850) Cover SH", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "76", code: "90320", name: "Fip25 Kapak Somunu (Cap screw 01-46505)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "77", code: "90950", name: "Fip25 Motor Flanşı (Paslanmaz+Demir)", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "78", code: "60003", name: "Rakor Contası - Gasket - Nw 25 Dın - EPDM", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "79", code: "96112", name: "3/4\" Siyah Madde Verici Kimyasal Hortum (MT)", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "80", code: "90827", name: "Omal DG451H005 3 Yollu L Port 3/4\" (DN20)", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
-      { id: "81", code: "50155", name: "Omal Aktüatör: DA030401S DA30 30Nm", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "82", code: "96467", name: "Omal Aktüatör: DAN0030411S DA30 30Nm", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "83", code: "91603", name: "Omal Vana: V451H405 3Yollu L Port 3/4\"", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "84", code: "91035", name: "Omal (Tamir) Takımı: KGBV4505 3/4\" (DN20)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "85", code: "90547", name: "3 Yollu \"L\" Port 3/4\" Vana Küresi", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "86", code: "20031", name: "Tork LS102M Switch Box", cat: "ELEKTRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "87", code: "90475", name: "Autonics Kapasitif Sensör: CR18-8DN", cat: "ELEKTRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "88", code: "50160", name: "Pnömatik rakor: 57116 1/2\"-10mm dirsek", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "89", code: "91285", name: "P00142140 U2 Çek Valf", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "90", code: "50606", name: "Nipel 2010 - 1/2\"", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "91", code: "91472", name: "Solenoid Valf: L03Eb13 1/2\" S00100400", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "92", code: "50247", name: "Valf bobini: B00126625 FGC1 24VDC 6W", cat: "ELEKTRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "93", code: "50249", name: "Valf soketi: M1TS2L01 24V ledli 11mm", cat: "ELEKTRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "94", code: "15401", name: "Tee rakor: 4000 1/4\" D-D-D", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "95", code: "41439", name: "1/4\" Paslanmaz Tek Taraflı Nipel", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "96", code: "91633", name: "Omal VIP Vana: VNC10004 NBR 1/2\" PN10", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "97", code: "91448", name: "Pnömatik rakor: 57116 1/8\"-6mm dirsek", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "98", code: "42595", name: "1/2\"x Ø16mm Pirinç Altıköşe Hortum Ağzı", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "99", code: "90861", name: "Siyah Kauçuk Su Hortumu 16mm", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "100", code: "90817", name: "Omal Vana: DG424H405 3/4\" (DN20) PN65", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "101", code: "96683", name: "Omal Aktüatör: SRN0015401S SR15 15Nm", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "102", code: "96097", name: "DG424H405 Omal Aktüatör", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "103", code: "91598", name: "Omal Küresel Vana: V424H405 3/4\" Paslanmaz", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "104", code: "91037", name: "Omal (Tamir) Takımı: KGBV6005 3/4\" (DN20)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "105", code: "40082", name: "Krohne Optiflux 5300 Magnetik Flowmeter", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "106", code: "91386", name: "E/H DN25 (1/2\") Promass40E15 Flowmetre", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "107", code: "91488", name: "V424H405 Vana Küresi 3/4\" RD", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
-      { id: "108", code: "90567", name: "Diyafram 66 Mm Teflon Takviyeli", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "109", code: "90965", name: "Manometre: G27-10-R1: AW10/AR10 için", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "110", code: "40647", name: "SMC CJPB15-10H6 Pin Silindir", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "111", code: "90715", name: "Regülatör: AR10-M5H: 0-8 Bar", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "112", code: "90828", name: "Omal Vana: DG451H006 3Yollu L Port 1\"", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "113", code: "90834", name: "Omal Aktüatör: DA045402S Flanş F03-F05", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "114", code: "96468", name: "Omal Çift Etkili Aktüatör: DAN0045412S DA45", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "115", code: "91463", name: "Eurotec Reducer Kafa Adaptörü 11mm-9mm", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "116", code: "91604", name: "V451H406 1\" Omal L Port Vana", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "117", code: "90548", name: "3 Yollu \"L\" Port 1\" Vana Küresi 545-II-F06", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "118", code: "91036", name: "Kgbv4506 V451H006 Omal Vana Conta Takımı", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "119", code: "90832", name: "Omal Aktüatör: DA0015411S DA15 15Nm", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "120", code: "40634", name: "BES0057: Balluff M12MI-NSC40B-BV03", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "121", code: "96412", name: "1\" > 3/4\" Polietilen Dst Çek Valf Adaptörü", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
-      { id: "122", code: "90878", name: "Dst16-23 Çekvalf Paslanmaz 3/4\"", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "123", code: "90881", name: "Dst Çek Valf Yayı", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "124", code: "90880", name: "DST Çekvalf Teflonu", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "125", code: "90879", name: "Dst Çek Valf Oring 007.59*2.62 EPDM", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "126", code: "91284", name: "Valf: P00112200 E1A/4: 3/2 i", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "127", code: "14574", name: "Nipel 2010 - 1/4\"", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "128", code: "14541", name: "Orantılı Nipel 2030 1/4\"-1/8\"", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "129", code: "91332", name: "Basınç Anahtarı: PE-1/8-1N 0-8 bar", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "130", code: "50219", name: "Pnömatik rakor: 57116 1/4\"-10mm dirsek", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "131", code: "54626", name: "Valf Bobini: A03/0-24VDC B00123525 5W", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "132", code: "41441", name: "57226 1/4\"x10 Döner Tee", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "133", code: "91447", name: "Pnömatik rakor: 57020 1/4\"-10mm düz erkek", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "134", code: "50057", name: "Pnömatik rakor: 57020 1/4\"-8mm düz erkek", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "135", code: "54612", name: "Yıldız Başlı Cıvata: M4x30mm", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "136", code: "50098", name: "Manifold: SS5Y5-41-04-01F-Q 4'lü", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "137", code: "50018", name: "Valf: SY5140-5YO-Q 5/2 tek bobin 24VDC", cat: "ELEKTRONIK", qty: 5, loc: "MERKEZ-DEPO" },
-      { id: "138", code: "91594", name: "Valf: SY5240-5YO-Q-5/2 Çift Bobin 24VDC", cat: "ELEKTRONIK", qty: 5, loc: "MERKEZ-DEPO" },
-      { id: "139", code: "91590", name: "Çek valf: U4: 1/4\"", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "140", code: "15005", name: "Kuyruklu dirsek: 5020 1/4\" erkek-dişi", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "141", code: "50549", name: "Redüksiyon 2090 1/4\"<1/8\"", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "142", code: "40085", name: "Basınç anahtarı: PMN10A 2-10 bar NO", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "143", code: "91451", name: "57116 RDD 1/4-8 DİRSEK AIGNEP", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "144", code: "50023", name: "KQ2S06-01AS: 1/8\"-6mm düz içten sıkmalı", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "145", code: "50273", name: "SS5Y5-41-05-01F-Q 5'li Altlık", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "146", code: "50021", name: "Valf soketi: DIN 43650C-C/Led 24V", cat: "ELEKTRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "147", code: "41442", name: "RD96 MU_22 Krom Kaplı Ray: Ø25 / 180 mm", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "148", code: "41404", name: "RD96 MU_33 Krom Kaplı Ray: Ø25 / 267 mm", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "149", code: "96517", name: "Rd96 MU Z Polietilen Piston Dayama Takozu", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "150", code: "50257", name: "SMC Tek Etkili Silindir CD75E32-80-B", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "151", code: "96501", name: "SMC C76-32PS Sızdırmazlık Kiti", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "152", code: "90766", name: "RD96 Alüminyum Lama Montaj Parçası", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "153", code: "16016", name: "Paslanmaz Altı köşe Civata M5 x10 mm", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "154", code: "16039", name: "Paslanmaz M5 Yaylı Rondela", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "155", code: "16034", name: "Paslanmaz M5 Pul", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "156", code: "41403", name: "Havşa Başlı İmbus Civata M8 x 10", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "157", code: "90767", name: "RD96 Cambaz Kolu Sacı", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "158", code: "91071", name: "KQ2L04-01Ns Dirsek Rakor 1/8\" 4mm", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "159", code: "90762", name: "Sensör tutucu: BM2-032: bant tipi 32mm", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "160", code: "90840", name: "Piston sensörü: DC73L: reed 3m kablolu", cat: "ELEKTRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "161", code: "41400", name: "Rd96 MU Z ekseni Yataklama Pim leri", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "162", code: "41401", name: "Rd96 MU Z eksen Gijonları 292mm*M6", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "163", code: "41300", name: "RD96-Mu Cambaz Pistonu Yeşil Takoz", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "164", code: "41402", name: "Rd96 MU Z ekseni Paslanmaz Yataklama Plakası", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "165", code: "91277", name: "RD96-Mu Polietilen Ağızlık", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "166", code: "54516", name: "Rd96 Full Z Axis Equipment", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
-      { id: "167", code: "90768", name: "Cambaz Kutusu Dolu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "168", code: "90769", name: "RD96 Boş Cambaz Kutusu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "169", code: "90782", name: "C85 Serisi Silindir Eklem Yer Bağlantı", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "170", code: "16032", name: "Paslanmaz Altı köşe Civata M6 x10 mm", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "171", code: "16041", name: "Paslanmaz M6 Yaylı Rondela", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "172", code: "16035", name: "Paslanmaz M6 Pul", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "173", code: "50260", name: "Pnömatik Silindir CD85N16-50-B (SMC)", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "174", code: "90759", name: "Sensör tutucu: BJ2-016", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "175", code: "50138", name: "Pnömatik rakor: KQ2L04-M5A 4mm dirsek", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "176", code: "91086", name: "Pnömatik T rakor: KQ2T04-M5A", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "177", code: "91045", name: "SMC Küresel Mafsal: KJ6D M6*1", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "178", code: "90770", name: "RD96 Cambaz Mekanizması", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "179", code: "16043", name: "Paslanmaz İmbus M5 Civata M5x20 mm", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
-      { id: "180", code: "16030", name: "Paslanmaz Altı köşe Civata M5 x20 mm", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
-      { id: "181", code: "90765", name: "RD96 Cambaz Kolu", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "182", code: "11906", name: "Altı Köşe Somun M6", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "183", code: "12302", name: "Fiberli Kör Somun M6", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "184", code: "41444", name: "Krom Ray: Ø25 / 1350 mm x ekseni", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "185", code: "91303", name: "Paslanmaz Araba 4 Delikli Rexroth", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "186", code: "50263", name: "Silindir: CD85N25-400C-B SMC", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "187", code: "91044", name: "SMC Küresel Mafsal: KJ10D M10*1,25", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "188", code: "54510", name: "Pnömatik rakor: KQ2VS04-01AS 1/8-4mm", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "189", code: "90761", name: "Sensör tutucu: BM2-025: bant tipi", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "190", code: "50262", name: "Silindir: CD85N25-300C-B (SMC)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "191", code: "41399", name: "Pnömatik rakor: KQ2U04-00 4mm Y", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "192", code: "50259", name: "Silindir CD85N16-200-B (SMC)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "193", code: "50258", name: "Silindir CD85N16-100-B (SMC)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "194", code: "50261", name: "Silindir 80 mm Strok CD85N16-80-B", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "195", code: "91269", name: "RD96 X Ekseni mekanik yatak Kilidi", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "196", code: "91270", name: "RD96 Y Ekseni mekanik yatak Kilidi", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "197", code: "50278", name: "Manifold: SS5YJ3-S41-02-M5F-Q 2'li", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "198", code: "50293", name: "Valf: SYJ3243-5LOU-Q 5/2 çift bobin", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "199", code: "90725", name: "Hız ayar valfi: ASN2-02 1/8 susturuculu", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "200", code: "50040", name: "Dirsek Rakor 1/8x6mm / KQ2L06-01AS", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "201", code: "41396", name: "12'li Hareketli Kablo X3-X4 Valf", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "202", code: "41398", name: "Soket ucu SY100-30-A SMC", cat: "ELEKTRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "203", code: "54630", name: "SYJ3243 2'li full valf grubu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "204", code: "50270", name: "Manifold: SS3Y1-S41-04-M5-Q 4'lü", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "205", code: "50287", name: "Valf: SY114-5LOU-Q SMC", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "206", code: "91066", name: "Pnömatik rakor: KQ2H06-M5A M5-6mm", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "207", code: "91064", name: "Pnömatik rakor: KQ2H04-M5A M5-4mm düz", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "208", code: "41457", name: "Kör Tapa: M-5P: M5x0,8 (SMC)", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "209", code: "50238", name: "Susturucu: AN120-M5 (SMC)", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "210", code: "50156", name: "Pnömatik T rakor: KQ2T06-00A 6mm", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "211", code: "91043", name: "Valf Kablosu: SY114 için (EM)", cat: "ELEKTRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "212", code: "50269", name: "Manifold: SS3Y1-S41-02-M5-Q 2'li", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "213", code: "50289", name: "Valf: SY3220-5LOU-M5-Q çift bobin", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "214", code: "50291", name: "Valf: SYJ3143-5LOU-Q SMC", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "215", code: "90781", name: "SMC C85-25Ps Piston Keçesi X3-X4", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "216", code: "96404", name: "RD96-MU22 Paslanmaz Çelik Tabla", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
-      { id: "217", code: "41406", name: "RD96_MU33 PVC Tabla", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
-      { id: "218", code: "41405", name: "RD96-MU33 Paslanmaz Çelik Tabla 304", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
-      { id: "219", code: "90484", name: "3/4\" Kimyasal Vana Kür.Vana+Elcik+Adaptör", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "220", code: "91490", name: "3/4 RD Vana Adaptör Bağlantı O-ringi", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "221", code: "91489", name: "3/4' RD Vana Conta Takımı", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "222", code: "90930", name: "EPDM Lastik Conta 25*40 Kare Oring", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "223", code: "91495", name: "3/4\" Şeffaf Kimyasal Hortum (MT)", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
-      { id: "224", code: "54661", name: "Rd96 Mu 22 Y eksen Kolu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "225", code: "54662", name: "Rd96 Mu 33 Y eksen Kolu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "226", code: "41437", name: "Flowmetre Dönüşüm Flanşı (Micromotion>E/H)", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "227", code: "90568", name: "66 Mm Teflon Takviyeli Diyafram Pulu", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "228", code: "50014", name: "Susturucu: AN15-02: 1/4\"", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "229", code: "91782", name: "Rd96-33 Hareketli Kablo (EM)", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "230", code: "91271", name: "RD96-22 Hareketli Kablo (EM)", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "231", code: "91268", name: "Rd96 Mu Fırça", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
-      { id: "232", code: "90793", name: "Loblu Pompa Conta (Teflon Giydirme)", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "233", code: "90324", name: "SLR1-40 Lob Anahtarı", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "234", code: "16044", name: "Yıldız Tornavida başlı M4 x 5 mm vida", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
-      { id: "235", code: "14847", name: "Klemp Kelepçesi: 1\" - Ø33.7mm Paslanmaz", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "236", code: "41290", name: "Soket muhafazası: HAN24 B-AGG-QB", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "237", code: "41287", name: "Socket Cover HDC HB 24TSVU 1/21 P", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "238", code: "41288", name: "Soket: HDC-HE-24BS: 24 pin dişi", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "239", code: "41289", name: "Soket: HDC-HE-24SS: 24 pin erkek", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "240", code: "54629", name: "SY114 4'lü Full Valf Grubu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "241", code: "54628", name: "SY114 2'li Full Valf Grubu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
-      { id: "242", code: "50024", name: "Hava hortumu: TU0604BU: 6mm mavi", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "243", code: "50025", name: "Hava hortumu: TU0806BU: 8mm mavi", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
-      { id: "244", code: "91586", name: "Hava hortumu: TU1065BU: 10mm mavi", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "245", code: "50027", name: "Hava hortumu: TU0425BU: 4mm mavi", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
-      { id: "246", code: "92038", name: "Regülatör: AW30-F03DE-B 3/8 NO tahliyeli", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "247", code: "54620", name: "G36-P10-01-X30 Manometre", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "248", code: "14577", name: "Nipel: 2010 3/8\"", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
-      { id: "249", code: "14317", name: "Pnömatik Tee rakor: 4000 3/8\" D-D-D", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "250", code: "96449", name: "Orantılı nipel: 2030 1/4\"-3/8\"", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
-      { id: "251", code: "91950", name: "Çek valf: U4: 1/4\"", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "252", code: "96219", name: "Küresel vana: 6310 3/8\" erkek dişi", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
-      { id: "253", code: "91453", name: "Pnömatik rakor: 57116 3/8\"-10mm dirsek", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
-      { id: "254", code: "50008", name: "Tespit Elemanı AR30 / AW30", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "255", code: "50010", name: "Tespit Elemanı : AW23P-270AS", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
-      { id: "256", code: "50046", name: "Regülatör: AW20-F02C-B SMC", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
-      { id: "257", code: "50054", name: "Küresel vana: 6310 1/4\" erkek dişi", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" }
+    // EXCEL'DEN ÇIKARILAN GERÇEK STOK LİSTESİ
+    const REAL_STOCKS_DATA = [
+      { id: "s1", code: "Pd320", name: "Pd320 Kontrol Cihazı", cat: "KONTROL", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s2", code: "PD330", name: "PD330 Kontrol Cihazı", cat: "KONTROL", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s3", code: "Aim8-A", name: "Aim8-A Analog Giriş Modülü", cat: "ELEKTRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s4", code: "Aim8-B", name: "Aim8-B Analog Giriş Modülü", cat: "ELEKTRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "s5", code: "Dim32", name: "Dim32 Dijital Giriş Modülü", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s6", code: "Dom16-PLC", name: "Dom16-PLC Çıkış Modülü", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "s7", code: "P44", name: "P44 Panel Kartı", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s8", code: "Pd300", name: "Pd300 Kontrol Cihazı", cat: "KONTROL", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s9", code: "Pd340", name: "Pd340 Kontrol Cihazı", cat: "KONTROL", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s10", code: "Pd350", name: "Pd350 Kontrol Cihazı", cat: "KONTROL", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "s11", code: "S400", name: "S400 Kontrol Cihazı", cat: "KONTROL", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s12", code: "S42", name: "S42 Kontrol Cihazı", cat: "KONTROL", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s13", code: "Umf-ILETISIM20", name: "Umf-ILETISIM20 İletişim Kablosu", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s14", code: "TBBPLC-F", name: "TBBPLC-F Modülü", cat: "ELEKTRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s15", code: "Edc T7000", name: "Edc T7000 Kontrolör", cat: "KONTROL", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s16", code: "Edc M7700", name: "Edc M7700 Kontrolör", cat: "KONTROL", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s17", code: "Edc T710", name: "Edc T710 Kontrolör", cat: "KONTROL", qty: 9, loc: "MERKEZ-DEPO" },
+      { id: "s18", code: "Edc T712", name: "Edc T712 Kontrolör", cat: "KONTROL", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "s19", code: "Powerfail", name: "Powerfail Güç Koruma Kartı", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s20", code: "P42", name: "P42 Panel Kartı", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s21", code: "P300", name: "P300 Panel Kartı", cat: "ELEKTRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "s22", code: "P40", name: "P40 Panel Kartı", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s23", code: "Edc T7701EX", name: "Edc T7701EX Kontrolör", cat: "KONTROL", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "s24", code: "Edc T7700", name: "Edc T7700 Kontrolör", cat: "KONTROL", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s25", code: "T7700", name: "T7700 Cihazı", cat: "KONTROL", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s26", code: "P43", name: "P43 Panel Kartı", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s27", code: "AOM8", name: "AOM8 Çıkış Modülü", cat: "ELEKTRONIK", qty: 7, loc: "MERKEZ-DEPO" },
+      { id: "s28", code: "T7701 EX G", name: "T7701 EX G Cihazı", cat: "KONTROL", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s29", code: "T7RACK 6 PLC", name: "T7RACK 6 PLC Ünitesi", cat: "ELEKTRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s30", code: "T7RACK 10 PLC", name: "T7RACK 10 PLC Ünitesi", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s31", code: "T7PAC-POWER 30", name: "T7PAC-POWER 30 Güç Kaynağı", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s32", code: "T7PAC-POWER 20", name: "T7PAC-POWER 20 Güç Kaynağı", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s33", code: "T7PAC-DIM32V5", name: "T7PAC-DIM32V5 Giriş Modülü", cat: "ELEKTRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "s34", code: "T7PAC-DOM32V5", name: "T7PAC-DOM32V5 Çıkış Modülü", cat: "ELEKTRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "s35", code: "T7PAC-DIM16V5", name: "T7PAC-DIM16V5 Giriş Modülü", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s36", code: "T7PAC-AIO88SV1", name: "T7PAC-AIO88SV1 Giriş/Çıkış Modülü", cat: "ELEKTRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "s37", code: "T7PAC-AI8SV1", name: "T7PAC-AI8SV1 Analog Giriş Modülü", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s38", code: "T7PAC-AO8SV1", name: "T7PAC-AO8SV1 Analog Çıkış Modülü", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s39", code: "PANELSET-T7701 ex", name: "PANELSET-T7701 ex Ön Panel Seti", cat: "KONTROL", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s40", code: "PANELSET-T7700", name: "PANELSET-T7700 Ön Panel Seti", cat: "KONTROL", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s41", code: "T7PAC-T7CPURIO", name: "T7PAC-T7CPURIO İşlemci Modülü", cat: "KONTROL", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s42", code: "T7PAC-DOM16V5", name: "T7PAC-DOM16V5 Çıkış Modülü", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s43", code: "1013", name: "Vana TORK 3/4\" 3 yollu + aktüatör", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s44", code: "1015", name: "SLD Kanal Vanası 3/4\" TORK aktüatörlü", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s45", code: "5022", name: "Salmastra (Geylani)", cat: "MEKATRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s46", code: "30010", name: "EBARA 15MM SIL/SIL/VITON SALMASTRA", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s47", code: "30076", name: "SANTOPRENE DIAPHRAGM POMKAR PK10", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s48", code: "40597", name: "BES005M BALLUFF Sensör", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s49", code: "40634", name: "BES0057: Balluff M12MI-NSC40B-BV03", cat: "ELEKTRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s50", code: "40647", name: "Smc CJPB15-10H6 Tek Etkili Silindir", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s51", code: "41300", name: "RD96 - MU CAMBAZ PISTONU YESIL TAKOZ", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s52", code: "41316", name: "Lab120 encoder", cat: "ELEKTRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s53", code: "41396", name: "12'li Hareketli Kablo (Valf Kablosu)", cat: "ELEKTRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s54", code: "42184", name: "PIPETLEME SIRINGA UCU", cat: "MEKATRONIK", qty: 200, loc: "MERKEZ-DEPO" },
+      { id: "s55", code: "50014", name: "SUSTURUCU: AN15-02: 1/4\"", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s56", code: "50018", name: "VALF: SY5140-5YO-Q", cat: "ELEKTRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s57", code: "50090", name: "Tork çift etkili aktüatör", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s58", code: "50138", name: "PNOMATIK RAKOR: KQ2L04-M5A: 4MM DIRSEK", cat: "MEKATRONIK", qty: 11, loc: "MERKEZ-DEPO" },
+      { id: "s59", code: "50156", name: "T RAKOR: KQ2T06-22A: 6MM", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s60", code: "50227", name: "KISICILI RAKOR: AS2201F: 1/8\"-4MM", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s61", code: "50238", name: "SUSTURUCU: AN 120-M5 (SMC)", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "s62", code: "50242", name: "KISICILI RAKOR: AS2002F-06: 6MM", cat: "MEKATRONIK", qty: 7, loc: "MERKEZ-DEPO" },
+      { id: "s63", code: "50257", name: "SILINDIR CD75E32-80-B-XC6B", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s64", code: "50258", name: "SILINDIR CD85N16-100-B", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s65", code: "50259", name: "SILINDIR CD85N16-200-B", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s66", code: "50260", name: "PISTON CD85N16-50-B", cat: "MEKATRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s67", code: "50261", name: "PISTON CD85N16-80-B", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s68", code: "50269", name: "Manifold: SS3Y1-S41-02-M5-Q 2'li", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s69", code: "50270", name: "Manifold: SS3Y1-S41-04-M5-Q 4'lü", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s70", code: "50287", name: "VALF: SY114-5LOU-Q", cat: "ELEKTRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s71", code: "50289", name: "VALF: SY3220-5LOU-M5-Q", cat: "ELEKTRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s72", code: "50291", name: "VALF: SYJ3143-5LOU-Q", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s73", code: "50292", name: "VALF: SYJ3240-5LOU-Q", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s74", code: "50293", name: "VALF: SYJ3243-5LOU-Q", cat: "ELEKTRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s75", code: "50294", name: "VALF: SYJ7120-5DZ-01F-Q", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s76", code: "50295", name: "VALF: SYJ7220-5DZ-01F-Q", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s77", code: "52156", name: "PNOMATIK T RAKOR: KQ2T06-00A", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s78", code: "54626", name: "Valf Bobini: A03/0-24VDC 5W", cat: "ELEKTRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s79", code: "54654", name: "LOP POMPA FILTRE ORINGI 30*3 MM", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "s80", code: "90416", name: "SOLENOID VALF: 00125317 24VDC", cat: "ELEKTRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s81", code: "90501", name: "SMC C76-32PS PISTON KECESI", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s82", code: "90715", name: "REGULATOR: AR10-M5H: 0-8 BAR", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s83", code: "90726", name: "HIZ AYAR VALFI: ASN2-02 1/4\"", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s84", code: "90759", name: "SENSOR TUTUCU: BJ2-016", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s85", code: "90761", name: "SENSOR TUTUCU: BM2-025", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s86", code: "90765", name: "RD96 CAMBAZ KOLU", cat: "MEKATRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s87", code: "90766", name: "RD96 ALIMINYUM LAMA MONTAJ PARCASI", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s88", code: "90769", name: "RD96 BOS CAMBAZ KUTUSU", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s89", code: "90771", name: "RD96 CAMBAZ MEKANIZMASI", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s90", code: "90781", name: "SMC C85-25PS PISTON KECESI", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s91", code: "90782", name: "C85C16 EKLEM BAGLANTI PARCASI", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s92", code: "90840", name: "PISTON SENSORU: DC73L", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "s93", code: "90879", name: "DST CEKVALF O-RINGI", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "s94", code: "90881", name: "DST CEKVALF YAYI", cat: "MEKATRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s95", code: "90946", name: "SLR1-40 FILTRE", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "s96", code: "90948", name: "FIP25 BAKALIT FLANŞ", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s97", code: "91035", name: "OMAL (TAMIR) TAKIMI: KGBV4505 3/4\"", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s98", code: "91036", name: "1\" OMAL VANA TAMIR TAKIMI", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "s99", code: "91037", name: "Omal küresel vana conta tamir takımı", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "s100", code: "91043", name: "VALF KABLOSU", cat: "ELEKTRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "s101", code: "91045", name: "SMC KURESEL MAFSAL: KJ6D M6*1", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s102", code: "91064", name: "PNOMATIK RAKOR: KQ2H04-M5A: 4MM DUZ", cat: "MEKATRONIK", qty: 13, loc: "MERKEZ-DEPO" },
+      { id: "s103", code: "91071", name: "1/8\"-4MM DIRSEK RAKOR / KQ2L04-01NS", cat: "MEKATRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s104", code: "91074", name: "PNOMATIK RAKOR: KQ2L6M5N 6MM DIRSEK", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "s105", code: "91086", name: "PNOMATIK T RAKOR: KQ2T04-M5A 4MM", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "s106", code: "91088", name: "T RAKOR: KQ2T08-06 8-6MM", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s107", code: "91238", name: "FIP25 POMPA KAPAK O-RINGI", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s108", code: "91277", name: "RD96-Mu Polietilen Ağızlık", cat: "MEKATRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s109", code: "91284", name: "BONESSI VALF: P00112200 E1A/4", cat: "ELEKTRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s110", code: "91303", name: "PASLANMAZ ARABA 4 DELIKLI REXROTH", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s111", code: "91332", name: "FESTO BASINC ANAHTARI", cat: "ELEKTRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s112", code: "91406", name: "FIP25 SALMASTRA", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "s113", code: "91448", name: "PNOMATIK RAKOR: 57116 1/8\"-6MM DIRSEK", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "s114", code: "91463", name: "EUROTEC REDUCER-KAFA ADAPTORU", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s115", code: "91502", name: "LAB120 mikser kayışı", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s116", code: "91590", name: "U4 CEKVALF", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s117", code: "91594", name: "VALF: SY5240-5YO-Q", cat: "ELEKTRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s118", code: "91603", name: "Omal Vana: V451H405 3 Yollu L Port 3/4\"", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s119", code: "91604", name: "1\" 3 YOLLU L PORT VANA", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s120", code: "91633", name: "OMAL VIP VANA VNC10004", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s121", code: "96185", name: "PISTON: CD76E32-50-B", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s122", code: "96412", name: "1\" > 3/4\" POLIETILEN CEK VALF ADAPTORU", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s123", code: "96467", name: "Omal Aktüatör: DAN0030411S F03-F05", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s124", code: "96496", name: "Omal Çift Etkili Aktüatör: DAN0015411S", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s125", code: "96515", name: "DST Polietilen Z Eksen dayama takozu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s126", code: "96516", name: "DST Z Ekseni Polietilen Ağızlık", cat: "MEKATRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s127", code: "96517", name: "Rd96_MU Z Piston Dayama Takozu", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s128", code: "96570", name: "Ø19mm Şeffaf Telli Hortum (Mavi)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "s129", code: "C-137161", name: "Tuz rofinadsiyon filtr kapagi", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s130", code: "TEST", name: "Güç Kaynağı: DRL-24V75W1AZ", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "s131", code: "90880", name: "DST Çekvalf Teflonu", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s132", code: "90567", name: "66 Mm Teflon Takviyeli Diyafram", cat: "MEKATRONIK", qty: 9, loc: "MERKEZ-DEPO" },
+      { id: "s133", code: "90620", name: "PH Sensörü SPH-1-DJ-6M (6mt Kablo)", cat: "ELEKTRONIK", qty: 0, loc: "MERKEZ-DEPO" },
+      { id: "s134", code: "40025", name: "PLC CPU: DVP12SA211R 8DI 4DO", cat: "KONTROL", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s135", code: "SP-01", name: "Saha panosu (SPU su yok)", cat: "ELEKTRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "s136", code: "RA032DA", name: "RA032DA09036000 aktuator", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" }
     ];
 
-    let currentLang = localStorage.getItem('eliar_lang') || 'tr';
-    let currentFlow = 'OMER_TO_KAMIL';
-    let selectedCat = 'ALL';
+    // EXCEL'DEKİ GEÇMİŞ SATIŞLAR (CANLI TESİS GEÇMİŞİ VERİLERİ)
+    const REAL_PAST_SALES = [
+      { id: "h1", firm: "INDIGO", contact: "-", date: "17.03.2025", status: "APPROVED", timestamp: "2025-03-17", items: [{ code: "90567", name: "66MM TEFLON TAKVIYELI DIYAFRAM", qty: 5 }] },
+      { id: "h2", firm: "WBM ANDIJON", contact: "-", date: "02.06.2025", status: "APPROVED", timestamp: "2025-06-02", items: [{ code: "90840", name: "PISTON SENSORU:DC73L", qty: 1 }] },
+      { id: "h3", firm: "SAFF TEKSTIL", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "90484", name: "3/4\" KIMYASAL VANA", qty: 3 }] },
+      { id: "h4", firm: "BEST COLOR", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "50289", name: "VALF:SY3220-5LOU-M5-Q", qty: 1 }] },
+      { id: "h5", firm: "CHUST TEKSTIL", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "90620", name: "PH SENSORU", qty: 2 }] },
+      { id: "h6", firm: "TERRY JAR", contact: "-", date: "07.07.2025", status: "APPROVED", timestamp: "2025-07-07", items: [{ code: "90567", name: "66MM TEFLON TAKVIYELI DIYAFRAM", qty: 2 }] },
+      { id: "h7", firm: "ASAKA TEKSTIL", contact: "-", date: "15.07.2025", status: "APPROVED", timestamp: "2025-07-15", items: [{ code: "50257", name: "TEK ETLKILI PNOMATIK SILINDIR", qty: 1 }, { code: "91071", name: "1/8\"-4MM DIRSEK RAKOR", qty: 2 }] },
+      { id: "h8", firm: "ASAKA TEKSTIL", contact: "-", date: "05.10.2025", status: "APPROVED", timestamp: "2025-10-05", items: [{ code: "91071", name: "1/8\"-4MM DIRSEK RAKOR", qty: 10 }] },
+      { id: "h9", firm: "TERRY JAR", contact: "-", date: "09.10.2025", status: "APPROVED", timestamp: "2025-10-09", items: [{ code: "90567", name: "66 Mm Teflon Takviyeli Diyafram", qty: 5 }] },
+      { id: "h10", firm: "BEST COLOR", contact: "-", date: "18.10.2025", status: "APPROVED", timestamp: "2025-10-18", items: [{ code: "50260", name: "PISTON CD85N16-50-B", qty: 2 }] },
+      { id: "h11", firm: "TERRY JAR", contact: "-", date: "25.10.2025", status: "APPROVED", timestamp: "2025-10-25", items: [{ code: "90620", name: "PH Sensörü SPH-1-DJ-6M", qty: 2 }] },
+      { id: "h12", firm: "TERRY JAR", contact: "-", date: "20.12.2025", status: "APPROVED", timestamp: "2025-12-20", items: [{ code: "91332", name: "FESTO BASINC ANAHTARI", qty: 1 }] },
+      { id: "h13", firm: "BIRYUZA TEKSTIL", contact: "-", date: "09.02.2026", status: "APPROVED", timestamp: "2026-02-09", items: [{ code: "90567", name: "66 Mm Teflon Takviyeli Diyafram", qty: 1 }] },
+      { id: "h14", firm: "AKPAMUK TEKSTIL", contact: "-", date: "26.03.2026", status: "APPROVED", timestamp: "2026-03-26", items: [{ code: "5022", name: "Salmastra", qty: 1 }] },
+      { id: "h15", firm: "ZELAL TEKSTIL", contact: "-", date: "01.04.2026", status: "APPROVED", timestamp: "2026-04-01", items: [{ code: "50293", name: "VALF:SYJ3243-5LOU-Q", qty: 1 }] },
+      { id: "h16", firm: "BIRYUZA TEKSTIL", contact: "-", date: "16.04.2026", status: "APPROVED", timestamp: "2026-04-16", items: [{ code: "50260", name: "PISTON CD85N16-50-B", qty: 2 }, { code: "91086", name: "PNOMATIK T RAKOR", qty: 2 }, { code: "90765", name: "RD96 CAMBAZ KOLU", qty: 1 }] },
+      { id: "h17", firm: "TERRY JAR", contact: "-", date: "23.04.2026", status: "APPROVED", timestamp: "2026-04-23", items: [{ code: "90881", name: "DST CEKVALF YAYI", qty: 2 }, { code: "90879", name: "DST CEKVALF O-RINGI", qty: 2 }] },
+      { id: "h18", firm: "ASAKA TEKSTIL", contact: "-", date: "07.05.2026", status: "APPROVED", timestamp: "2026-05-07", items: [{ code: "91277", name: "RD96-Mu Ağızlık", qty: 1 }, { code: "50291", name: "VALF:SYJ3240", qty: 1 }, { code: "50289", name: "VALF:SY3220", qty: 1 }, { code: "50287", name: "VALF:SY114", qty: 2 }] },
+      { id: "h19", firm: "TERRY JAR", contact: "-", date: "06.07.2026", status: "APPROVED", timestamp: "2026-07-06", items: [{ code: "90840", name: "PISTON SENSORU:DC73L", qty: 2 }] },
+      { id: "h20", firm: "TERRY JAR", contact: "-", date: "21.10.2026", status: "APPROVED", timestamp: "2026-10-21", items: [{ code: "90879", name: "DST CEKVALF O-RINGI", qty: 2 }, { code: "90881", name: "DST CEKVALF YAYI", qty: 2 }, { code: "91284", name: "BONESSI VALF:P00112200", qty: 2 }] }
+    ];
 
-    // Otomatik Önbellek Denetimi (Yeni sürüm ile eski eksik önbelleği ezer)
-    const STORAGE_KEY = 'eliar_rd96_v5';
+    const STORAGE_KEY = 'eliar_real_stocks_v6';
     let stocks = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!stocks || stocks.length < 50) {
-      stocks = RD96_MASTER_CATALOG;
+      stocks = REAL_STOCKS_DATA;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
     }
 
-    let sales = JSON.parse(localStorage.getItem('eliar_sales_v5')) || [
-      {
-        id: "Q-1",
-        firm: "TERRY JAR TEKSTİL",
-        contact: "Mehmet Usta (0532 111 22 33)",
-        ref_no: "46189ND",
-        items: [{ code: "91514", name: "Rd96 SLR1-40 AISI 316L Loblu Pompa", qty: 1 }],
-        status: "APPROVED",
-        date: "28.10.2026 16:31",
-        timestamp: "2026-10-28T16:31:00"
-      }
-    ];
+    let sales = JSON.parse(localStorage.getItem('eliar_real_sales_v6')) || REAL_PAST_SALES;
+    let selectedCat = 'ALL';
+    let currentLang = 'tr';
+    let currentFlow = 'OMER_TO_KAMIL';
 
     function normalizeTr(text) {
       if (!text) return "";
@@ -749,30 +603,18 @@
 
     function persist() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
-      localStorage.setItem('eliar_sales_v5', JSON.stringify(sales));
+      localStorage.setItem('eliar_real_sales_v6', JSON.stringify(sales));
     }
 
     function forceResetToCatalog() {
-      if (confirm("Kataloğu sıfırlamak ve tüm RD96 parçalarını baştan yüklemek istiyor musunuz?")) {
-        stocks = RD96_MASTER_CATALOG;
+      if (confirm("Depo stoklarını ve geçmiş kayıtları Excel'deki gerçek listeye sıfırlamak istiyor musunuz?")) {
+        stocks = REAL_STOCKS_DATA;
+        sales = REAL_PAST_SALES;
         persist();
         renderStockTable();
-        alert("RD96 Kataloğundaki tüm parçalar başarıyla yüklendi!");
+        renderZReport();
+        alert("Depo stokları başarıyla güncellendi!");
       }
-    }
-
-    function setLanguage(lang) {
-      currentLang = lang;
-      localStorage.setItem('eliar_lang', lang);
-      document.getElementById('lang-tr').className = lang === 'tr' ? "px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white" : "px-2 py-0.5 text-xs font-bold rounded-lg text-slate-400";
-      document.getElementById('lang-uz').className = lang === 'uz' ? "px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white" : "px-2 py-0.5 text-xs font-bold rounded-lg text-slate-400";
-      
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const k = el.getAttribute('data-i18n');
-        if (I18N[lang] && I18N[lang][k]) el.innerText = I18N[lang][k];
-      });
-
-      renderStockTable();
     }
 
     function switchTab(t) {
@@ -781,7 +623,6 @@
       document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('bg-brand-600', 'text-white', 'shadow-md'); b.classList.add('text-slate-400'); });
       document.getElementById('tab-btn-' + t).classList.add('bg-brand-600', 'text-white', 'shadow-md');
       document.getElementById('tab-btn-' + t).classList.remove('text-slate-400');
-      
       if (t === 'reports') renderZReport();
     }
 
@@ -815,13 +656,9 @@
     }
 
     function getCategoryBadge(cat) {
-      if (cat === 'KONTROL') {
-        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800">Kontrolör</span>`;
-      } else if (cat === 'ELEKTRONIK') {
-        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-400 border border-amber-800">Elektronik</span>`;
-      } else {
-        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-950 text-purple-400 border border-purple-800">Mekatronik</span>`;
-      }
+      if (cat === 'KONTROL') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800">Kontrolör</span>`;
+      if (cat === 'ELEKTRONIK') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-400 border border-amber-800">Elektronik</span>`;
+      return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-950 text-purple-400 border border-purple-800">Mekatronik</span>`;
     }
 
     function renderStockTable() {
@@ -843,25 +680,29 @@
         return;
       }
 
-      listEl.innerHTML = filtered.map(i => `
-        <div class="bg-cardbg border border-bordercol rounded-2xl p-3 flex justify-between items-center shadow-md hover:border-slate-600 transition">
-          <div>
-            <div class="flex items-center space-x-1.5">
-              <span class="text-[10px] font-mono font-bold text-white bg-darkbg px-2 py-0.5 rounded border border-emerald-500/40">${i.code}</span>
-              ${getCategoryBadge(i.cat || 'MEKATRONIK')}
+      listEl.innerHTML = filtered.map(i => {
+        const hasStock = i.qty > 0;
+        const qtyDisplay = hasStock ? `${i.qty} ADT` : `<span class="text-rose-400">0 ADT (Tükendi)</span>`;
+        return `
+          <div class="bg-cardbg border border-bordercol rounded-2xl p-3 flex justify-between items-center shadow-md hover:border-slate-600 transition">
+            <div>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-[10px] font-mono font-bold text-white bg-darkbg px-2 py-0.5 rounded border border-emerald-500/40">${i.code}</span>
+                ${getCategoryBadge(i.cat || 'MEKATRONIK')}
+              </div>
+              <h4 class="text-xs font-semibold text-white mt-1 leading-tight">${i.name}</h4>
+              <p class="text-[10px] text-slate-400 mt-0.5">Konum: <span class="text-slate-300 font-mono">${i.loc}</span></p>
             </div>
-            <h4 class="text-xs font-semibold text-white mt-1 leading-tight">${i.name}</h4>
-            <p class="text-[10px] text-slate-400 mt-0.5">Konum: <span class="text-slate-300 font-mono">${i.loc}</span></p>
-          </div>
-          <div class="flex items-center space-x-2">
-            <span class="text-xs font-black text-emerald-400 whitespace-nowrap">${i.qty} ADT</span>
-            <div class="flex flex-col space-y-1">
-              <button onclick="increaseStock('${i.id}')" title="Stok Ekle (+1)" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-emerald-950 text-emerald-400 rounded-lg text-xs font-bold flex items-center justify-center">+</button>
-              <button onclick="openDeductModal('${i.id}')" title="Stoktan Düş / Satış Yap" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-rose-950 text-rose-400 rounded-lg text-xs font-bold flex items-center justify-center">-</button>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-black text-emerald-400 whitespace-nowrap">${qtyDisplay}</span>
+              <div class="flex flex-col space-y-1">
+                <button onclick="increaseStock('${i.id}')" title="Stok Ekle (+1)" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-emerald-950 text-emerald-400 rounded-lg text-xs font-bold flex items-center justify-center">+</button>
+                <button onclick="openDeductModal('${i.id}')" title="Stoktan Düş / Satış Yap" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-rose-950 text-rose-400 rounded-lg text-xs font-bold flex items-center justify-center">-</button>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function openDeductModal(id) {
@@ -869,7 +710,7 @@
       if (!it) return;
       document.getElementById('deduct-part-id').value = id;
       document.getElementById('deduct-part-header').innerText = `[${it.code}] ${it.name}`;
-      document.getElementById('deduct-current-stock').innerText = `Mevcut Depo: ${it.qty} ADT`;
+      document.getElementById('deduct-current-stock').innerText = `Mevcut: ${it.qty} ADT`;
       document.getElementById('deduct-qty').value = "1";
       document.getElementById('deduct-destination').value = "";
       document.getElementById('deduct-contact').value = "";
@@ -902,17 +743,15 @@
 
       it.qty = Math.max(0, it.qty - qty);
       
-      const newSale = {
+      sales.unshift({
         id: "Q-" + Date.now(),
         firm: dest,
-        contact: contact || "Belirtilmedi",
-        ref_no: "MANUEL-ÇIKIŞ",
-        items: [{ code: it.code, name: it.name, qty: qty }],
+        contact: contact || "-",
+        date: new Date().toLocaleDateString('tr-TR'),
         status: "APPROVED",
-        date: new Date().toLocaleString([], { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
-        timestamp: new Date().toISOString()
-      };
-      sales.unshift(newSale);
+        timestamp: new Date().toISOString().split('T')[0],
+        items: [{ code: it.code, name: it.name, qty: qty }]
+      });
 
       persist();
       renderStockTable();
@@ -932,7 +771,7 @@
         loc: it.loc
       };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      alert(`Stoktan düşüldü: ${qty} Adet [${it.code}] ${it.name} ➔ ${dest}`);
+      alert(`Stoktan düşüldü: ${qty} Adet [${it.code}] ➔ ${dest}`);
     }
 
     function increaseStock(id) {
@@ -965,19 +804,14 @@
       const loc = document.getElementById('m-loc').value.trim();
       if (!code || !name) { alert("Lütfen Ürün Kodu ve İsmini doldurun!"); return; }
 
-      stocks.unshift({ id: Date.now().toString(), code, cat, name, qty, loc });
+      stocks.unshift({ id: "s" + Date.now(), code, cat, name, qty, loc });
       persist();
       closeStockModal();
       renderStockTable();
-
-      const payload = { direction: "STOCK_CHANGE", action: "NEW_ITEM", category: cat, code, name, qty, loc };
-      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      
       document.getElementById('m-code').value = "";
       document.getElementById('m-name').value = "";
     }
 
-    /* ---------------- AKILLI CANLI ARAMA (İŞ AKIŞI) ---------------- */
     function searchPartsLive(query) {
       const dropdown = document.getElementById('otk-part-dropdown');
       const q = normalizeTr(query.trim());
@@ -996,7 +830,7 @@
             <span class="text-[9px] font-mono font-bold bg-darkbg border border-bordercol px-1 rounded text-emerald-400">${p.code}</span>
             <span class="text-white ml-1">${p.name}</span>
           </div>
-          <span class="text-[10px] font-bold text-emerald-400">${p.qty} ADT</span>
+          <span class="text-[10px] font-bold ${p.qty > 0 ? 'text-emerald-400' : 'text-slate-500'}">${p.qty} ADT</span>
         </div>
       `).join('');
       dropdown.classList.remove('hidden');
@@ -1007,7 +841,7 @@
       document.getElementById('otk-selected-name').value = name;
       document.getElementById('otk-part-search').value = `${name} [${code}]`;
       const badge = document.getElementById('otk-selected-badge');
-      badge.innerText = `✓ Kod: ${code} (Stok: ${qty})`;
+      badge.innerText = `✓ Kod: ${code} (Depo: ${qty} ADT)`;
       badge.classList.remove('hidden');
       document.getElementById('otk-clear-btn').classList.remove('hidden');
       document.getElementById('otk-part-dropdown').classList.add('hidden');
@@ -1146,7 +980,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `Eliar_RD96_Z_Raporu_${new Date().toISOString().slice(0,10)}.csv`;
+      a.download = `Eliar_Z_Raporu_${new Date().toISOString().slice(0,10)}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -1184,8 +1018,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      setLanguage(currentLang);
-      setDatePreset('week');
+      setDatePreset('all');
       renderStockTable();
     });
   </script>
