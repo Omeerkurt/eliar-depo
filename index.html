@@ -7,7 +7,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -22,15 +21,20 @@
     }
   </script>
   <style>
-    body { -webkit-tap-highlight-color: transparent; user-select: none; }
-    input, textarea, select { user-select: auto; }
+    body { -webkit-tap-highlight-color: transparent; }
+    /* Mobil klavye açılmasını ve yazmayı engelleyen tüm kilitler kaldırıldı */
+    input, textarea, select { 
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      touch-action: manipulation !important;
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
 
-  <!-- ÜST HEADER -->
+  <!-- HEADER -->
   <header class="sticky top-0 z-40 bg-cardbg/95 backdrop-blur border-b border-bordercol px-4 py-3 flex items-center justify-between shadow-lg">
     <div class="flex items-center space-x-3">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-md shadow-brand-500/20">
@@ -41,33 +45,31 @@
         <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">GÜNCEL DEPO ENVANTERİ</p>
       </div>
     </div>
-
     <div class="flex items-center space-x-1.5">
       <button onclick="forceResetToCatalog()" title="Stokları Sıfırla" class="px-2 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
         <i class="fa-solid fa-arrows-rotate"></i>
         <span class="text-[10px] hidden sm:inline">Sıfırla</span>
       </button>
       <div class="flex items-center bg-darkbg border border-bordercol rounded-xl p-1 shadow-inner">
-        <button id="lang-tr" onclick="setLanguage('tr')" class="px-2 py-0.5 text-xs font-bold rounded-lg transition-all bg-brand-600 text-white">TR</button>
-        <button id="lang-uz" onclick="setLanguage('uz')" class="px-2 py-0.5 text-xs font-bold rounded-lg transition-all text-slate-400">UZ</button>
+        <button id="lang-tr" onclick="setLanguage('tr')" class="px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white">TR</button>
+        <button id="lang-uz" onclick="setLanguage('uz')" class="px-2 py-0.5 text-xs font-bold rounded-lg text-slate-400">UZ</button>
       </div>
     </div>
   </header>
 
   <!-- ANA İÇERİK -->
   <main class="p-3.5 max-w-2xl mx-auto space-y-4">
-
-    <!-- 3'LÜ ANA MENÜ BUTONLARI -->
+    <!-- 3'LÜ ANA MENÜ -->
     <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
-      <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
+      <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
         <i class="fa-solid fa-boxes-stacked text-sm"></i>
         <span>Depo Stok</span>
       </button>
-      <button onclick="switchTab('workflow')" id="tab-btn-workflow" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
+      <button onclick="switchTab('workflow')" id="tab-btn-workflow" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 text-slate-400">
         <i class="fa-solid fa-share-nodes text-sm"></i>
         <span>İş Akışı / Talep</span>
       </button>
-      <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
+      <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 text-slate-400">
         <i class="fa-solid fa-chart-line text-sm"></i>
         <span>Rapor & Tesis</span>
       </button>
@@ -79,7 +81,7 @@
         <div class="relative flex-1">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
           <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Kod (91463, 90880) veya isimle ara..." 
-            class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-brand-500 text-white placeholder-slate-500 shadow-inner">
+            class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500 shadow-inner">
         </div>
         <button onclick="openStockModal()" class="px-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1 text-xs shadow-md">
           <i class="fa-solid fa-plus"></i>
@@ -87,7 +89,7 @@
         </button>
       </div>
 
-      <!-- AKILLI SIRALAMA & FİLTRELEME -->
+      <!-- AKILLI SIRALAMA SEÇİCİ -->
       <div class="flex items-center space-x-2 bg-cardbg border border-bordercol px-3 py-1.5 rounded-xl text-xs">
         <i class="fa-solid fa-arrow-down-short-wide text-brand-500"></i>
         <span class="text-slate-400 text-[11px] font-semibold whitespace-nowrap">Sırala:</span>
@@ -116,13 +118,11 @@
     <!-- 2. TAB: İŞ AKIŞI & TALEP -->
     <section id="tab-workflow" class="tab-content hidden space-y-3">
       <div class="grid grid-cols-2 p-1 bg-darkbg border border-bordercol rounded-2xl gap-1">
-        <button onclick="setWorkflowDirection('OMER_TO_KAMIL')" id="btn-flow-otk" 
-          class="py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md">
+        <button onclick="setWorkflowDirection('OMER_TO_KAMIL')" id="btn-flow-otk" class="py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md">
           <i class="fa-solid fa-user-gear"></i>
           <span>Sahadan Talep</span>
         </button>
-        <button onclick="setWorkflowDirection('KAMIL_TO_OMER')" id="btn-flow-kto" 
-          class="py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white">
+        <button onclick="setWorkflowDirection('KAMIL_TO_OMER')" id="btn-flow-kto" class="py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white">
           <i class="fa-solid fa-paper-plane"></i>
           <span>Sahaya İş Gönder</span>
         </button>
@@ -130,19 +130,17 @@
 
       <!-- FORM A: ÖMER ➔ KAMİL -->
       <div id="form-omer-to-kamil" class="bg-cardbg border border-bordercol rounded-2xl p-4 shadow-xl space-y-3">
-        <div class="border-b border-bordercol pb-2">
-          <h2 class="text-sm font-bold text-white flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-            <span>Sahadan Talep (Ömer ➔ Kamil)</span>
-          </h2>
-        </div>
-
+        <h2 class="text-sm font-bold text-white flex items-center space-x-2 border-b border-bordercol pb-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+          <span>Sahadan Talep (Ömer ➔ Kamil)</span>
+        </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div>
+          <div class="relative">
             <label class="text-xs text-slate-400 font-semibold flex items-center">
               <span>Müşteri / Firma İsmi</span> <span class="text-rose-400 ml-1">*</span>
             </label>
-            <input type="text" id="otk-firm-name" placeholder="Örn: MARK FORMELLE" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+            <input type="text" id="otk-firm-name" oninput="showFirmSuggestions(this.value, 'otk-firm-dropdown', 'otk-firm-name')" autocomplete="off" placeholder="Örn: TERRY JAR" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+            <div id="otk-firm-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-40 overflow-y-auto hidden"></div>
           </div>
           <div>
             <label class="text-xs text-slate-400 font-semibold flex items-center">
@@ -151,10 +149,9 @@
             <input type="text" id="otk-firm-contact" placeholder="Örn: +998 88 984 5595" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
           </div>
         </div>
-
         <div class="relative">
           <label class="text-xs text-slate-400 font-semibold flex items-center justify-between">
-            <span class="flex items-center"><span>İstenen Parça</span> <span class="text-rose-400 ml-1">*</span></span>
+            <span>İstenen Parça <span class="text-rose-400">*</span></span>
             <span id="otk-selected-badge" class="text-[10px] text-emerald-400 font-mono font-bold hidden"></span>
           </label>
           <div class="relative mt-1">
@@ -166,28 +163,23 @@
           <input type="hidden" id="otk-selected-code" value="">
           <input type="hidden" id="otk-selected-name" value="">
         </div>
-
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span>Miktar (Adet)</span> <span class="text-rose-400 ml-1">*</span>
-            </label>
+            <label class="text-xs text-slate-400 font-semibold">Miktar (Adet) <span class="text-rose-400">*</span></label>
             <input type="number" id="otk-qty" value="1" min="1" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white font-bold">
           </div>
           <div>
             <label class="text-xs text-slate-400 font-semibold">Öncelik</label>
             <select id="otk-priority" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-              <option value="NORMAL">Normal Servis / Talep</option>
+              <option value="NORMAL">Normal Servis</option>
               <option value="KRITIK" class="text-rose-400">🚨 Acil (Hat Duruşu!)</option>
             </select>
           </div>
         </div>
-
         <div>
           <label class="text-xs text-slate-400 font-semibold">Talep Notu & Detay</label>
           <textarea id="otk-notes" rows="2" placeholder="Not veya detay..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
         </div>
-
         <button onclick="dispatchOmerToKamil()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg shadow-emerald-900/30">
           <i class="fa-brands fa-telegram text-sm"></i>
           <span>Kamil'e Gönder & Onay İste</span>
@@ -196,40 +188,29 @@
 
       <!-- FORM B: KAMİL ➔ ÖMER -->
       <div id="form-kamil-to-omer" class="bg-cardbg border border-bordercol rounded-2xl p-4 shadow-xl space-y-3 hidden">
-        <div class="border-b border-bordercol pb-2">
-          <h2 class="text-sm font-bold text-white flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
-            <span>Sahaya İş Gönder (Kamil ➔ Ömer)</span>
-          </h2>
-        </div>
-
+        <h2 class="text-sm font-bold text-white flex items-center space-x-2 border-b border-bordercol pb-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+          <span>Sahaya İş Gönder (Kamil ➔ Ömer)</span>
+        </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div>
-            <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span>Gidilecek Firma İsmi</span> <span class="text-rose-400 ml-1">*</span>
-            </label>
-            <input type="text" id="kto-firm-name" placeholder="Firma / Tesis Adı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+          <div class="relative">
+            <label class="text-xs text-slate-400 font-semibold">Gidilecek Firma İsmi <span class="text-rose-400">*</span></label>
+            <input type="text" id="kto-firm-name" oninput="showFirmSuggestions(this.value, 'kto-firm-dropdown', 'kto-firm-name')" autocomplete="off" placeholder="Firma Adı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+            <div id="kto-firm-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-40 overflow-y-auto hidden"></div>
           </div>
           <div>
-            <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span>İlgili Kişi & Telefon</span>
-            </label>
-            <input type="text" id="kto-firm-contact" placeholder="Tesis Sorumlusu & Telefon" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+            <label class="text-xs text-slate-400 font-semibold">İlgili Kişi & Telefon</label>
+            <input type="text" id="kto-firm-contact" placeholder="Tesis Sorumlusu" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
           </div>
         </div>
-
         <div>
-          <label class="text-xs text-slate-400 font-semibold flex items-center">
-            <span>Görev Başlığı</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
+          <label class="text-xs text-slate-400 font-semibold">Görev Başlığı <span class="text-rose-400">*</span></label>
           <input type="text" id="kto-task-type" placeholder="Örn: Dozajlama Pompası Bakımı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
         </div>
-
         <div>
           <label class="text-xs text-slate-400 font-semibold">Özel Talimatlar</label>
           <textarea id="kto-instructions" rows="2" placeholder="Ömer'e talimatlar..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
         </div>
-
         <button onclick="dispatchKamilToOmer()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg shadow-cyan-900/30">
           <i class="fa-solid fa-paper-plane text-sm"></i>
           <span>Sahaya Görev Olarak İlet (Ömer'e Bildir)</span>
@@ -237,7 +218,7 @@
       </div>
     </section>
 
-    <!-- 3. TAB: Z-RAPORU & TESİS GEÇMİŞİ -->
+    <!-- 3. TAB: Z-RAPORU & GEÇMİŞ -->
     <section id="tab-reports" class="tab-content hidden space-y-3">
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
         <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -248,20 +229,18 @@
             </h3>
             <p class="text-[10px] text-slate-400 mt-0.5">Tarih Aralıklı Canlı Döküm</p>
           </div>
-          
           <div class="flex items-center space-x-1.5">
-            <button onclick="exportZReportCSV()" title="Excel / CSV İndir" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1 shadow-md">
+            <button onclick="exportZReportCSV()" title="Excel İndir" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1">
               <i class="fa-solid fa-file-excel"></i>
               <span>Excel</span>
             </button>
-            <button onclick="exportZReportPDF()" title="PDF Yazdır / Kaydet" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1 shadow-md">
+            <button onclick="exportZReportPDF()" title="PDF Yazdır" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1">
               <i class="fa-solid fa-file-pdf"></i>
               <span>PDF</span>
             </button>
           </div>
         </div>
 
-        <!-- Tarih Seçici -->
         <div class="space-y-2 bg-darkbg p-2.5 rounded-xl border border-bordercol">
           <div class="grid grid-cols-2 gap-2 text-xs">
             <div>
@@ -274,13 +253,12 @@
             </div>
           </div>
           <div class="flex space-x-1.5 text-[10px]">
-            <button onclick="setDatePreset('all')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Tüm Zamanlar</button>
+            <button onclick="setDatePreset('all')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Tümü</button>
             <button onclick="setDatePreset('month')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Ay</button>
             <button onclick="setDatePreset('week')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Hafta</button>
           </div>
         </div>
 
-        <!-- İstatistik Kutuları -->
         <div class="grid grid-cols-2 gap-2 text-center">
           <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl">
             <span class="text-[10px] text-slate-400 block font-medium">Satılan Toplam Parça</span>
@@ -291,23 +269,16 @@
             <span id="z-total-plants" class="text-base font-black text-cyan-400">0 Tesis</span>
           </div>
         </div>
-
         <div class="space-y-1.5 max-h-56 overflow-y-auto no-scrollbar" id="z-sales-list"></div>
       </div>
 
       <!-- Tesis Geçmişi Sorgulama -->
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
-        <div class="border-b border-bordercol pb-2">
-          <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
-            <i class="fa-solid fa-industry text-cyan-400"></i>
-            <span>Tesis Parça Geçmişi ("Bu Müşteriye Ne Verdik?")</span>
-          </h3>
-        </div>
-
-        <div class="flex space-x-2">
-          <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Firma Adı Yazın (TERRY JAR, ASAKA, ZELAL)..." class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
-        </div>
-
+        <h3 class="text-xs font-bold text-white flex items-center space-x-1.5 border-b border-bordercol pb-2">
+          <i class="fa-solid fa-industry text-cyan-400"></i>
+          <span>Tesis Parça Geçmişi ("Bu Müşteriye Ne Verdik?")</span>
+        </h3>
+        <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Firma Adı Yazın (TERRY JAR, ASAKA, ZELAL)..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
         <div id="facility-history-results" class="space-y-1.5 max-h-60 overflow-y-auto text-xs">
           <p class="text-slate-500 text-center py-2 text-[11px]">Geçmişini görmek istediğiniz fabrika adını yazın.</p>
         </div>
@@ -315,16 +286,14 @@
     </section>
   </main>
 
-  <!-- MODAL: ÜRÜN DÜZENLEME & KATEGORİ DEĞİŞTİRME -->
+  <!-- MODAL: ÜRÜN & KATEGORİ DÜZENLEME -->
   <div id="modal-edit-part" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3 shadow-2xl">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
-        <h3 class="font-bold text-white text-sm">Ürünü Düzenle & Kategori Değiştir</h3>
+        <h3 class="font-bold text-white text-sm">Ürünü & Kategoriyi Düzenle</h3>
         <button onclick="closeEditPartModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
-
       <input type="hidden" id="edit-id">
-
       <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
           <label class="text-slate-400 font-semibold">Parça Kodu</label>
@@ -339,15 +308,13 @@
           </select>
         </div>
       </div>
-
       <div class="text-xs">
-        <label class="text-slate-400 font-semibold">Ürün Adı / Açıklaması</label>
+        <label class="text-slate-400 font-semibold">Ürün Adı</label>
         <input type="text" id="edit-name" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
       </div>
-
       <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
-          <label class="text-slate-400 font-semibold">Mevcut Stok Adedi</label>
+          <label class="text-slate-400 font-semibold">Stok Adedi</label>
           <input type="number" id="edit-qty" min="0" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-emerald-400 font-bold">
         </div>
         <div>
@@ -355,14 +322,11 @@
           <input type="text" id="edit-loc" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
         </div>
       </div>
-
-      <button onclick="savePartChanges()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">
-        Değişiklikleri Kaydet
-      </button>
+      <button onclick="savePartChanges()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Değişiklikleri Kaydet</button>
     </div>
   </div>
 
-  <!-- MODAL: HIZLI STOK ÇIKIŞI / SATIŞ -->
+  <!-- MODAL: HIZLI STOK ÇIKIŞI & FİRMA TAMAMLAMA -->
   <div id="modal-deduct" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3 shadow-2xl">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -372,26 +336,20 @@
         </div>
         <button onclick="closeDeductModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
-
-      <div>
+      <div class="relative">
         <label class="text-xs text-slate-400 font-semibold flex items-center">
           <span>Firma İsmi (Müşteri / Fabrika)</span> <span class="text-rose-400 ml-1">*</span>
         </label>
-        <input type="text" id="deduct-destination" placeholder="Örn: MARK FORMELLE" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+        <input type="text" id="deduct-destination" oninput="showFirmSuggestions(this.value, 'deduct-firm-dropdown', 'deduct-destination')" autocomplete="off" placeholder="Yazmaya başlayın..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+        <div id="deduct-firm-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-40 overflow-y-auto hidden"></div>
       </div>
-
       <div>
-        <label class="text-xs text-slate-400 font-semibold flex items-center">
-          <span>İlgili Kişi & Telefon</span>
-        </label>
+        <label class="text-xs text-slate-400 font-semibold">İlgili Kişi & Telefon</label>
         <input type="text" id="deduct-contact" placeholder="Örn: +998 88 984 5595" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
       </div>
-
       <div>
         <div class="flex justify-between items-center text-xs">
-          <label class="text-slate-400 font-semibold flex items-center">
-            <span>Düşülecek Miktar</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
+          <label class="text-slate-400 font-semibold">Düşülecek Miktar <span class="text-rose-400">*</span></label>
           <span id="deduct-current-stock" class="text-slate-400 font-mono"></span>
         </div>
         <div class="flex items-center space-x-2 mt-1">
@@ -403,9 +361,7 @@
           </div>
         </div>
       </div>
-
       <input type="hidden" id="deduct-part-id" value="">
-
       <button onclick="confirmStockDeduction()" class="w-full bg-rose-600 hover:bg-rose-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-rose-900/30 flex items-center justify-center space-x-2">
         <i class="fa-solid fa-arrow-down-from-bracket"></i>
         <span>Stoktan Düş & Herkese Bildir</span>
@@ -413,56 +369,42 @@
     </div>
   </div>
 
-  <!-- MODAL: YENİ PARÇA EKLE -->
+  <!-- MODAL: YENİ PARÇA TANIMLAMA -->
   <div id="modal-stock" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
         <h3 class="font-bold text-white text-sm">Yeni Parça Tanımla</h3>
         <button onclick="closeStockModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
-      
       <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
-          <label class="text-slate-400 font-medium flex items-center">
-            <span>Ürün Kodu</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
-          <input type="text" id="m-code" placeholder="Örn: 90880" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono focus:border-brand-500">
+          <label class="text-slate-400 font-medium">Ürün Kodu <span class="text-rose-400">*</span></label>
+          <input type="text" id="m-code" placeholder="Örn: 90880" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono">
         </div>
         <div>
-          <label class="text-slate-400 font-medium flex items-center">
-            <span>Kategori</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
+          <label class="text-slate-400 font-medium">Kategori <span class="text-rose-400">*</span></label>
           <select id="m-cat" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-2 py-2 text-white">
             <option value="MEKATRONIK">Mekatronik</option>
             <option value="ELEKTRONIK">Elektronik</option>
-            <option value="KONTROL">Kontrolörler</option>
+            <option value="KONTROL">Kontrolör</option>
           </select>
         </div>
       </div>
-
       <div class="text-xs">
-        <label class="text-slate-400 font-medium flex items-center">
-          <span>Ürün İsmi / Tanımı</span> <span class="text-rose-400 ml-1">*</span>
-        </label>
-        <input type="text" id="m-name" placeholder="Örn: DST Çekvalf Teflonu" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white focus:border-brand-500">
+        <label class="text-slate-400 font-medium">Ürün Adı <span class="text-rose-400">*</span></label>
+        <input type="text" id="m-name" placeholder="Örn: DST Çekvalf Teflonu" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
       </div>
-      
       <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
-          <label class="text-slate-400 font-medium flex items-center">
-            <span>Başlangıç Adedi</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
+          <label class="text-slate-400 font-medium">Başlangıç Adedi</label>
           <input type="number" id="m-qty" value="0" min="0" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
         </div>
         <div>
-          <label class="text-slate-400 font-medium flex items-center">
-            <span>Depo / Raf Konumu</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
-          <input type="text" id="m-loc" value="ELIPS-DEPO" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white focus:border-brand-500">
+          <label class="text-slate-400 font-medium">Konum</label>
+          <input type="text" id="m-loc" value="ELIPS-DEPO" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
         </div>
       </div>
-
-      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Kaydet & Senkronize Et</button>
+      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Kaydet & Ekle</button>
     </div>
   </div>
 
@@ -471,246 +413,219 @@
     if (tg) {
       tg.expand();
       tg.ready();
+      if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
       tg.setHeaderColor('#161F30');
       tg.setBackgroundColor('#0B0F19');
     }
 
-    // %100 EKSİKSİZ VE DOĞRULANMIŞ ELİPS DEPO VERİLERİ
+    // %100 GERÇEK STOK LİSTESİ
     const REAL_STOCKS_DATA = [
-      { id: "s1", code: "Pd320", name: "Pd320 Kontrol Cihazı", cat: "KONTROL", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s2", code: "PD330", name: "PD330 Kontrol Cihazı", cat: "KONTROL", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s3", code: "Aim8-A", name: "Aim8-A Analog Giriş Modülü", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s4", code: "Aim8-B", name: "Aim8-B Analog Giriş Modülü", cat: "ELEKTRONIK", qty: 5, loc: "ELIPS-DEPO" },
-      { id: "s5", code: "Dim32", name: "Dim32 Dijital Giriş Modülü", cat: "ELEKTRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s6", code: "Dom16-PLC", name: "Dom16-PLC Çıkış Modülü", cat: "ELEKTRONIK", qty: 6, loc: "ELIPS-DEPO" },
-      { id: "s7", code: "P44", name: "P44 Panel Kartı", cat: "ELEKTRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s8", code: "Pd300", name: "Pd300 Kontrol Cihazı", cat: "KONTROL", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s9", code: "Pd340", name: "Pd340 Kontrol Cihazı", cat: "KONTROL", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s10", code: "Pd350", name: "Pd350 Kontrol Cihazı", cat: "KONTROL", qty: 10, loc: "ELIPS-DEPO" },
-      { id: "s11", code: "S400", name: "S400 Kontrol Cihazı", cat: "KONTROL", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s12", code: "S42", name: "S42 Kontrol Cihazı", cat: "KONTROL", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s13", code: "Umf-ILETISIM20", name: "Umf-ILETISIM20 kablosu", cat: "ELEKTRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s14", code: "TBBPLC-F", name: "TBBPLC-F Modülü", cat: "ELEKTRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s15", code: "Edc T7000", name: "Edc T7000 Kontrolör", cat: "KONTROL", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s16", code: "Edc M7700", name: "Edc M7700 Kontrolör", cat: "KONTROL", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s17", code: "Edc T710", name: "Edc T710 Kontrolör", cat: "KONTROL", qty: 9, loc: "ELIPS-DEPO" },
-      { id: "s18", code: "Edc T712", name: "Edc T712 Kontrolör", cat: "KONTROL", qty: 8, loc: "ELIPS-DEPO" },
-      { id: "s19", code: "Powerfail", name: "Powerfail Güç Koruma Kartı", cat: "ELEKTRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s20", code: "P42", name: "P42 Panel Kartı", cat: "ELEKTRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s21", code: "P300", name: "P300 Panel Kartı", cat: "ELEKTRONIK", qty: 5, loc: "ELIPS-DEPO" },
-      { id: "s22", code: "P40", name: "P40 Panel Kartı", cat: "ELEKTRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s23", code: "Edc T7701EX", name: "Edc T7701EX Kontrolör", cat: "KONTROL", qty: 10, loc: "ELIPS-DEPO" },
-      { id: "s24", code: "Edc T7700", name: "Edc T7700 Kontrolör", cat: "KONTROL", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s25", code: "T7700", name: "T7700 Cihazı", cat: "KONTROL", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s26", code: "P43", name: "P43 Panel Kartı", cat: "ELEKTRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s27", code: "AOM8", name: "AOM8 Çıkış Modülü", cat: "ELEKTRONIK", qty: 7, loc: "ELIPS-DEPO" },
-      { id: "s28", code: "T7701 EX G", name: "T7701 EX G Cihazı", cat: "KONTROL", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s29", code: "T7RACK 6 PLC", name: "T7RACK 6 PLC Ünitesi", cat: "ELEKTRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s30", code: "T7RACK 10 PLC", name: "T7RACK 10 PLC Ünitesi", cat: "ELEKTRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s31", code: "T7PAC-POWER 30", name: "T7PAC-POWER 30 Güç Kaynağı", cat: "ELEKTRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s32", code: "T7PAC-POWER 20", name: "T7PAC-POWER 20 Güç Kaynağı", cat: "ELEKTRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s33", code: "T7PAC-DIM32V5", name: "T7PAC-DIM32V5 Giriş Modülü", cat: "ELEKTRONIK", qty: 5, loc: "ELIPS-DEPO" },
-      { id: "s34", code: "T7PAC-DOM32V5", name: "T7PAC-DOM32V5 Çıkış Modülü", cat: "ELEKTRONIK", qty: 5, loc: "ELIPS-DEPO" },
-      { id: "s35", code: "T7PAC-DIM16V5", name: "T7PAC-DIM16V5 Giriş Modülü", cat: "ELEKTRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s36", code: "T7PAC-AIO88SV1", name: "T7PAC-AIO88SV1 Giriş/Çıkış Modülü", cat: "ELEKTRONIK", qty: 5, loc: "ELIPS-DEPO" },
-      { id: "s37", code: "T7PAC-AI8SV1", name: "T7PAC-AI8SV1 Analog Giriş Modülü", cat: "ELEKTRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s38", code: "T7PAC-AO8SV1", name: "T7PAC-AO8SV1 Analog Çıkış Modülü", cat: "ELEKTRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s39", code: "PANELSET-T7701 ex", name: "PANELSET-T7701 ex Ön Panel Seti", cat: "KONTROL", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s40", code: "PANELSET-T7700", name: "PANELSET-T7700 Ön Panel Seti", cat: "KONTROL", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s41", code: "T7PAC-T7CPURIO", name: "T7PAC-T7CPURIO İşlemci Modülü", cat: "KONTROL", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s42", code: "T7PAC-DOM16V5", name: "T7PAC-DOM16V5 Çıkış Modülü", cat: "ELEKTRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s43", code: "40025", name: "PLC CPU: DVP12SA211R: 8DI 4DO", cat: "KONTROL", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s44", code: "SP-01", name: "Saha panosu (SPU su yok)", cat: "ELEKTRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s45", code: "RA032DA", name: "RA032DA09036000 aktuator", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s46", code: "1013", name: "Vana TORK (ko'k) 3/4\" 3 yollu + aktuator", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s47", code: "1015", name: "SLD Kanal Vanası Full 3/4\" TORK 2 yollu", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s48", code: "5022", name: "Salmastra (Geylani ile geldi)", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s49", code: "30010", name: "EBARA 15MM SIL/SIL/VITON SALMASTRA", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s50", code: "30076", name: "SANTOPRENE DIAPHRAGM POMKAR PK10", cat: "MEKATRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s51", code: "40597", name: "BES005M BALLUFF Sensör", cat: "ELEKTRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s52", code: "40634", name: "BES0057: Balluff M12MI-NSC40B-BV03", cat: "ELEKTRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s53", code: "40647", name: "Smc CJPB15-10H6 Tek Etkili Silindir", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s54", code: "41300", name: "RD96 - MU CAMBAZ PISTONU POLIETILEN (YESIL) TAKOZ", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s55", code: "41316", name: "Lab120 encoder", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s56", code: "41396", name: "12'li Hareketli Kablo (X3-X4 Pistonu)", cat: "ELEKTRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s57", code: "42184", name: "PIPETLEME SIRINGA UCU", cat: "MEKATRONIK", qty: 200, loc: "ELIPS-DEPO" },
-      { id: "s58", code: "50014", name: "SUSTURUCU: AN15-02: 1/4\"", cat: "MEKATRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s59", code: "50018", name: "VALF: SY5140-5YO-Q", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s60", code: "50090", name: "Tork çift etkili aktüatör", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s61", code: "50138", name: "PNOMATIK RAKOR: KQ2L04-M5A 4MM DIRSEK", cat: "MEKATRONIK", qty: 11, loc: "ELIPS-DEPO" },
-      { id: "s62", code: "50156", name: "T RAKOR: KQ2T06-22A 6MM", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s63", code: "50227", name: "KISICILI RAKOR: AS2201F-01-04SA 1/8\"-4MM", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s64", code: "50238", name: "SUSTURUCU: AN 120-M5 (SMC)", cat: "MEKATRONIK", qty: 5, loc: "ELIPS-DEPO" },
-      { id: "s65", code: "50242", name: "KISICILI RAKOR: AS2002F-06 6MM HAT TIPI", cat: "MEKATRONIK", qty: 7, loc: "ELIPS-DEPO" },
-      { id: "s66", code: "50257", name: "TEK ETLKILI PNOMATIK SILINDIR CD75E32", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s67", code: "50258", name: "SILINDIR CD85N16-100-B (SMC)", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s68", code: "50259", name: "SILINDIR CD85N16-200-B (SMC)", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s69", code: "50260", name: "PISTON CD85N16-50-B", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s70", code: "50261", name: "PISTON CD85N16-80-B", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s71", code: "50269", name: "Manifold: SS3Y1-S41-02-M5-Q 2'li", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s72", code: "50270", name: "Manifold: SS3Y1-S41-04-M5-Q 4'lü", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s73", code: "50287", name: "VALF: SY114-5LOU-Q", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s74", code: "50289", name: "VALF: SY3220-5LOU-M5-Q", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s75", code: "50291", name: "VALF: SYJ3143-5LOU-Q", cat: "ELEKTRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s76", code: "50292", name: "VALF: SYJ3240-5LOU-Q", cat: "ELEKTRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s77", code: "50293", name: "VALF: SYJ3243-5LOU-Q", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s78", code: "50294", name: "VALF: SYJ7120-5DZ-01F-Q", cat: "ELEKTRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s79", code: "50295", name: "VALF: SYJ7220-5DZ-01F-Q", cat: "ELEKTRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s80", code: "52156", name: "PNOMATIK T RAKOR: KQ2T06-00A 6MM", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s81", code: "54626", name: "A03/0-24VDC B00123525: 5W 22mm", cat: "ELEKTRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s82", code: "54654", name: "LOP POMPA FILTRE ORINGI 30*3 MM", cat: "MEKATRONIK", qty: 10, loc: "ELIPS-DEPO" },
-      { id: "s83", code: "90416", name: "SOLENOID VALF: 00125317 24VDC", cat: "ELEKTRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s84", code: "90501", name: "SMC C76-32PS PISTON KECESI", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s85", code: "90715", name: "REGULATOR: AR10-M5H: 0-8 BAR", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s86", code: "90726", name: "HIZ AYAR VALFI: ASN2-02 1/4\" SUSTURUCULU", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s87", code: "90759", name: "SENSOR TUTUCU: BJ2-016", cat: "MEKATRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s88", code: "90761", name: "SENSOR TUTUCU: BM2-025", cat: "MEKATRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s89", code: "90765", name: "RD96 CAMBAZ KOLU", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s90", code: "90766", name: "RD96 ALIMINYUM LAMA MONTAJ PARCASI", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s91", code: "90769", name: "RD96 BOS CAMBAZ KUTUSU", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s92", code: "90771", name: "RD96 CAMBAZ MEKANIZMASI", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s93", code: "90781", name: "SMC C85-25PS PISTON KECESI", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s94", code: "90782", name: "C85C16 EKLEM BAGLANTI PARCASI", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s95", code: "90840", name: "PISTON SENSORU: DC73L", cat: "ELEKTRONIK", qty: 6, loc: "ELIPS-DEPO" },
-      { id: "s96", code: "90879", name: "DST CEKVALF O-RINGI", cat: "MEKATRONIK", qty: 5, loc: "ELIPS-DEPO" },
-      { id: "s97", code: "90881", name: "DST CEKVALF YAYI", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s98", code: "90946", name: "SLR1-40 FILTRE", cat: "MEKATRONIK", qty: 12, loc: "ELIPS-DEPO" },
-      { id: "s99", code: "90948", name: "FIP25 BAKALIT FLANŞ", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s100", code: "91035", name: "OMAL (TAMIR) TAKIMI: KGBV4505 3/4\"", cat: "MEKATRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s101", code: "91036", name: "1\" OMAL VANA TAMIR TAKIMI", cat: "MEKATRONIK", qty: 4, loc: "ELIPS-DEPO" },
-      { id: "s102", code: "91037", name: "Omal küresel vana conta tamir takımı", cat: "MEKATRONIK", qty: 5, loc: "ELIPS-DEPO" },
-      { id: "s103", code: "91043", name: "VALF KABLOSU", cat: "ELEKTRONIK", qty: 5, loc: "ELIPS-DEPO" },
-      { id: "s104", code: "91045", name: "SMC KURESEL MAFSAL: KJ6D M6*1", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s105", code: "91064", name: "PNOMATIK RAKOR: KQ2H04-M5A 4MM DUZ", cat: "MEKATRONIK", qty: 13, loc: "ELIPS-DEPO" },
-      { id: "s106", code: "91071", name: "1/8\"-4MM DIRSEK RAKOR KQ2L04-01NS", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s107", code: "91074", name: "PNOMATIK RAKOR: KQ2L6M5N 6MM DIRSEK", cat: "MEKATRONIK", qty: 10, loc: "ELIPS-DEPO" },
-      { id: "s108", code: "91086", name: "PNOMATIK T RAKOR: KQ2T04-M5A 4MM", cat: "MEKATRONIK", qty: 10, loc: "ELIPS-DEPO" },
-      { id: "s109", code: "91088", name: "T RAKOR: KQ2T08-06 8-6MM", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s110", code: "91238", name: "FIP25 POMPA KAPAK O-RINGI", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s111", code: "91277", name: "RD96-Mu Polietilen Ağızlık", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s112", code: "91284", name: "BONESSI VALF: P00112200 E1A/4", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s113", code: "91303", name: "PASLANMAZ ARABA 4 DELIKLI REXROTH", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s114", code: "91332", name: "FESTO BASINC ANAHTARI", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s115", code: "91406", name: "FIP25 SALMASTRA", cat: "MEKATRONIK", qty: 3, loc: "ELIPS-DEPO" },
-      { id: "s116", code: "91448", name: "PNOMATIK RAKOR: 57116 1/8\"-6MM DIRSEK", cat: "MEKATRONIK", qty: 8, loc: "ELIPS-DEPO" },
-      { id: "s117", code: "91463", name: "EUROTEC REDUCER-KAFA ADAPTORU", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s118", code: "91502", name: "LAB120 mikser kayışı", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s119", code: "91590", name: "U4 CEKVALF", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s120", code: "91594", name: "VALF: SY5240-5YO-Q", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s121", code: "91603", name: "Omal Vana: V451H405 3 Yollu L Port 3/4\"", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s122", code: "91604", name: "1\" 3 YOLLU L PORT VANA", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s123", code: "91633", name: "OMAL VIP VANA VNC10004", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s124", code: "96185", name: "PISTON: CD76E32-50-B", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s125", code: "96412", name: "1\" > 3/4\" POLIETILEN DST CEK VALF ADAPTORU", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s126", code: "96467", name: "Omal Aktüatör: DAN0030411S F03-F05", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s127", code: "96496", name: "Omal Çift Etkili Aktüatör: DAN0015411S", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s128", code: "96515", name: "DST Polietilen Z Eksen dayama takozu", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s129", code: "96516", name: "DST Z Ekseni Polietilen Ağızlık", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "s130", code: "96517", name: "Rd96_MU Z Polietilen Z eksen Piston Dayama Takozu", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s131", code: "96570", name: "Ø19mm Şeffaf Telli Hortum (Mavi)", cat: "MEKATRONIK", qty: 10, loc: "ELIPS-DEPO" },
-      { id: "s132", code: "C-137161", name: "Tuz rofinadsiyon filtr kapagi", cat: "MEKATRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s133", code: "TEST", name: "Güç Kaynağı: DRL-24V75W1AZ", cat: "ELEKTRONIK", qty: 2, loc: "ELIPS-DEPO" },
-      { id: "s134", code: "90880", name: "DST Çekvalf Teflonu", cat: "MEKATRONIK", qty: 1, loc: "ELIPS-DEPO" },
-      { id: "s135", code: "90567", name: "66 Mm Teflon Takviyeli Diyafram", cat: "MEKATRONIK", qty: 9, loc: "ELIPS-DEPO" },
-      { id: "s136", code: "90620", name: "PH Sensörü: SPH-1-DJ-6M Ph Sensör - 6mt Kablosu", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c1", code: "91410", name: "Wat 3 faz Motor (Q2E112M6C) 2,2 kW 3 HP", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c2", code: "91411", name: "WAT Motor Ayağı (Q2E112M6C)", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c3", code: "41436", name: "Rd96 SLR1-40 Pompa Çıkış Bağlantı Rakor ve Dirsekleri", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c4", code: "41435", name: "Rd96 SLR1-40 Pompa Giriş Bağlantı Rakor ve Dirsekleri", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c5", code: "96469", name: "Rakor Contası - Gasket - Nw 40 Dın - EPDM", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c6", code: "60002", name: "Klemp Contası: EPDM (DN25) 1''- Ø33.7mm", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c7", code: "91661", name: "Sürücü VZAB2P2BAA V1000 3/2,2 kW", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c8", code: "40642", name: "PLC CPU: CJ1M-CPU21", cat: "KONTROL", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c9", code: "40645", name: "Güç kaynağı: CJ1W-PA202", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c10", code: "40643", name: "Dijital giriş modülü: CJ1W-ID211", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c11", code: "40644", name: "Dijital çıkış modülü: CJ1W-OC211", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c12", code: "90802", name: "Güç Kaynağı: CQM1-PA203 (omron)", cat: "ELEKTRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c13", code: "91514", name: "Rd96 SLR1-40 AISI 316L Loblu Pompa", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c14", code: "41381", name: "Rd96 22 Li Pompa Altı Paslanmaz Tava", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c15", code: "90338", name: "SLR1-40 ASI 316L Salmastra Bileziği", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c16", code: "91128", name: "SLR 1-40 Mec. Seal Si.Carbon/Si.Carbide", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c17", code: "91516", name: "SLR1-40 NBR O-Ring (Part No 80D)", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c18", code: "41538", name: "SLR1-40 Cover Seal (Part No: 09)", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c19", code: "41407", name: "SLR1-40 Pump Housing (CF-8M)", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c20", code: "90484", name: "3/4\" Kimyasal Vana (Kür. Vana + Elcik + Adaptör)", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c21", code: "91490", name: "3/4 RD Vana Adaptör Bağlantı O-ringi", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c22", code: "91489", name: "3/4' RD Vana Conta Takımı", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c23", code: "91488", name: "3/4 RD Vana Küre", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c24", code: "90930", name: "EPDM Lastik Conta 25*40 Kare Oring", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c25", code: "91495", name: "3/4\" Şeffaf Kimyasal Hortum", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c26", code: "96404", name: "RD96-MU22 Paslanmaz Çelik Tabla", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c27", code: "41406", name: "RD96_MU33 PVC Tabla", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" },
-      { id: "c28", code: "41405", name: "RD96-MU33 Paslanmaz Çelik Tabla", cat: "MEKATRONIK", qty: 0, loc: "ELIPS-DEPO" }
+      {id:"s1",code:"Pd320",name:"Pd320 Kontrol Cihazı",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s2",code:"PD330",name:"PD330 Kontrol Cihazı",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s3",code:"Aim8-A",name:"Aim8-A Analog Giriş Modülü",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s4",code:"Aim8-B",name:"Aim8-B Analog Giriş Modülü",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
+      {id:"s5",code:"Dim32",name:"Dim32 Dijital Giriş Modülü",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s6",code:"Dom16-PLC",name:"Dom16-PLC Çıkış Modülü",cat:"ELEKTRONIK",qty:6,loc:"ELIPS-DEPO"},
+      {id:"s7",code:"P44",name:"P44 Panel Kartı",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s8",code:"Pd300",name:"Pd300 Kontrol Cihazı",cat:"KONTROL",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s9",code:"Pd340",name:"Pd340 Kontrol Cihazı",cat:"KONTROL",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s10",code:"Pd350",name:"Pd350 Kontrol Cihazı",cat:"KONTROL",qty:10,loc:"ELIPS-DEPO"},
+      {id:"s11",code:"S400",name:"S400 Kontrol Cihazı",cat:"KONTROL",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s12",code:"S42",name:"S42 Kontrol Cihazı",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s13",code:"Umf-ILETISIM20",name:"Umf-ILETISIM20 kablosu",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s14",code:"TBBPLC-F",name:"TBBPLC-F Modülü",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s15",code:"Edc T7000",name:"Edc T7000 Kontrolör",cat:"KONTROL",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s16",code:"Edc M7700",name:"Edc M7700 Kontrolör",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s17",code:"Edc T710",name:"Edc T710 Kontrolör",cat:"KONTROL",qty:9,loc:"ELIPS-DEPO"},
+      {id:"s18",code:"Edc T712",name:"Edc T712 Kontrolör",cat:"KONTROL",qty:8,loc:"ELIPS-DEPO"},
+      {id:"s19",code:"Powerfail",name:"Powerfail Güç Koruma Kartı",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s20",code:"P42",name:"P42 Panel Kartı",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s21",code:"P300",name:"P300 Panel Kartı",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
+      {id:"s22",code:"P40",name:"P40 Panel Kartı",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s23",code:"Edc T7701EX",name:"Edc T7701EX Kontrolör",cat:"KONTROL",qty:10,loc:"ELIPS-DEPO"},
+      {id:"s24",code:"Edc T7700",name:"Edc T7700 Kontrolör",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s25",code:"T7700",name:"T7700 Cihazı",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s26",code:"P43",name:"P43 Panel Kartı",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s27",code:"AOM8",name:"AOM8 Çıkış Modülü",cat:"ELEKTRONIK",qty:7,loc:"ELIPS-DEPO"},
+      {id:"s28",code:"T7701 EX G",name:"T7701 EX G Cihazı",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s29",code:"T7RACK 6 PLC",name:"T7RACK 6 PLC Ünitesi",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s30",code:"T7RACK 10 PLC",name:"T7RACK 10 PLC Ünitesi",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s31",code:"T7PAC-POWER 30",name:"T7PAC-POWER 30 Güç Kaynağı",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s32",code:"T7PAC-POWER 20",name:"T7PAC-POWER 20 Güç Kaynağı",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s33",code:"T7PAC-DIM32V5",name:"T7PAC-DIM32V5 Giriş Modülü",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
+      {id:"s34",code:"T7PAC-DOM32V5",name:"T7PAC-DOM32V5 Çıkış Modülü",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
+      {id:"s35",code:"T7PAC-DIM16V5",name:"T7PAC-DIM16V5 Giriş Modülü",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s36",code:"T7PAC-AIO88SV1",name:"T7PAC-AIO88SV1 Modülü",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
+      {id:"s37",code:"T7PAC-AI8SV1",name:"T7PAC-AI8SV1 Analog Giriş",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s38",code:"T7PAC-AO8SV1",name:"T7PAC-AO8SV1 Analog Çıkış",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s39",code:"PANELSET-T7701 ex",name:"PANELSET-T7701 ex Ön Panel Seti",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s40",code:"PANELSET-T7700",name:"PANELSET-T7700 Ön Panel Seti",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s41",code:"T7PAC-T7CPURIO",name:"T7PAC-T7CPURIO İşlemci",cat:"KONTROL",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s42",code:"T7PAC-DOM16V5",name:"T7PAC-DOM16V5 Çıkış Modülü",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s43",code:"40025",name:"PLC CPU: DVP12SA211R: 8DI 4DO",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s44",code:"SP-01",name:"Saha panosu (SPU su yok)",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s45",code:"RA032DA",name:"RA032DA09036000 aktuator",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s46",code:"1013",name:"Vana TORK (ko'k) 3/4\" 3 yollu + aktuator",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s47",code:"1015",name:"SLD Kanal Vanası Full 3/4\" TORK 2 yollu",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s48",code:"5022",name:"Salmastra (Geylani ile geldi)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s49",code:"30010",name:"EBARA 15MM SIL/SIL/VITON SALMASTRA",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s50",code:"30076",name:"SANTOPRENE DIAPHRAGM POMKAR PK10",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s51",code:"40597",name:"BES005M BALLUFF Sensör",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s52",code:"40634",name:"BES0057: Balluff M12MI-NSC40B-BV03",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s53",code:"40647",name:"Smc CJPB15-10H6 Tek Etkili Silindir",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s54",code:"41300",name:"RD96 - MU CAMBAZ PISTONU POLIETILEN (YESIL) TAKOZ",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s55",code:"41316",name:"Lab120 encoder",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s56",code:"41396",name:"12'li Hareketli Kablo (X3-X4 Pistonu)",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s57",code:"42184",name:"PIPETLEME SIRINGA UCU",cat:"MEKATRONIK",qty:200,loc:"ELIPS-DEPO"},
+      {id:"s58",code:"50014",name:"SUSTURUCU: AN15-02: 1/4\"",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s59",code:"50018",name:"VALF: SY5140-5YO-Q",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s60",code:"50090",name:"Tork çift etkili aktüatör",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s61",code:"50138",name:"PNOMATIK RAKOR: KQ2L04-M5A 4MM DIRSEK",cat:"MEKATRONIK",qty:11,loc:"ELIPS-DEPO"},
+      {id:"s62",code:"50156",name:"T RAKOR: KQ2T06-22A 6MM",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s63",code:"50227",name:"KISICILI RAKOR: AS2201F-01-04SA 1/8\"-4MM",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s64",code:"50238",name:"SUSTURUCU: AN 120-M5 (SMC)",cat:"MEKATRONIK",qty:5,loc:"ELIPS-DEPO"},
+      {id:"s65",code:"50242",name:"KISICILI RAKOR: AS2002F-06 6MM HAT TIPI",cat:"MEKATRONIK",qty:7,loc:"ELIPS-DEPO"},
+      {id:"s66",code:"50257",name:"TEK ETLKILI PNOMATIK SILINDIR CD75E32",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s67",code:"50258",name:"SILINDIR CD85N16-100-B (SMC)",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s68",code:"50259",name:"SILINDIR CD85N16-200-B (SMC)",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s69",code:"50260",name:"PISTON CD85N16-50-B",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s70",code:"50261",name:"PISTON CD85N16-80-B",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s71",code:"50269",name:"Manifold: SS3Y1-S41-02-M5-Q 2'li",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s72",code:"50270",name:"Manifold: SS3Y1-S41-04-M5-Q 4'lü",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s73",code:"50287",name:"VALF: SY114-5LOU-Q",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s74",code:"50289",name:"VALF: SY3220-5LOU-M5-Q",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s75",code:"50291",name:"VALF: SYJ3143-5LOU-Q",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s76",code:"50292",name:"VALF: SYJ3240-5LOU-Q",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s77",code:"50293",name:"VALF: SYJ3243-5LOU-Q",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s78",code:"50294",name:"VALF: SYJ7120-5DZ-01F-Q",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s79",code:"50295",name:"VALF: SYJ7220-5DZ-01F-Q",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s80",code:"52156",name:"PNOMATIK T RAKOR: KQ2T06-00A 6MM",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s81",code:"54626",name:"A03/0-24VDC B00123525: 5W 22mm",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s82",code:"54654",name:"LOP POMPA FILTRE ORINGI 30*3 MM",cat:"MEKATRONIK",qty:10,loc:"ELIPS-DEPO"},
+      {id:"s83",code:"90416",name:"SOLENOID VALF: 00125317 24VDC",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s84",code:"90501",name:"SMC C76-32PS PISTON KECESI",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s85",code:"90715",name:"REGULATOR: AR10-M5H: 0-8 BAR",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s86",code:"90726",name:"HIZ AYAR VALFI: ASN2-02 1/4\" SUSTURUCULU",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s87",code:"90759",name:"SENSOR TUTUCU: BJ2-016",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s88",code:"90761",name:"SENSOR TUTUCU: BM2-025",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s89",code:"90765",name:"RD96 CAMBAZ KOLU",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s90",code:"90766",name:"RD96 ALIMINYUM LAMA MONTAJ PARCASI",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s91",code:"90769",name:"RD96 BOS CAMBAZ KUTUSU",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s92",code:"90771",name:"RD96 CAMBAZ MEKANIZMASI",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s93",code:"90781",name:"SMC C85-25PS PISTON KECESI",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s94",code:"90782",name:"C85C16 EKLEM BAGLANTI PARCASI",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s95",code:"90840",name:"PISTON SENSORU: DC73L",cat:"ELEKTRONIK",qty:6,loc:"ELIPS-DEPO"},
+      {id:"s96",code:"90879",name:"DST CEKVALF O-RINGI",cat:"MEKATRONIK",qty:5,loc:"ELIPS-DEPO"},
+      {id:"s97",code:"90881",name:"DST CEKVALF YAYI",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s98",code:"90946",name:"SLR1-40 FILTRE",cat:"MEKATRONIK",qty:12,loc:"ELIPS-DEPO"},
+      {id:"s99",code:"90948",name:"FIP25 BAKALIT FLANŞ",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s100",code:"91035",name:"OMAL (TAMIR) TAKIMI: KGBV4505 3/4\"",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s101",code:"91036",name:"1\" OMAL VANA TAMIR TAKIMI",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s102",code:"91037",name:"Omal küresel vana conta tamir takımı",cat:"MEKATRONIK",qty:5,loc:"ELIPS-DEPO"},
+      {id:"s103",code:"91043",name:"VALF KABLOSU",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
+      {id:"s104",code:"91045",name:"SMC KURESEL MAFSAL: KJ6D M6*1",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s105",code:"91064",name:"PNOMATIK RAKOR: KQ2H04-M5A 4MM DUZ",cat:"MEKATRONIK",qty:13,loc:"ELIPS-DEPO"},
+      {id:"s106",code:"91071",name:"1/8\"-4MM DIRSEK RAKOR KQ2L04-01NS",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s107",code:"91074",name:"PNOMATIK RAKOR: KQ2L6M5N 6MM DIRSEK",cat:"MEKATRONIK",qty:10,loc:"ELIPS-DEPO"},
+      {id:"s108",code:"91086",name:"PNOMATIK T RAKOR: KQ2T04-M5A 4MM",cat:"MEKATRONIK",qty:10,loc:"ELIPS-DEPO"},
+      {id:"s109",code:"91088",name:"T RAKOR: KQ2T08-06 8-6MM",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s110",code:"91238",name:"FIP25 POMPA KAPAK O-RINGI",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s111",code:"91277",name:"RD96-Mu Polietilen Ağızlık",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s112",code:"91284",name:"BONESSI VALF: P00112200 E1A/4",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s113",code:"91303",name:"PASLANMAZ ARABA 4 DELIKLI REXROTH",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s114",code:"91332",name:"FESTO BASINC ANAHTARI",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s115",code:"91406",name:"FIP25 SALMASTRA",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s116",code:"91448",name:"PNOMATIK RAKOR: 57116 1/8\"-6MM DIRSEK",cat:"MEKATRONIK",qty:8,loc:"ELIPS-DEPO"},
+      {id:"s117",code:"91463",name:"EUROTEC REDUCER-KAFA ADAPTORU",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s118",code:"91502",name:"LAB120 mikser kayışı",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s119",code:"91590",name:"U4 CEKVALF",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s120",code:"91594",name:"VALF: SY5240-5YO-Q",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s121",code:"91603",name:"Omal Vana: V451H405 3 Yollu L Port 3/4\"",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s122",code:"91604",name:"1\" 3 YOLLU L PORT VANA",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s123",code:"91633",name:"OMAL VIP VANA VNC10004",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s124",code:"96185",name:"PISTON: CD76E32-50-B",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s125",code:"96412",name:"1\" > 3/4\" POLIETILEN DST CEK VALF ADAPTORU",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s126",code:"96467",name:"Omal Aktüatör: DAN0030411S F03-F05",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s127",code:"96496",name:"Omal Çift Etkili Aktüatör: DAN0015411S",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s128",code:"96515",name:"DST Polietilen Z Eksen dayama takozu",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s129",code:"96516",name:"DST Z Ekseni Polietilen Ağızlık",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"s130",code:"96517",name:"Rd96_MU Z Polietilen Z eksen Piston Dayama Takozu",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s131",code:"96570",name:"Ø19mm Şeffaf Telli Hortum (Mavi)",cat:"MEKATRONIK",qty:10,loc:"ELIPS-DEPO"},
+      {id:"s132",code:"C-137161",name:"Tuz rofinadsiyon filtr kapagi",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s133",code:"TEST",name:"Güç Kaynağı: DRL-24V75W1AZ",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
+      {id:"s134",code:"90880",name:"DST Çekvalf Teflonu",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s135",code:"90567",name:"66 Mm Teflon Takviyeli Diyafram",cat:"MEKATRONIK",qty:9,loc:"ELIPS-DEPO"},
+      {id:"s136",code:"90620",name:"PH Sensörü: SPH-1-DJ-6M Ph Sensör - 6mt Kablosu",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c1",code:"91410",name:"Wat 3 faz Motor (Q2E112M6C) 2,2 kW 3 HP",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c2",code:"91411",name:"WAT Motor Ayağı (Q2E112M6C)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c3",code:"41436",name:"Rd96 SLR1-40 Pompa Çıkış Bağlantı Rakor ve Dirsekleri",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c4",code:"41435",name:"Rd96 SLR1-40 Pompa Giriş Bağlantı Rakor ve Dirsekleri",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c5",code:"96469",name:"Rakor Contası - Gasket - Nw 40 Dın - EPDM",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c6",code:"60002",name:"Klemp Contası: EPDM (DN25) 1''- Ø33.7mm",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c7",code:"91661",name:"Sürücü VZAB2P2BAA V1000 3/2,2 kW",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c8",code:"40642",name:"PLC CPU: CJ1M-CPU21",cat:"KONTROL",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c9",code:"40645",name:"Güç kaynağı: CJ1W-PA202",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c10",code:"40643",name:"Dijital giriş modülü: CJ1W-ID211",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c11",code:"40644",name:"Dijital çıkış modülü: CJ1W-OC211",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c12",code:"90802",name:"Güç Kaynağı: CQM1-PA203 (omron)",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c13",code:"91514",name:"Rd96 SLR1-40 AISI 316L Loblu Pompa",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c14",code:"41381",name:"Rd96 22 Li Pompa Altı Paslanmaz Tava",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c15",code:"90338",name:"SLR1-40 ASI 316L Salmastra Bileziği",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c16",code:"91128",name:"SLR 1-40 Mec. Seal Si.Carbon/Si.Carbide",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c17",code:"91516",name:"SLR1-40 NBR O-Ring (Part No 80D)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c18",code:"41538",name:"SLR1-40 Cover Seal (Part No: 09)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c19",code:"41407",name:"SLR1-40 Pump Housing (CF-8M)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c20",code:"90484",name:"3/4\" Kimyasal Vana (Kür. Vana + Elcik + Adaptör)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c21",code:"91490",name:"3/4 RD Vana Adaptör Bağlantı O-ringi",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c22",code:"91489",name:"3/4' RD Vana Conta Takımı",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c23",code:"91488",name:"3/4 RD Vana Küre",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c24",code:"90930",name:"EPDM Lastik Conta 25*40 Kare Oring",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c25",code:"91495",name:"3/4\" Şeffaf Kimyasal Hortum",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c26",code:"96404",name:"RD96-MU22 Paslanmaz Çelik Tabla",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c27",code:"41406",name:"RD96_MU33 PVC Tabla",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
+      {id:"c28",code:"41405",name:"RD96-MU33 Paslanmaz Çelik Tabla",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"}
     ];
 
     const REAL_PAST_SALES = [
-      { id: "h1", firm: "INDIGO", contact: "-", date: "17.03.2025", status: "APPROVED", timestamp: "2025-03-17", items: [{ code: "90567", name: "66MM TEFLON TAKVIYELI DIYAFRAM", qty: 5 }] },
-      { id: "h2", firm: "WBM ANDIJON", contact: "-", date: "02.06.2025", status: "APPROVED", timestamp: "2025-06-02", items: [{ code: "90840", name: "PISTON SENSORU:DC73L", qty: 1 }] },
-      { id: "h3", firm: "SAFF TEKSTIL", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "90484", name: "3/4\" KIMYASAL VANA", qty: 3 }] },
-      { id: "h4", firm: "BEST COLOR", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "50289", name: "VALF:SY3220-5LOU-M5-Q", qty: 1 }] },
-      { id: "h5", firm: "CHUST TEKSTIL", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "90620", name: "PH SENSORU", qty: 2 }] },
-      { id: "h6", firm: "PARVOZ HUMO (HAJJ TEKSTIL)", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "90567", name: "66MM TEFLON TAKVIYELI DIYAFRAM", qty: 6 }] },
-      { id: "h7", firm: "SOF MEGA TEKSTIL", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "91332", name: "FESTO BASINC ANAHTARI", qty: 1 }] },
-      { id: "h8", firm: "TERRY JAR", contact: "-", date: "07.07.2025", status: "APPROVED", timestamp: "2025-07-07", items: [{ code: "90567", name: "66MM TEFLON TAKVIYELI DIYAFRAM", qty: 2 }] },
-      { id: "h9", firm: "ASAKA TEKSTIL", contact: "-", date: "15.07.2025", status: "APPROVED", timestamp: "2025-07-15", items: [{ code: "50257", name: "TEK ETLKILI PNOMATIK SILINDIR", qty: 1 }, { code: "91071", name: "1/8\"-4MM DIRSEK RAKOR", qty: 2 }] },
-      { id: "h10", firm: "ASAKA TEKSTIL", contact: "-", date: "05.10.2025", status: "APPROVED", timestamp: "2025-10-05", items: [{ code: "91071", name: "1/8\"-4MM DIRSEK RAKOR", qty: 10 }] },
-      { id: "h11", firm: "ZELAL TEKSTIL", contact: "-", date: "07.10.2025", status: "APPROVED", timestamp: "2025-10-07", items: [{ code: "96516", name: "DST Z Ekseni Polietilen Ağızlık", qty: 1 }] },
-      { id: "h12", firm: "TERRY JAR", contact: "-", date: "09.10.2025", status: "APPROVED", timestamp: "2025-10-09", items: [{ code: "90567", name: "66 Mm Teflon Takviyeli Diyafram", qty: 5 }] },
-      { id: "h13", firm: "BEST COLOR", contact: "-", date: "18.10.2025", status: "APPROVED", timestamp: "2025-10-18", items: [{ code: "50260", name: "PISTON CD85N16-50-B", qty: 2 }] },
-      { id: "h14", firm: "TERRY JAR", contact: "-", date: "25.10.2025", status: "APPROVED", timestamp: "2025-10-25", items: [{ code: "90620", name: "PH Sensörü: SPH-1-DJ-6M Ph Sensör", qty: 2 }] },
-      { id: "h15", firm: "JIZZAX TEKSTIL", contact: "-", date: "04.12.2025", status: "APPROVED", timestamp: "2025-12-04", items: [{ code: "90567", name: "66MM TEFLON TAKVIYELI DIYAFRAM", qty: 4 }] },
-      { id: "h16", firm: "TERRY JAR", contact: "-", date: "20.12.2025", status: "APPROVED", timestamp: "2025-12-20", items: [{ code: "91332", name: "FESTO BASINC ANAHTARI", qty: 1 }] },
-      { id: "h17", firm: "BIRYUZA TEKSTIL", contact: "-", date: "09.02.2026", status: "APPROVED", timestamp: "2026-02-09", items: [{ code: "90567", name: "66 Mm Teflon Takviyeli Diyafram", qty: 1 }] },
-      { id: "h18", firm: "ZELAL TEKSTIL", contact: "-", date: "21.02.2026", status: "APPROVED", timestamp: "2026-02-21", items: [{ code: "96516", name: "DST Z Ekseni Polietilen Ağızlık", qty: 1 }] },
-      { id: "h19", firm: "AKPAMUK TEKSTIL", contact: "-", date: "26.03.2026", status: "APPROVED", timestamp: "2026-03-26", items: [{ code: "5022", name: "Salmastra", qty: 1 }] },
-      { id: "h20", firm: "ZELAL TEKSTIL", contact: "-", date: "01.04.2026", status: "APPROVED", timestamp: "2026-04-01", items: [{ code: "50293", name: "VALF:SYJ3243-5LOU-Q", qty: 1 }] },
-      { id: "h21", firm: "BIRYUZA TEKSTIL", contact: "-", date: "16.04.2026", status: "APPROVED", timestamp: "2026-04-16", items: [{ code: "50260", name: "PISTON CD85N16-50-B", qty: 2 }, { code: "91086", name: "PNOMATIK T RAKOR", qty: 2 }, { code: "90765", name: "RD96 CAMBAZ KOLU", qty: 1 }] },
-      { id: "h22", firm: "TERRY JAR", contact: "-", date: "23.04.2026", status: "APPROVED", timestamp: "2026-04-23", items: [{ code: "90881", name: "DST CEKVALF YAYI", qty: 2 }, { code: "90879", name: "DST CEKVALF O-RINGI", qty: 2 }] },
-      { id: "h23", firm: "ASAKA TEKSTIL", contact: "-", date: "07.05.2026", status: "APPROVED", timestamp: "2026-05-07", items: [{ code: "91277", name: "RD96-Mu Polietilen Ağızlık", qty: 1 }, { code: "50291", name: "VALF:SYJ3240-5LOU-Q", qty: 1 }, { code: "50289", name: "VALF:SY3220-5LOU-M5-Q", qty: 1 }, { code: "50287", name: "VALF:SY114-5LOU-Q", qty: 2 }] },
-      { id: "h24", firm: "AKPAMUK TEKSTIL", contact: "-", date: "20.05.2026", status: "APPROVED", timestamp: "2026-05-20", items: [{ code: "90567", name: "66 Mm Teflon Takviyeli Diyafram", qty: 1 }] },
-      { id: "h25", firm: "DAKA TEKSTIL", contact: "-", date: "04.07.2026", status: "APPROVED", timestamp: "2026-07-04", items: [{ code: "41316", name: "Lab120 encoder", qty: 1 }] },
-      { id: "h26", firm: "TERRY JAR", contact: "-", date: "06.07.2026", status: "APPROVED", timestamp: "2026-07-06", items: [{ code: "90840", name: "PISTON SENSORU:DC73L", qty: 2 }] },
-      { id: "h27", firm: "ZELAL TEKSTIL", contact: "-", date: "30.09.2026", status: "APPROVED", timestamp: "2026-09-30", items: [{ code: "50018", name: "VALF:SY5140-5YO-Q", qty: 3 }] },
-      { id: "h28", firm: "ZELAL TEKSTIL", contact: "-", date: "21.10.2026", status: "APPROVED", timestamp: "2026-10-21", items: [{ code: "91594", name: "VALF:SY5240-5YO-Q", qty: 3 }] },
-      { id: "h29", firm: "TERRY JAR", contact: "-", date: "21.10.2026", status: "APPROVED", timestamp: "2026-10-21", items: [{ code: "90879", name: "DST CEKVALF O-RINGI", qty: 2 }, { code: "90881", name: "DST CEKVALF YAYI", qty: 2 }, { code: "91284", name: "BONESSI VALF:P00112200", qty: 2 }] },
-      { id: "h30", firm: "TASHTIP", contact: "-", date: "18.04.2025", status: "APPROVED", timestamp: "2025-04-18", items: [{ code: "Edc T7000", name: "Edc T7000", qty: 1 }] },
-      { id: "h31", firm: "GLOBAL", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "Aim8-B", name: "Aim8-B", qty: 1 }] },
-      { id: "h32", firm: "ELEGANT GARANTI", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "Pd300", name: "Pd300", qty: 1 }] },
-      { id: "h33", firm: "AL HAKIM", contact: "-", date: "11.06.2025", status: "APPROVED", timestamp: "2025-06-11", items: [{ code: "AOM8", name: "AOM8", qty: 1 }] },
-      { id: "h34", firm: "EZOZNUR", contact: "-", date: "12.06.2025", status: "APPROVED", timestamp: "2025-06-12", items: [{ code: "S400", name: "S400", qty: 1 }] },
-      { id: "h35", firm: "UNITEX", contact: "-", date: "18.06.2025", status: "APPROVED", timestamp: "2025-06-18", items: [{ code: "Edc T710", name: "Edc T710", qty: 1 }] },
-      { id: "h36", firm: "CHUST TEKSTIL", contact: "-", date: "30.06.2025", status: "APPROVED", timestamp: "2025-06-30", items: [{ code: "PD330", name: "Pd330", qty: 5 }] },
-      { id: "h37", firm: "CHUST TEKSTIL", contact: "-", date: "02.07.2025", status: "APPROVED", timestamp: "2025-07-02", items: [{ code: "PD330", name: "Pd330", qty: 5 }] },
-      { id: "h38", firm: "AYA GLOBAL TEKSTIL", contact: "-", date: "18.07.2025", status: "APPROVED", timestamp: "2025-07-18", items: [{ code: "PD330", name: "PD330", qty: 1 }] },
-      { id: "h39", firm: "BARKAS TEKSTIL", contact: "-", date: "23.07.2025", status: "APPROVED", timestamp: "2025-07-23", items: [{ code: "Edc T7700", name: "EDC T7700", qty: 1 }] },
-      { id: "h40", firm: "SAM RAFOAT", contact: "-", date: "25.07.2025", status: "APPROVED", timestamp: "2025-07-25", items: [{ code: "PD300", name: "PD300", qty: 1 }] },
-      { id: "h41", firm: "EZOZNUR", contact: "-", date: "23.10.2025", status: "APPROVED", timestamp: "2025-10-23", items: [{ code: "PD300", name: "PD300", qty: 1 }] },
-      { id: "h42", firm: "AYA GLOBAL TEKSTIL", contact: "-", date: "06.11.2025", status: "APPROVED", timestamp: "2025-11-06", items: [{ code: "PD300", name: "PD300", qty: 1 }] },
-      { id: "h43", firm: "SAMRAFOAT TEKSTIL", contact: "-", date: "04.12.2025", status: "APPROVED", timestamp: "2025-12-04", items: [{ code: "PD300", name: "Pd300", qty: 2 }] },
-      { id: "h44", firm: "INDIGO TEKSTIL", contact: "-", date: "17.12.2025", status: "APPROVED", timestamp: "2025-12-17", items: [{ code: "Edc T712", name: "EDC T712", qty: 1 }] },
-      { id: "h45", firm: "EZOZNUR", contact: "-", date: "09.01.2026", status: "APPROVED", timestamp: "2026-01-09", items: [{ code: "S400", name: "S400", qty: 1 }] },
-      { id: "h46", firm: "TERRY JAR", contact: "-", date: "13.01.2026", status: "APPROVED", timestamp: "2026-01-13", items: [{ code: "T7701", name: "T7701", qty: 1 }] },
-      { id: "h47", firm: "BIRYUZA TEKSTIL", contact: "-", date: "11.02.2026", status: "APPROVED", timestamp: "2026-02-11", items: [{ code: "PD350", name: "PD350", qty: 1 }] },
-      { id: "h48", firm: "EZOZNUR TEKSTIL", contact: "-", date: "16.02.2026", status: "APPROVED", timestamp: "2026-02-16", items: [{ code: "PD300", name: "PD300", qty: 1 }] },
-      { id: "h49", firm: "EZOZNUR TEKSTIL", contact: "-", date: "16.03.2026", status: "APPROVED", timestamp: "2026-03-16", items: [{ code: "Dom16-PLC", name: "DOM16 PLC", qty: 1 }] },
-      { id: "h50", firm: "SOF MEGA TEKSTIL", contact: "-", date: "17.03.2026", status: "APPROVED", timestamp: "2026-03-17", items: [{ code: "Pd340", name: "PD340", qty: 2 }] },
-      { id: "h51", firm: "ELEGANT TEKSTIL", contact: "-", date: "24.03.2026", status: "APPROVED", timestamp: "2026-03-24", items: [{ code: "S42", name: "S42", qty: 1 }] },
-      { id: "h52", firm: "BO'STON OPTIMAL", contact: "-", date: "07.05.2026", status: "APPROVED", timestamp: "2026-05-07", items: [{ code: "T7PAC-DOM16V5", name: "T7PAC-DOM16V5", qty: 1 }] },
-      { id: "h53", firm: "AYA GLOBAL TEKSTIL", contact: "-", date: "05.06.2026", status: "APPROVED", timestamp: "2026-06-05", items: [{ code: "PD350", name: "PD350", qty: 2 }] },
-      { id: "h54", firm: "CHUST TEKSTIL", contact: "-", date: "24.06.2026", status: "APPROVED", timestamp: "2026-06-24", items: [{ code: "PD300", name: "PD300", qty: 2 }] },
-      { id: "h55", firm: "AYA GLOBAL TEKSTIL", contact: "-", date: "07.07.2026", status: "APPROVED", timestamp: "2026-07-07", items: [{ code: "PD300", name: "PD300", qty: 1 }] },
-      { id: "h56", firm: "MIC BRO TEKSTIL", contact: "-", date: "18.09.2026", status: "APPROVED", timestamp: "2026-09-18", items: [{ code: "Umf-ILETISIM20", name: "Umf-ILETISIM20 kablosu", qty: 1 }] },
-      { id: "h57", firm: "GLOBAL ELEKTRONIK", contact: "-", date: "29.09.2026", status: "APPROVED", timestamp: "2026-09-29", items: [{ code: "Pd340", name: "PD340", qty: 1 }] }
+      {id:"h1",firm:"INDIGO",contact:"-",date:"17.03.2025",status:"APPROVED",timestamp:"2025-03-17",items:[{code:"90567",name:"66MM TEFLON TAKVIYELI DIYAFRAM",qty:5}]},
+      {id:"h2",firm:"WBM ANDIJON",contact:"-",date:"02.06.2025",status:"APPROVED",timestamp:"2025-06-02",items:[{code:"90840",name:"PISTON SENSORU:DC73L",qty:1}]},
+      {id:"h3",firm:"SAFF TEKSTIL",contact:"-",date:"11.06.2025",status:"APPROVED",timestamp:"2025-06-11",items:[{code:"90484",name:"3/4\" KIMYASAL VANA",qty:3}]},
+      {id:"h4",firm:"BEST COLOR",contact:"-",date:"11.06.2025",status:"APPROVED",timestamp:"2025-06-11",items:[{code:"50289",name:"VALF:SY3220-5LOU-M5-Q",qty:1}]},
+      {id:"h5",firm:"CHUST TEKSTIL",contact:"-",date:"11.06.2025",status:"APPROVED",timestamp:"2025-06-11",items:[{code:"90620",name:"PH SENSORU",qty:2}]},
+      {id:"h6",firm:"PARVOZ HUMO (HAJJ TEKSTIL)",contact:"-",date:"11.06.2025",status:"APPROVED",timestamp:"2025-06-11",items:[{code:"90567",name:"66MM TEFLON TAKVIYELI DIYAFRAM",qty:6}]},
+      {id:"h7",firm:"SOF MEGA TEKSTIL",contact:"-",date:"11.06.2025",status:"APPROVED",timestamp:"2025-06-11",items:[{code:"91332",name:"FESTO BASINC ANAHTARI",qty:1}]},
+      {id:"h8",firm:"TERRY JAR",contact:"-",date:"07.07.2025",status:"APPROVED",timestamp:"2025-07-07",items:[{code:"90567",name:"66MM TEFLON TAKVIYELI DIYAFRAM",qty:2}]},
+      {id:"h9",firm:"ASAKA TEKSTIL",contact:"-",date:"15.07.2025",status:"APPROVED",timestamp:"2025-07-15",items:[{code:"50257",name:"TEK ETLKILI PNOMATIK SILINDIR",qty:1},{code:"91071",name:"1/8\"-4MM DIRSEK RAKOR",qty:2}]},
+      {id:"h10",firm:"ASAKA TEKSTIL",contact:"-",date:"05.10.2025",status:"APPROVED",timestamp:"2025-10-05",items:[{code:"91071",name:"1/8\"-4MM DIRSEK RAKOR",qty:10}]},
+      {id:"h11",firm:"ZELAL TEKSTIL",contact:"-",date:"07.10.2025",status:"APPROVED",timestamp:"2025-10-07",items:[{code:"96516",name:"DST Z Ekseni Polietilen Ağızlık",qty:1}]},
+      {id:"h12",firm:"TERRY JAR",contact:"-",date:"09.10.2025",status:"APPROVED",timestamp:"2025-10-09",items:[{code:"90567",name:"66 Mm Teflon Takviyeli Diyafram",qty:5}]},
+      {id:"h13",firm:"BEST COLOR",contact:"-",date:"18.10.2025",status:"APPROVED",timestamp:"2025-10-18",items:[{code:"50260",name:"PISTON CD85N16-50-B",qty:2}]},
+      {id:"h14",firm:"TERRY JAR",contact:"-",date:"25.10.2025",status:"APPROVED",timestamp:"2025-10-25",items:[{code:"90620",name:"PH Sensörü: SPH-1-DJ-6M Ph Sensör",qty:2}]},
+      {id:"h15",firm:"JIZZAX TEKSTIL",contact:"-",date:"04.12.2025",status:"APPROVED",timestamp:"2025-12-04",items:[{code:"90567",name:"66MM TEFLON TAKVIYELI DIYAFRAM",qty:4}]},
+      {id:"h16",firm:"TERRY JAR",contact:"-",date:"20.12.2025",status:"APPROVED",timestamp:"2025-12-20",items:[{code:"91332",name:"FESTO BASINC ANAHTARI",qty:1}]},
+      {id:"h17",firm:"BIRYUZA TEKSTIL",contact:"-",date:"09.02.2026",status:"APPROVED",timestamp:"2026-02-09",items:[{code:"90567",name:"66 Mm Teflon Takviyeli Diyafram",qty:1}]},
+      {id:"h18",firm:"ZELAL TEKSTIL",contact:"-",date:"21.02.2026",status:"APPROVED",timestamp:"2026-02-21",items:[{code:"96516",name:"DST Z Ekseni Polietilen Ağızlık",qty:1}]},
+      {id:"h19",firm:"AKPAMUK TEKSTIL",contact:"-",date:"26.03.2026",status:"APPROVED",timestamp:"2026-03-26",items:[{code:"5022",name:"Salmastra",qty:1}]},
+      {id:"h20",firm:"ZELAL TEKSTIL",contact:"-",date:"01.04.2026",status:"APPROVED",timestamp:"2026-04-01",items:[{code:"50293",name:"VALF:SYJ3243-5LOU-Q",qty:1}]},
+      {id:"h21",firm:"BIRYUZA TEKSTIL",contact:"-",date:"16.04.2026",status:"APPROVED",timestamp:"2026-04-16",items:[{code:"50260",name:"PISTON CD85N16-50-B",qty:2},{code:"91086",name:"PNOMATIK T RAKOR",qty:2},{code:"90765",name:"RD96 CAMBAZ KOLU",qty:1}]},
+      {id:"h22",firm:"TERRY JAR",contact:"-",date:"23.04.2026",status:"APPROVED",timestamp:"2026-04-23",items:[{code:"90881",name:"DST CEKVALF YAYI",qty:2},{code:"90879",name:"DST CEKVALF O-RINGI",qty:2}]},
+      {id:"h23",firm:"ASAKA TEKSTIL",contact:"-",date:"07.05.2026",status:"APPROVED",timestamp:"2026-05-07",items:[{code:"91277",name:"RD96-Mu Polietilen Ağızlık",qty:1},{code:"50291",name:"VALF:SYJ3240-5LOU-Q",qty:1},{code:"50289",name:"VALF:SY3220-5LOU-M5-Q",qty:1},{code:"50287",name:"VALF:SY114-5LOU-Q",qty:2}]},
+      {id:"h24",firm:"AKPAMUK TEKSTIL",contact:"-",date:"20.05.2026",status:"APPROVED",timestamp:"2026-05-20",items:[{code:"90567",name:"66 Mm Teflon Takviyeli Diyafram",qty:1}]},
+      {id:"h25",firm:"DAKA TEKSTIL",contact:"-",date:"04.07.2026",status:"APPROVED",timestamp:"2026-07-04",items:[{code:"41316",name:"Lab120 encoder",qty:1}]},
+      {id:"h26",firm:"TERRY JAR",contact:"-",date:"06.07.2026",status:"APPROVED",timestamp:"2026-07-06",items:[{code:"90840",name:"PISTON SENSORU:DC73L",qty:2}]},
+      {id:"h27",firm:"ZELAL TEKSTIL",contact:"-",date:"30.09.2026",status:"APPROVED",timestamp:"2026-09-30",items:[{code:"50018",name:"VALF:SY5140-5YO-Q",qty:3}]},
+      {id:"h28",firm:"ZELAL TEKSTIL",contact:"-",date:"21.10.2026",status:"APPROVED",timestamp:"2026-10-21",items:[{code:"91594",name:"VALF:SY5240-5YO-Q",qty:3}]},
+      {id:"h29",firm:"TERRY JAR",contact:"-",date:"21.10.2026",status:"APPROVED",timestamp:"2026-10-21",items:[{code:"90879",name:"DST CEKVALF O-RINGI",qty:2},{code:"90881",name:"DST CEKVALF YAYI",qty:2},{code:"91284",name:"BONESSI VALF:P00112200",qty:2}]}
     ];
 
-    const STORAGE_KEY = 'elips_depo_v9';
+    const STORAGE_KEY = 'elips_depo_v10';
     let stocks = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!stocks || stocks.length < 50) {
       stocks = REAL_STOCKS_DATA;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
     }
 
-    let sales = JSON.parse(localStorage.getItem('elips_sales_v9')) || REAL_PAST_SALES;
+    let sales = JSON.parse(localStorage.getItem('elips_sales_v10')) || REAL_PAST_SALES;
     let selectedCat = 'ALL';
     let currentLang = 'tr';
     let currentFlow = 'OMER_TO_KAMIL';
@@ -723,7 +638,7 @@
 
     function persist() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
-      localStorage.setItem('elips_sales_v9', JSON.stringify(sales));
+      localStorage.setItem('elips_sales_v10', JSON.stringify(sales));
     }
 
     function forceResetToCatalog() {
@@ -749,13 +664,13 @@
     function setWorkflowDirection(dir) {
       currentFlow = dir;
       if (dir === 'OMER_TO_KAMIL') {
-        document.getElementById('btn-flow-otk').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md";
-        document.getElementById('btn-flow-kto').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
+        document.getElementById('btn-flow-otk').className = "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md";
+        document.getElementById('btn-flow-kto').className = "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
         document.getElementById('form-omer-to-kamil').classList.remove('hidden');
         document.getElementById('form-kamil-to-omer').classList.add('hidden');
       } else {
-        document.getElementById('btn-flow-kto').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-cyan-600 text-white shadow-md";
-        document.getElementById('btn-flow-otk').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
+        document.getElementById('btn-flow-kto').className = "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-cyan-600 text-white shadow-md";
+        document.getElementById('btn-flow-otk').className = "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
         document.getElementById('form-kamil-to-omer').classList.remove('hidden');
         document.getElementById('form-omer-to-kamil').classList.add('hidden');
       }
@@ -789,21 +704,13 @@
         return matchesSearch && matchesCat;
       });
 
-      // AKILLI SIRALAMA
       const sortMode = document.getElementById('stock-sort-select')?.value || 'DEFAULT';
-      if (sortMode === 'QTY_ASC') {
-        filtered.sort((a, b) => a.qty - b.qty);
-      } else if (sortMode === 'QTY_DESC') {
-        filtered.sort((a, b) => b.qty - a.qty);
-      } else if (sortMode === 'MEK_FIRST') {
-        filtered.sort((a, b) => (b.cat === 'MEKATRONIK' ? 1 : 0) - (a.cat === 'MEKATRONIK' ? 1 : 0));
-      } else if (sortMode === 'KONT_FIRST') {
-        filtered.sort((a, b) => (b.cat === 'KONTROL' ? 1 : 0) - (a.cat === 'KONTROL' ? 1 : 0));
-      } else if (sortMode === 'ELK_FIRST') {
-        filtered.sort((a, b) => (b.cat === 'ELEKTRONIK' ? 1 : 0) - (a.cat === 'ELEKTRONIK' ? 1 : 0));
-      } else if (sortMode === 'NAME_ASC') {
-        filtered.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
-      }
+      if (sortMode === 'QTY_ASC') filtered.sort((a, b) => a.qty - b.qty);
+      else if (sortMode === 'QTY_DESC') filtered.sort((a, b) => b.qty - a.qty);
+      else if (sortMode === 'MEK_FIRST') filtered.sort((a, b) => (b.cat === 'MEKATRONIK' ? 1 : 0) - (a.cat === 'MEKATRONIK' ? 1 : 0));
+      else if (sortMode === 'KONT_FIRST') filtered.sort((a, b) => (b.cat === 'KONTROL' ? 1 : 0) - (a.cat === 'KONTROL' ? 1 : 0));
+      else if (sortMode === 'ELK_FIRST') filtered.sort((a, b) => (b.cat === 'ELEKTRONIK' ? 1 : 0) - (a.cat === 'ELEKTRONIK' ? 1 : 0));
+      else if (sortMode === 'NAME_ASC') filtered.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
 
       document.getElementById('count-all').innerText = stocks.length;
       document.getElementById('count-kontrol').innerText = stocks.filter(p => p.cat === 'KONTROL').length;
@@ -844,7 +751,37 @@
       }).join('');
     }
 
-    // ÜRÜN & KATEGORİ DÜZENLEME MODALI FONKSİYONLARI
+    // AKILLI FİRMA İSMİ ÖNERİ VE TAMAMLAMA SİSTEMİ
+    function showFirmSuggestions(val, dropdownId, inputId) {
+      const dd = document.getElementById(dropdownId);
+      if (!dd) return;
+      const q = normalizeTr(val.trim());
+      if (!q) { dd.classList.add('hidden'); return; }
+
+      const firmSet = new Set();
+      sales.forEach(s => { if (s.firm) firmSet.add(s.firm.toUpperCase()); });
+      ["TERRY JAR", "ASAKA TEKSTIL", "ZELAL TEKSTIL", "INDIGO", "MARK FORMELLE", "BEST COLOR", "CHUST TEKSTIL", "BIRYUZA TEKSTIL", "AKPAMUK TEKSTIL", "EZOZNUR", "AYA GLOBAL", "SAFF TEKSTIL"].forEach(f => firmSet.add(f));
+
+      const matches = Array.from(firmSet).filter(f => normalizeTr(f).includes(q));
+      if (matches.length === 0) { dd.classList.add('hidden'); return; }
+
+      dd.innerHTML = matches.slice(0, 6).map(f => `
+        <div onclick="selectFirmSuggestion('${f.replace(/'/g, "\\'")}', '${inputId}', '${dropdownId}')" class="p-2.5 hover:bg-slate-800 cursor-pointer text-xs font-semibold text-white border-b border-bordercol/30 flex items-center justify-between">
+          <span>${f}</span>
+          <i class="fa-solid fa-arrow-turn-down text-[10px] text-emerald-400"></i>
+        </div>
+      `).join('');
+      dd.classList.remove('hidden');
+    }
+
+    function selectFirmSuggestion(val, inputId, dropdownId) {
+      const inp = document.getElementById(inputId);
+      if (inp) inp.value = val;
+      const dd = document.getElementById(dropdownId);
+      if (dd) dd.classList.add('hidden');
+    }
+
+    // ÜRÜN DÜZENLEME MODAL FONKSİYONLARI
     function openEditPartModal(id) {
       const it = stocks.find(x => x.id === id);
       if (!it) return;
@@ -874,10 +811,7 @@
       const newQty = parseInt(document.getElementById('edit-qty').value) || 0;
       const newLoc = document.getElementById('edit-loc').value.trim() || 'ELIPS-DEPO';
 
-      if (!newCode || !newName) {
-        alert("Lütfen ürün kodu ve ismini boş bırakmayın!");
-        return;
-      }
+      if (!newCode || !newName) { alert("Lütfen ürün kodu ve ismini doldurun!"); return; }
 
       it.code = newCode;
       it.name = newName;
@@ -888,7 +822,7 @@
       persist();
       renderStockTable();
       closeEditPartModal();
-      alert(`[${it.code}] ${it.name} başarıyla güncellendi!`);
+      alert(`[${it.code}] ${it.name} güncellendi!`);
     }
 
     function openDeductModal(id) {
@@ -1061,9 +995,8 @@
         priority: document.getElementById('otk-priority').value,
         notes: document.getElementById('otk-notes').value
       };
-
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      alert(`Talep iletildi:\nFirma: ${firm}\nİlgili Kişi: ${contact}\nParça: [${code}] ${name}\nAdet: ${qty}`);
+      alert(`Talep iletildi:\nFirma: ${firm}\nParça: [${code}] ${name}\nAdet: ${qty}`);
     }
 
     function dispatchKamilToOmer() {
@@ -1080,7 +1013,6 @@
         task_type: taskType,
         instructions: document.getElementById('kto-instructions').value
       };
-
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
       alert(`İş Sahaya Gönderildi:\nFirma: ${firm}\nGörev: ${taskType}`);
     }
@@ -1171,9 +1103,7 @@
       document.body.removeChild(a);
     }
 
-    function exportZReportPDF() {
-      window.print();
-    }
+    function exportZReportPDF() { window.print(); }
 
     function queryFacilityHistoryLive() {
       const q = normalizeTr(document.getElementById('facility-search-input').value.trim());
@@ -1204,8 +1134,8 @@
 
     function setLanguage(lang) {
       currentLang = lang;
-      document.getElementById('lang-tr').className = lang === 'tr' ? 'px-2 py-0.5 text-xs font-bold rounded-lg transition-all bg-brand-600 text-white' : 'px-2 py-0.5 text-xs font-bold rounded-lg transition-all text-slate-400';
-      document.getElementById('lang-uz').className = lang === 'uz' ? 'px-2 py-0.5 text-xs font-bold rounded-lg transition-all bg-brand-600 text-white' : 'px-2 py-0.5 text-xs font-bold rounded-lg transition-all text-slate-400';
+      document.getElementById('lang-tr').className = lang === 'tr' ? 'px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white' : 'px-2 py-0.5 text-xs font-bold rounded-lg text-slate-400';
+      document.getElementById('lang-uz').className = lang === 'uz' ? 'px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white' : 'px-2 py-0.5 text-xs font-bold rounded-lg text-slate-400';
     }
 
     window.addEventListener('DOMContentLoaded', () => {
