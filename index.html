@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Eliar Depo</title>
+  <title>Eliar Depo - RD96 Kataloğu & İş Paylaşımı</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -21,268 +22,704 @@
     }
   </script>
   <style>
-    body { -webkit-tap-highlight-color: transparent; }
-    input, textarea, select { user-select: auto !important; pointer-events: auto !important; }
+    body { -webkit-tap-highlight-color: transparent; user-select: none; }
+    input, textarea, select { user-select: auto; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
 
-  <!-- HEADER -->
+  <!-- ==================== HEADER ==================== -->
   <header class="sticky top-0 z-40 bg-cardbg/95 backdrop-blur border-b border-bordercol px-4 py-3 flex items-center justify-between shadow-lg">
     <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-md shadow-amber-500/20">
-        <i class="fa-solid fa-bolt text-white text-lg"></i>
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-md shadow-brand-500/20">
+        <i class="fa-solid fa-boxes-stacked text-white text-base"></i>
       </div>
       <div>
         <h1 class="text-base font-bold tracking-wide text-white leading-tight">ELIAR DEPO</h1>
-        <p class="text-[10px] text-amber-400 font-mono tracking-wider font-semibold">Eliar Elips İş Paylaşımı</p>
+        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">RD96 SIVI KİMYASAL DAĞITIM</p>
       </div>
     </div>
-    <div class="flex items-center bg-darkbg border border-bordercol rounded-xl p-1 shadow-inner">
-      <button id="lang-tr" onclick="setLanguage('tr')" class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all">TR</button>
-      <button id="lang-uz" onclick="setLanguage('uz')" class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all">UZ</button>
+
+    <!-- Dil Değiştirici & Kataloğu Sıfırlama Butonu -->
+    <div class="flex items-center space-x-1.5">
+      <button onclick="forceResetToCatalog()" title="Kataloğu Sıfırla ve Yeniden Yükle" class="px-2 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
+        <i class="fa-solid fa-arrows-rotate"></i>
+        <span class="text-[10px] hidden sm:inline">Sıfırla</span>
+      </button>
+      <div class="flex items-center bg-darkbg border border-bordercol rounded-xl p-1 shadow-inner">
+        <button id="lang-tr" onclick="setLanguage('tr')" class="px-2 py-0.5 text-xs font-bold rounded-lg transition-all">TR</button>
+        <button id="lang-uz" onclick="setLanguage('uz')" class="px-2 py-0.5 text-xs font-bold rounded-lg transition-all">UZ</button>
+      </div>
     </div>
   </header>
 
-  <!-- ANA ALAN -->
+  <!-- ==================== ANA ALAN ==================== -->
   <main class="p-3.5 max-w-2xl mx-auto space-y-4">
+
+    <!-- 3'LÜ ANA MENÜ -->
     <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
       <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
-        <i class="fa-solid fa-boxes-stacked text-sm"></i><span data-i18n="nav_stock">Stok</span>
+        <i class="fa-solid fa-boxes-stacked text-sm"></i>
+        <span>Katalog & Stok</span>
       </button>
       <button onclick="switchTab('workflow')" id="tab-btn-workflow" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
-        <i class="fa-solid fa-share-nodes text-sm"></i><span data-i18n="nav_workflow">İş Akışı</span>
+        <i class="fa-solid fa-share-nodes text-sm"></i>
+        <span>İş Akışı / Talep</span>
       </button>
       <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
-        <i class="fa-solid fa-chart-line text-sm"></i><span data-i18n="nav_reports">Rapor / Tesis</span>
+        <i class="fa-solid fa-chart-line text-sm"></i>
+        <span>Rapor & Tesis</span>
       </button>
     </div>
 
-    <!-- TAB 1: STOK -->
+    <!-- ==================== 1. TAB: KATEGORİZE STOK ==================== -->
     <section id="tab-stock" class="tab-content space-y-3">
       <div class="flex space-x-2">
         <div class="relative flex-1">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-          <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Ürün kodu veya isimle ara..." 
-            class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+          <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Sipariş kodu (91514) veya parça adı ara..." 
+            class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-brand-500 text-white placeholder-slate-500 shadow-inner">
         </div>
         <button onclick="openStockModal()" class="px-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1 text-xs shadow-md">
-          <i class="fa-solid fa-plus"></i><span data-i18n="btn_add_part">Yeni</span>
+          <i class="fa-solid fa-plus"></i>
+          <span>Yeni</span>
         </button>
       </div>
 
+      <!-- Kategori Filtre Butonları -->
       <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
-        <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white shadow-sm whitespace-nowrap" data-i18n="cat_all">Tümü</button>
-        <button onclick="filterCategory('MEKATRONIK')" id="pill-MEKATRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap" data-i18n="cat_mechatronic">1. Mekatronik</button>
-        <button onclick="filterCategory('ELEKTRONIK')" id="pill-ELEKTRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap" data-i18n="cat_electronic">2. Elektronik</button>
-        <button onclick="filterCategory('KONTROL')" id="pill-KONTROL" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap" data-i18n="cat_control">3. Kontrolörler</button>
+        <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white shadow-sm whitespace-nowrap">Tümü (<span id="count-all">0</span>)</button>
+        <button onclick="filterCategory('KONTROL')" id="pill-KONTROL" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Kontrolörler</button>
+        <button onclick="filterCategory('ELEKTRONIK')" id="pill-ELEKTRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Elektronik</button>
+        <button onclick="filterCategory('MEKATRONIK')" id="pill-MEKATRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Mekatronik</button>
       </div>
+
       <div id="stock-list" class="space-y-2"></div>
     </section>
 
-    <!-- TAB 2: İŞ AKIŞI -->
+    <!-- ==================== 2. TAB: İŞ AKIŞI & TALEP FORMU ==================== -->
     <section id="tab-workflow" class="tab-content hidden space-y-3">
       <div class="grid grid-cols-2 p-1 bg-darkbg border border-bordercol rounded-2xl gap-1">
-        <button onclick="setWorkflowDirection('OMER_TO_KAMIL')" id="btn-flow-otk" class="py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md">
-          <i class="fa-solid fa-user-gear"></i><span data-i18n="btn_tab_request">Sahadan Talep</span>
+        <button onclick="setWorkflowDirection('OMER_TO_KAMIL')" id="btn-flow-otk" 
+          class="py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md">
+          <i class="fa-solid fa-user-gear"></i>
+          <span>Sahadan Talep</span>
         </button>
-        <button onclick="setWorkflowDirection('KAMIL_TO_OMER')" id="btn-flow-kto" class="py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white">
-          <i class="fa-solid fa-paper-plane"></i><span data-i18n="btn_tab_dispatch">Sahaya İş Gönder</span>
+        <button onclick="setWorkflowDirection('KAMIL_TO_OMER')" id="btn-flow-kto" 
+          class="py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white">
+          <i class="fa-solid fa-paper-plane"></i>
+          <span>Sahaya İş Gönder</span>
         </button>
       </div>
 
-      <!-- FORM ÖMER -> KAMİL -->
+      <!-- FORM A: ÖMER ➔ KAMİL (SAHADAN TALEP) -->
       <div id="form-omer-to-kamil" class="bg-cardbg border border-bordercol rounded-2xl p-4 shadow-xl space-y-3">
         <div class="border-b border-bordercol pb-2">
           <h2 class="text-sm font-bold text-white flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span><span data-i18n="title_otk">Sahadan Talep (Ömer ➔ Kamil)</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+            <span>Sahadan Talep (Ömer ➔ Kamil)</span>
           </h2>
         </div>
-        <div>
-          <label class="text-xs text-slate-400 font-semibold flex items-center"><span data-i18n="lbl_request_type">Talep Türü</span> *</label>
-          <select id="otk-req-type" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-            <option value="PARCA">📦 Parça Talebi</option>
-            <option value="SERVIS">🛠️ Servis Talebi</option>
-            <option value="SERVIS_PARCA">⚡ Servis + Parça Talebi</option>
-          </select>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs text-slate-400 font-semibold flex items-center">
+              <span>Müşteri / Firma İsmi</span> <span class="text-rose-400 ml-1">*</span>
+            </label>
+            <input type="text" id="otk-firm-name" placeholder="Örn: TERRY JAR TEKSTİL" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 font-semibold flex items-center">
+              <span>İlgili Kişi & Telefon</span> <span class="text-rose-400 ml-1">*</span>
+            </label>
+            <input type="text" id="otk-firm-contact" placeholder="Örn: Ahmet Bey - 0532..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+          </div>
         </div>
-        <div class="space-y-2">
-          <input type="text" id="otk-firm-name" placeholder="Fabrika / Müşteri Adı *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-          <input type="text" id="otk-firm-contact" placeholder="Yetkili Kişi & Telefon" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-        </div>
+
+        <!-- Akıllı Parça Arama (Kod veya İsim) -->
         <div class="relative">
+          <label class="text-xs text-slate-400 font-semibold flex items-center justify-between">
+            <span class="flex items-center"><span>İstenen Parça (Kod veya İsim)</span> <span class="text-rose-400 ml-1">*</span></span>
+            <span id="otk-selected-badge" class="text-[10px] text-emerald-400 font-mono font-bold hidden"></span>
+          </label>
           <div class="relative mt-1">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-            <input type="text" id="otk-part-search" oninput="searchPartsLive(this.value)" placeholder="Ürün adı veya kodu yazın... *" class="w-full bg-darkbg border border-bordercol rounded-xl pl-8 pr-8 py-2 text-xs text-white focus:outline-none">
+            <input type="text" id="otk-part-search" oninput="searchPartsLive(this.value)" onfocus="searchPartsLive(this.value)" placeholder="Sipariş kodu (91514) veya parça adı yazın..." autocomplete="off" class="w-full bg-darkbg border border-bordercol rounded-xl pl-8 pr-8 py-2 text-xs text-white focus:outline-none">
             <button type="button" onclick="clearPartSelection()" id="otk-clear-btn" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-white text-xs">✕</button>
           </div>
           <div id="otk-part-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-52 overflow-y-auto hidden divide-y divide-bordercol/50"></div>
           <input type="hidden" id="otk-selected-code" value="">
+          <input type="hidden" id="otk-selected-name" value="">
         </div>
+
         <div class="grid grid-cols-2 gap-2">
-          <input type="number" id="otk-qty" value="1" min="1" placeholder="Adet" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-          <select id="otk-priority" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-            <option value="NORMAL">Normal Servis</option>
-            <option value="KRITIK" class="text-rose-400">Acil (Hat Duruşu!)</option>
-          </select>
+          <div>
+            <label class="text-xs text-slate-400 font-semibold flex items-center">
+              <span>Miktar (Adet)</span> <span class="text-rose-400 ml-1">*</span>
+            </label>
+            <input type="number" id="otk-qty" value="1" min="1" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white font-bold">
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 font-semibold">Öncelik / Aciliyet</label>
+            <select id="otk-priority" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+              <option value="NORMAL">Normal Servis / Talep</option>
+              <option value="KRITIK" class="text-rose-400">🚨 Acil (Hat Duruşu!)</option>
+            </select>
+          </div>
         </div>
-        <textarea id="otk-notes" rows="2" placeholder="Ömer'in Notu..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
-        <button onclick="dispatchOmerToKamil()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg">
-          <i class="fa-brands fa-telegram text-sm"></i><span data-i18n="btn_send_kamil">Kamil'e Gönder & Onay İste</span>
+
+        <div>
+          <label class="text-xs text-slate-400 font-semibold">Talep Notu & Detay</label>
+          <textarea id="otk-notes" rows="2" placeholder="Arıza detayları, teslimat notu..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
+        </div>
+
+        <button onclick="dispatchOmerToKamil()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg shadow-emerald-900/30">
+          <i class="fa-brands fa-telegram text-sm"></i>
+          <span>Kamil'e Gönder & Onay İste</span>
         </button>
       </div>
 
-      <!-- FORM KAMİL -> ÖMER -->
+      <!-- FORM B: KAMİL ➔ ÖMER (SAHAYA İŞ GÖNDER) -->
       <div id="form-kamil-to-omer" class="bg-cardbg border border-bordercol rounded-2xl p-4 shadow-xl space-y-3 hidden">
         <div class="border-b border-bordercol pb-2">
           <h2 class="text-sm font-bold text-white flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span><span data-i18n="title_kto">Sahaya İş Gönder (Kamil ➔ Ömer)</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+            <span>Sahaya İş Gönder (Kamil ➔ Ömer)</span>
           </h2>
         </div>
-        <div class="space-y-2">
-          <input type="text" id="kto-firm-name" placeholder="Gidilecek Müşteri / Tesis *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-          <input type="text" id="kto-firm-contact" placeholder="Tesis Sorumlusu & Telefon" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs text-slate-400 font-semibold flex items-center">
+              <span>Gidilecek Firma İsmi</span> <span class="text-rose-400 ml-1">*</span>
+            </label>
+            <input type="text" id="kto-firm-name" placeholder="Firma / Tesis Adı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 font-semibold flex items-center">
+              <span>İlgili Kişi & Telefon</span>
+            </label>
+            <input type="text" id="kto-firm-contact" placeholder="Tesis Sorumlusu & Telefon" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+          </div>
         </div>
-        <input type="text" id="kto-task-type" placeholder="Görev Tipi / Başlığı *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-        <textarea id="kto-instructions" rows="2" placeholder="Kamil'in Talimatları..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
-        <button onclick="dispatchKamilToOmer()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg">
-          <i class="fa-solid fa-paper-plane text-sm"></i><span data-i18n="btn_send_omer">Sahaya İş Gönder (Ömer'e)</span>
+
+        <div>
+          <label class="text-xs text-slate-400 font-semibold flex items-center">
+            <span>Görev Başlığı</span> <span class="text-rose-400 ml-1">*</span>
+          </label>
+          <input type="text" id="kto-task-type" placeholder="Örn: Dozajlama Pompası Bakımı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+        </div>
+
+        <div>
+          <label class="text-xs text-slate-400 font-semibold">Özel Talimatlar</label>
+          <textarea id="kto-instructions" rows="2" placeholder="Ömer'e talimatlar..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
+        </div>
+
+        <button onclick="dispatchKamilToOmer()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg shadow-cyan-900/30">
+          <i class="fa-solid fa-paper-plane text-sm"></i>
+          <span>Sahaya Görev Olarak İlet (Ömer'e Bildir)</span>
         </button>
       </div>
     </section>
 
-    <!-- TAB 3: RAPORLAR -->
+    <!-- ==================== 3. TAB: Z-RAPORU & TESİS GEÇMİŞİ ==================== -->
     <section id="tab-reports" class="tab-content hidden space-y-3">
+      
+      <!-- Canlı Z-Raporu Kartı -->
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
         <div class="flex justify-between items-center border-b border-bordercol pb-2">
           <div>
-            <h3 class="text-sm font-bold text-white flex items-center space-x-1.5"><i class="fa-solid fa-chart-pie text-emerald-400"></i><span>Satış Z-Raporu</span></h3>
-            <p class="text-[10px] text-slate-400">ELİPS TEKSTİL ELİAR SATIŞ DÖKÜMÜ</p>
+            <h3 class="text-sm font-bold text-white flex items-center space-x-1.5">
+              <i class="fa-solid fa-chart-pie text-emerald-400"></i>
+              <span>Satış & Çıkış Z-Raporu</span>
+            </h3>
+            <p class="text-[10px] text-slate-400 mt-0.5">Tarih Aralıklı Döküm</p>
           </div>
+          
           <div class="flex items-center space-x-1.5">
-            <button onclick="exportZReportCSV()" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1"><i class="fa-solid fa-file-excel"></i><span>Excel</span></button>
-            <button onclick="exportZReportPDF()" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1"><i class="fa-solid fa-file-pdf"></i><span>PDF</span></button>
-            <button onclick="exportZReportBoth()" class="px-2.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1"><i class="fa-solid fa-download"></i><span>İkisi</span></button>
+            <button onclick="exportZReportCSV()" title="Excel / CSV İndir" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1 shadow-md">
+              <i class="fa-solid fa-file-excel"></i>
+              <span>Excel</span>
+            </button>
+            <button onclick="exportZReportPDF()" title="PDF Yazdır / Kaydet" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1 shadow-md">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>PDF</span>
+            </button>
           </div>
         </div>
 
+        <!-- Tarih Seçici -->
         <div class="space-y-2 bg-darkbg p-2.5 rounded-xl border border-bordercol">
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <input type="date" id="z-start-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
-            <input type="date" id="z-end-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
-          </div>
-          <div class="flex space-x-1.5 text-[10px]">
-            <button onclick="setDatePreset('week')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300">Bu Hafta</button>
-            <button onclick="setDatePreset('month')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300">Bu Ay</button>
-            <button onclick="setDatePreset('all')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300">Tümü</button>
+            <div>
+              <label class="text-slate-400 text-[10px] font-semibold block mb-1">Başlangıç</label>
+              <input type="date" id="z-start-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
+            </div>
+            <div>
+              <label class="text-slate-400 text-[10px] font-semibold block mb-1">Bitiş</label>
+              <input type="date" id="z-end-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
+            </div>
           </div>
         </div>
 
+        <!-- İstatistik Kutuları -->
         <div class="grid grid-cols-2 gap-2 text-center">
           <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl">
-            <span class="text-[10px] text-slate-400 block">Toplam Parça</span>
+            <span class="text-[10px] text-slate-400 block font-medium">Satılan Toplam Parça</span>
             <span id="z-total-qty" class="text-base font-black text-emerald-400">0 ADT</span>
           </div>
           <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl">
-            <span class="text-[10px] text-slate-400 block">Tesis Sayısı</span>
+            <span class="text-[10px] text-slate-400 block font-medium">Hizmet Verilen Tesis</span>
             <span id="z-total-plants" class="text-base font-black text-cyan-400">0 Tesis</span>
           </div>
         </div>
+
         <div class="space-y-1.5 max-h-56 overflow-y-auto no-scrollbar" id="z-sales-list"></div>
       </div>
 
+      <!-- Tesis Parça Geçmişi Sorgulama -->
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
-        <h3 class="text-xs font-bold text-white flex items-center space-x-1.5"><i class="fa-solid fa-industry text-cyan-400"></i><span>Tesis Parça Geçmişi</span></h3>
-        <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Fabrika Adı Yazın..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
+        <div class="border-b border-bordercol pb-2">
+          <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
+            <i class="fa-solid fa-industry text-cyan-400"></i>
+            <span>Tesis Parça Geçmişi ("Bu Müşteriye Ne Verdik?")</span>
+          </h3>
+        </div>
+
+        <div class="flex space-x-2">
+          <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Firma Adı Yazın (TERRY JAR, MICBRO)..." class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
+        </div>
+
         <div id="facility-history-results" class="space-y-1.5 max-h-60 overflow-y-auto text-xs">
-          <p class="text-slate-500 text-center py-2 text-[11px]">Geçmişini aradığınız fabrikayı yazın.</p>
+          <p class="text-slate-500 text-center py-2 text-[11px]">Geçmişini görmek istediğiniz fabrika adını yazın.</p>
         </div>
       </div>
+
     </section>
+
   </main>
 
-  <!-- MODAL: STOK DÜŞ / SATIŞ -->
-  <div id="modal-deduct" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-4 shadow-2xl relative z-[10000]">
+  <!-- ==================== MODAL: HIZLI STOK ÇIKIŞI / SATIŞ ==================== -->
+  <div id="modal-deduct" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3 shadow-2xl">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
         <div>
           <h3 class="font-bold text-white text-sm">Stok Çıkışı / Satış</h3>
-          <p id="deduct-part-header" class="text-[11px] text-emerald-400 font-mono mt-0.5"></p>
+          <p id="deduct-part-header" class="text-[11px] text-emerald-400 font-mono font-semibold mt-0.5"></p>
         </div>
-        <button type="button" onclick="closeDeductModal()" class="w-8 h-8 text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
+        <button onclick="closeDeductModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
+
       <div>
-        <div class="flex justify-between text-xs text-slate-400"><span>Adet *</span><span id="deduct-current-stock"></span></div>
-        <div class="flex items-center space-x-2 mt-1.5">
-          <input type="number" id="deduct-qty" value="1" min="1" class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-bold text-center">
-          <button type="button" onclick="setDeductQty(1)" class="px-2.5 py-2 bg-darkbg border border-bordercol text-xs rounded-xl">+1</button>
-          <button type="button" onclick="setDeductQty(2)" class="px-2.5 py-2 bg-darkbg border border-bordercol text-xs rounded-xl">+2</button>
-          <button type="button" onclick="setDeductQty(5)" class="px-2.5 py-2 bg-darkbg border border-bordercol text-xs rounded-xl">+5</button>
+        <label class="text-xs text-slate-400 font-semibold flex items-center">
+          <span>Firma İsmi (Müşteri / Fabrika)</span> <span class="text-rose-400 ml-1">*</span>
+        </label>
+        <input type="text" id="deduct-destination" placeholder="Örn: TERRY JAR TEKSTİL" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+      </div>
+
+      <div>
+        <label class="text-xs text-slate-400 font-semibold flex items-center">
+          <span>İlgili Kişi & Telefon</span>
+        </label>
+        <input type="text" id="deduct-contact" placeholder="Örn: Ali Bey (0532...)" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center text-xs">
+          <label class="text-slate-400 font-semibold flex items-center">
+            <span>Düşülecek Miktar</span> <span class="text-rose-400 ml-1">*</span>
+          </label>
+          <span id="deduct-current-stock" class="text-slate-400 font-mono"></span>
+        </div>
+        <div class="flex items-center space-x-2 mt-1">
+          <input type="number" id="deduct-qty" value="1" min="1" class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-bold text-center text-sm focus:border-brand-500">
+          <div class="flex space-x-1">
+            <button onclick="setDeductQty(1)" class="px-2.5 py-1.5 bg-darkbg border border-bordercol text-xs font-bold rounded-xl text-slate-300">+1</button>
+            <button onclick="setDeductQty(2)" class="px-2.5 py-1.5 bg-darkbg border border-bordercol text-xs font-bold rounded-xl text-slate-300">+2</button>
+            <button onclick="setDeductQty(5)" class="px-2.5 py-1.5 bg-darkbg border border-bordercol text-xs font-bold rounded-xl text-slate-300">+5</button>
+          </div>
         </div>
       </div>
-      <div>
-        <label class="text-xs text-slate-400">Satılan Müşteri / Tesis *</label>
-        <input type="text" id="deduct-destination" placeholder="Örn: TERRY JAR" class="w-full mt-1.5 bg-darkbg border border-bordercol rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-      </div>
+
       <input type="hidden" id="deduct-part-id" value="">
-      <button type="button" onclick="confirmStockDeduction()" class="w-full bg-rose-600 hover:bg-rose-500 py-3 rounded-xl font-bold text-white text-xs">Stoktan Düş & Bildir</button>
+
+      <button onclick="confirmStockDeduction()" class="w-full bg-rose-600 hover:bg-rose-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-rose-900/30 flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-arrow-down-from-bracket"></i>
+        <span>Stoktan Düş & Herkese Bildir</span>
+      </button>
     </div>
   </div>
 
-  <!-- MODAL: YENİ PARÇA -->
-  <div id="modal-stock" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3 relative z-[10000]">
+  <!-- ==================== MODAL: YENİ PARÇA EKLE ==================== -->
+  <div id="modal-stock" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
-        <h3 class="font-bold text-white text-sm">Yeni Parça Ekle</h3>
-        <button type="button" onclick="closeStockModal()" class="w-8 h-8 text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
+        <h3 class="font-bold text-white text-sm">Yeni Parça Tanımla</h3>
+        <button onclick="closeStockModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
+      
       <div class="grid grid-cols-2 gap-2 text-xs">
-        <input type="text" id="m-code" placeholder="Ürün Kodu *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono">
-        <select id="m-cat" class="w-full bg-darkbg border border-bordercol rounded-xl px-2 py-2 text-white">
-          <option value="MEKATRONIK">1. Mekatronik</option>
-          <option value="ELEKTRONIK">2. Elektronik</option>
-          <option value="KONTROL">3. Kontrolörler</option>
-        </select>
+        <div>
+          <label class="text-slate-400 font-medium flex items-center">
+            <span>Ürün Kodu</span> <span class="text-rose-400 ml-1">*</span>
+          </label>
+          <input type="text" id="m-code" placeholder="Örn: 91514" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono focus:border-brand-500">
+        </div>
+        <div>
+          <label class="text-slate-400 font-medium flex items-center">
+            <span>Kategori</span> <span class="text-rose-400 ml-1">*</span>
+          </label>
+          <select id="m-cat" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-2 py-2 text-white">
+            <option value="MEKATRONIK">Mekatronik</option>
+            <option value="ELEKTRONIK">Elektronik</option>
+            <option value="KONTROL">Kontrolörler</option>
+          </select>
+        </div>
       </div>
-      <input type="text" id="m-name" placeholder="Parça Tanımı *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+
+      <div class="text-xs">
+        <label class="text-slate-400 font-medium flex items-center">
+          <span>Ürün İsmi / Tanımı</span> <span class="text-rose-400 ml-1">*</span>
+        </label>
+        <input type="text" id="m-name" placeholder="Örn: SLR1-40 AISI 316L Loblu Pompa" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white focus:border-brand-500">
+      </div>
+      
       <div class="grid grid-cols-2 gap-2 text-xs">
-        <input type="number" id="m-qty" value="1" min="0" placeholder="Miktar *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
-        <input type="text" id="m-loc" placeholder="Konum / Raf *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+        <div>
+          <label class="text-slate-400 font-medium flex items-center">
+            <span>Başlangıç Adedi</span> <span class="text-rose-400 ml-1">*</span>
+          </label>
+          <input type="number" id="m-qty" value="0" min="0" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="text-slate-400 font-medium flex items-center">
+            <span>Depo / Raf Konumu</span> <span class="text-rose-400 ml-1">*</span>
+          </label>
+          <input type="text" id="m-loc" value="MERKEZ-DEPO" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white focus:border-brand-500">
+        </div>
       </div>
-      <button type="button" onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs">Stoka Kaydet</button>
+
+      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Kaydet & Senkronize Et</button>
     </div>
   </div>
 
+  <!-- ==================== UYGULAMA MOTORU ==================== -->
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) { tg.expand(); tg.ready(); tg.setHeaderColor('#161F30'); tg.setBackgroundColor('#0B0F19'); }
+    if (tg) {
+      tg.expand();
+      tg.ready();
+      tg.setHeaderColor('#161F30');
+      tg.setBackgroundColor('#0B0F19');
+    }
 
-    const I18N = {
-      tr: { nav_stock: "Stok", nav_workflow: "İş Akışı", nav_reports: "Rapor/Tesis", cat_all: "Tümü", cat_control: "3. Kontrolörler", cat_electronic: "2. Elektronik", cat_mechatronic: "1. Mekatronik", btn_tab_request: "Sahadan Talep", btn_tab_dispatch: "Sahaya İş Gönder", title_otk: "Sahadan Talep (Ömer ➔ Kamil)", title_kto: "Sahaya İş Gönder (Kamil ➔ Ömer)", lbl_request_type: "Talep Türü", btn_send_kamil: "Kamil'e Gönder", btn_send_omer: "Sahaya İş Gönder", btn_add_part: "Yeni", shelf: "Konum" },
-      uz: { nav_stock: "Ombor", nav_workflow: "Ish Oqimi", nav_reports: "Hisobot/Tesis", cat_all: "Hammasi", cat_control: "3. Kontrollerlar", cat_electronic: "2. Elektronika", cat_mechatronic: "1. Mexatronika", btn_tab_request: "Maydondan So'rov", btn_tab_dispatch: "Maydonga Ish", title_otk: "Maydondan So'rov (O'mar ➔ Komil)", title_kto: "Maydonga Ish (Komil ➔ O'mar)", lbl_request_type: "So'rov Turi", btn_send_kamil: "Komilga Yuborish", btn_send_omer: "Maydonga Yuborish", btn_add_part: "Yangi", shelf: "Joy" }
-    };
+    // RD96 KATALOĞUNDAKİ TÜM PARÇALARIN EKSİKSİZ LİSTESİ (1'DEN 130'A KADAR)
+    const RD96_MASTER_CATALOG = [
+      { id: "1", code: "91661", name: "Sürücü: VZAB2P2BAA V1000 3/2,2 kW", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "2", code: "40642", name: "PLC CPU: CJ1M-CPU21", cat: "KONTROL", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "3", code: "40645", name: "Güç kaynağı: CJ1W-PA202", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "4", code: "40643", name: "Dijital giriş modülü: CJ1W-ID211", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "5", code: "40644", name: "Dijital çıkış modülü: CJ1W-OC211", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "6", code: "90802", name: "Güç Kaynağı: CQM1-PA203 (omron)", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "7", code: "41370", name: "Plc Çıkış Modülü: CQM1-OC222 (Omron)", cat: "ELEKTRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "8", code: "41381", name: "Rd96 22 Li Pompa Altı Paslanmaz Tava", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "9", code: "91514", name: "Rd96 SLR1-40 AISI 316L Loblu Pompa", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "10", code: "91410", name: "Wat 3 faz Motor 2,2 kW 3 HP 1000 d/d", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "11", code: "91411", name: "WAT Motor Ayağı (Q2E112M6C)", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "12", code: "41436", name: "Rd96 SLR1-40 Pompa Çıkış Bağlantı Rakor ve Dirsekleri", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "13", code: "41435", name: "Rd96 SLR1-40 Pompa Giriş Bağlantı Rakor ve Dirsekleri", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "14", code: "96469", name: "Rakor Contası - Gasket - Nw 40 Dın - EPDM", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "15", code: "60002", name: "Klemp Contası: EPDM (DN25) 1''- Ø33.7mm", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
+      { id: "16", code: "90338", name: "SLR1-40 ASI 316L Salmastra Bileziği (Part No 13)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "17", code: "91128", name: "SLR 1-40 Mec. Seal Si.Carbon/Si.Carbide (Part 8-8A)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "18", code: "91516", name: "SLR1-40 NBR O-Ring (Part No 80D)", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "19", code: "41538", name: "SLR1-40 Cover Seal (Part No: 09) (AISI-304)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "20", code: "41407", name: "SLR1-40 Pump Housing (Part No: 01) (CF-8M)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "21", code: "41420", name: "SLR1-40 Allen Screw (Part No: 51B) (A2)", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "22", code: "93041", name: "SLR1-40 Brass Flanş Burcu (Part No 35)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "23", code: "93035", name: "SLR1-40 AISI 431 Wedge Lobe (Part No 2)", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "24", code: "60020", name: "SLR1-40 AISI 316 Lobe Screw (Part No 25)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "25", code: "91517", name: "SLR1-40 NBR O-Ring (Part No 80)", cat: "MEKATRONIK", qty: 18, loc: "MERKEZ-DEPO" },
+      { id: "26", code: "41430", name: "SLR1-40 O-ring (Part No: 80A) (EPDM)", cat: "MEKATRONIK", qty: 16, loc: "MERKEZ-DEPO" },
+      { id: "27", code: "41408", name: "SLR1-40 Pump Cover (Part No: 03) (AISI-316)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "28", code: "41415", name: "SLR1-40 Wing Nut (Part No: 45) (AISI 316)", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "29", code: "41419", name: "SLR1-40 Allen Screw (Part No: 51A) (8.8)", cat: "MEKATRONIK", qty: 24, loc: "MERKEZ-DEPO" },
+      { id: "30", code: "41414", name: "SLR1-40 Dragging Bushing (Part No: 17B)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "31", code: "41425", name: "SLR1-40 Safety Nut (Part No: 62) (Steel)", cat: "MEKATRONIK", qty: 14, loc: "MERKEZ-DEPO" },
+      { id: "32", code: "41427", name: "SLR1-40 Conical Tightening Ring (Part No: 65A)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "33", code: "41426", name: "SLR1-40 Safety Washer (Part No: 63) (Steel)", cat: "MEKATRONIK", qty: 14, loc: "MERKEZ-DEPO" },
+      { id: "34", code: "93039", name: "SLR1-40 F 154 Motor Shaft Dişlisi (Part No 19)", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "35", code: "93040", name: "SLR1-40 F-154 Tahrik Shaft Dişlisi (Part No 19A)", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "36", code: "41413", name: "SLR1-40 Drive Shaft Bushing (Part No:17)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "37", code: "41418", name: "SLR1-40 Allen Screw (Part No: 51) (8.8)", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "38", code: "41411", name: "SLR1-40 Bearing Stop Flange (Part No: 12A)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "39", code: "41428", name: "SLR1-40 Ball Bearing (Part No: 70) (Steel)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "40", code: "41429", name: "SLR1-40 Needle Bearing (Part No: 70A) (Steel)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "41", code: "93043", name: "SLR1-40 Steel Tahrik Shaft Mili Kaması (Part 61A)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "42", code: "93042", name: "SLR1-40 Steel Motor Shaft Mili Kaması (Part 61)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "43", code: "93037", name: "SLR1-40 AISI 329 Tahrik Shaft (Part No 05A)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "44", code: "93036", name: "SLR1-40 AISI 329 Motor Shaft (Part No 5)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "45", code: "60044", name: "SLR1-40 NBR Keçe (Part No 88)", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "46", code: "41434", name: "SLR1-40 Bleeder (Part No: 87) (Plastic)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "47", code: "90946", name: "SLR1-40 Filtre", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "48", code: "41432", name: "SLR1-40 Oil Plug (Part No: 85) (Plastic)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "49", code: "41409", name: "SLR1-40 Support (Part No: 06) (GG-15)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "50", code: "41424", name: "SLR1-40 Pin (Part No: 56) (F-522)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "51", code: "41433", name: "SLR1-40 Peephole (Part No: 86) (Plastic)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "52", code: "41416", name: "SLR1-40 Protector (Part No: 47A) (Plastic)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "53", code: "41417", name: "SLR1-40 Screw (Part No: 50) (A2)", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "54", code: "41533", name: "SLR1-40 Part 18A (Gasket)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "55", code: "96541", name: "23-35 Paslanmaz Hortum Kelepçesi", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "56", code: "EE-ERBI-1", name: "13-19 mm Paslanmaz Hortum Kelepçesi", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "57", code: "90951", name: "Rd96 Fip25 Pompa + Motor+ Flanş (Takım)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "58", code: "41384", name: "R96 Fip 25 Pompa Bağlantı Çıkış Rakoru ve Dirseği", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "59", code: "41383", name: "R96 Fip 25 Pompa Bağlantı Giriş Rakoru ve Dirseği", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "60", code: "90310", name: "Fip25 1\"/1\" Esnek Çarklı Pompa (Motorsuz)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "61", code: "90952", name: "Fip25 Pompa Gövde+Kapak+Oring", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "62", code: "90332", name: "Fip25 Pompa Mili (01-46634) (Part of 7)", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "63", code: "90328", name: "Fip25 Maşon (Sleeve 01-45214) (Part of 15)", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "64", code: "90949", name: "Fip25 Maşon Alyan Vida (0.0300.943)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "65", code: "90947", name: "Fip25 Salmastra Sacı (Washer 01-45782)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "66", code: "90321", name: "Fip25 Saç Vidası (0.0150.001) (Part No 12)", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "67", code: "16073", name: "Fip25 M8 Pul (Washer 0.0350.11) (Part No 11)", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
+      { id: "68", code: "90490", name: "Fip25 Kapak Civatası Screw 4-20x8", cat: "MEKATRONIK", qty: 16, loc: "MERKEZ-DEPO" },
+      { id: "69", code: "91238", name: "Fip25 O-ring (0-2173.523) FDA", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "70", code: "90333", name: "Fip25 Kapak Pimi (Screw Stud 01-46638)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "71", code: "90948", name: "Fip25 Bakalit Flanş (Motor Flange 01-24252)", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "72", code: "91407", name: "Fip25 Salmastra (09-46686-04) Si&Si", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "73", code: "93008", name: "Fip25 Pompa Gövdesi 09-46687-07 SH-DIN", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "74", code: "90345", name: "Fip25 FDA,EPDM (Impeller)", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "75", code: "90325", name: "Fip25 Pompa Kapağı (01-35850) Cover SH", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "76", code: "90320", name: "Fip25 Kapak Somunu (Cap screw 01-46505)", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "77", code: "90950", name: "Fip25 Motor Flanşı (Paslanmaz+Demir)", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "78", code: "60003", name: "Rakor Contası - Gasket - Nw 25 Dın - EPDM", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "79", code: "96112", name: "3/4\" Siyah Madde Verici Kimyasal Hortum (MT)", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "80", code: "90827", name: "Omal DG451H005 3 Yollu L Port 3/4\" (DN20)", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "81", code: "50155", name: "Omal Aktüatör: DA030401S DA30 30Nm", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "82", code: "96467", name: "Omal Aktüatör: DAN0030411S DA30 30Nm", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "83", code: "91603", name: "Omal Vana: V451H405 3Yollu L Port 3/4\"", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "84", code: "91035", name: "Omal (Tamir) Takımı: KGBV4505 3/4\" (DN20)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "85", code: "90547", name: "3 Yollu \"L\" Port 3/4\" Vana Küresi", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "86", code: "20031", name: "Tork LS102M Switch Box", cat: "ELEKTRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "87", code: "90475", name: "Autonics Kapasitif Sensör: CR18-8DN", cat: "ELEKTRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "88", code: "50160", name: "Pnömatik rakor: 57116 1/2\"-10mm dirsek", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "89", code: "91285", name: "P00142140 U2 Çek Valf", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "90", code: "50606", name: "Nipel 2010 - 1/2\"", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "91", code: "91472", name: "Solenoid Valf: L03Eb13 1/2\" S00100400", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "92", code: "50247", name: "Valf bobini: B00126625 FGC1 24VDC 6W", cat: "ELEKTRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "93", code: "50249", name: "Valf soketi: M1TS2L01 24V ledli 11mm", cat: "ELEKTRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "94", code: "15401", name: "Tee rakor: 4000 1/4\" D-D-D", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "95", code: "41439", name: "1/4\" Paslanmaz Tek Taraflı Nipel", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "96", code: "91633", name: "Omal VIP Vana: VNC10004 NBR 1/2\" PN10", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "97", code: "91448", name: "Pnömatik rakor: 57116 1/8\"-6mm dirsek", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "98", code: "42595", name: "1/2\"x Ø16mm Pirinç Altıköşe Hortum Ağzı", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "99", code: "90861", name: "Siyah Kauçuk Su Hortumu 16mm", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "100", code: "90817", name: "Omal Vana: DG424H405 3/4\" (DN20) PN65", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "101", code: "96683", name: "Omal Aktüatör: SRN0015401S SR15 15Nm", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "102", code: "96097", name: "DG424H405 Omal Aktüatör", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "103", code: "91598", name: "Omal Küresel Vana: V424H405 3/4\" Paslanmaz", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "104", code: "91037", name: "Omal (Tamir) Takımı: KGBV6005 3/4\" (DN20)", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "105", code: "40082", name: "Krohne Optiflux 5300 Magnetik Flowmeter", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "106", code: "91386", name: "E/H DN25 (1/2\") Promass40E15 Flowmetre", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "107", code: "91488", name: "V424H405 Vana Küresi 3/4\" RD", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "108", code: "90567", name: "Diyafram 66 Mm Teflon Takviyeli", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "109", code: "90965", name: "Manometre: G27-10-R1: AW10/AR10 için", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "110", code: "40647", name: "SMC CJPB15-10H6 Pin Silindir", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "111", code: "90715", name: "Regülatör: AR10-M5H: 0-8 Bar", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "112", code: "90828", name: "Omal Vana: DG451H006 3Yollu L Port 1\"", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "113", code: "90834", name: "Omal Aktüatör: DA045402S Flanş F03-F05", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "114", code: "96468", name: "Omal Çift Etkili Aktüatör: DAN0045412S DA45", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "115", code: "91463", name: "Eurotec Reducer Kafa Adaptörü 11mm-9mm", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "116", code: "91604", name: "V451H406 1\" Omal L Port Vana", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "117", code: "90548", name: "3 Yollu \"L\" Port 1\" Vana Küresi 545-II-F06", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "118", code: "91036", name: "Kgbv4506 V451H006 Omal Vana Conta Takımı", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "119", code: "90832", name: "Omal Aktüatör: DA0015411S DA15 15Nm", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "120", code: "40634", name: "BES0057: Balluff M12MI-NSC40B-BV03", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "121", code: "96412", name: "1\" > 3/4\" Polietilen Dst Çek Valf Adaptörü", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "122", code: "90878", name: "Dst16-23 Çekvalf Paslanmaz 3/4\"", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "123", code: "90881", name: "Dst Çek Valf Yayı", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "124", code: "90880", name: "DST Çekvalf Teflonu", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "125", code: "90879", name: "Dst Çek Valf Oring 007.59*2.62 EPDM", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "126", code: "91284", name: "Valf: P00112200 E1A/4: 3/2 i", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "127", code: "14574", name: "Nipel 2010 - 1/4\"", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "128", code: "14541", name: "Orantılı Nipel 2030 1/4\"-1/8\"", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "129", code: "91332", name: "Basınç Anahtarı: PE-1/8-1N 0-8 bar", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "130", code: "50219", name: "Pnömatik rakor: 57116 1/4\"-10mm dirsek", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "131", code: "54626", name: "Valf Bobini: A03/0-24VDC B00123525 5W", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "132", code: "41441", name: "57226 1/4\"x10 Döner Tee", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "133", code: "91447", name: "Pnömatik rakor: 57020 1/4\"-10mm düz erkek", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "134", code: "50057", name: "Pnömatik rakor: 57020 1/4\"-8mm düz erkek", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "135", code: "54612", name: "Yıldız Başlı Cıvata: M4x30mm", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "136", code: "50098", name: "Manifold: SS5Y5-41-04-01F-Q 4'lü", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "137", code: "50018", name: "Valf: SY5140-5YO-Q 5/2 tek bobin 24VDC", cat: "ELEKTRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "138", code: "91594", name: "Valf: SY5240-5YO-Q-5/2 Çift Bobin 24VDC", cat: "ELEKTRONIK", qty: 5, loc: "MERKEZ-DEPO" },
+      { id: "139", code: "91590", name: "Çek valf: U4: 1/4\"", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "140", code: "15005", name: "Kuyruklu dirsek: 5020 1/4\" erkek-dişi", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "141", code: "50549", name: "Redüksiyon 2090 1/4\"<1/8\"", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "142", code: "40085", name: "Basınç anahtarı: PMN10A 2-10 bar NO", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "143", code: "91451", name: "57116 RDD 1/4-8 DİRSEK AIGNEP", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "144", code: "50023", name: "KQ2S06-01AS: 1/8\"-6mm düz içten sıkmalı", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "145", code: "50273", name: "SS5Y5-41-05-01F-Q 5'li Altlık", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "146", code: "50021", name: "Valf soketi: DIN 43650C-C/Led 24V", cat: "ELEKTRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "147", code: "41442", name: "RD96 MU_22 Krom Kaplı Ray: Ø25 / 180 mm", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "148", code: "41404", name: "RD96 MU_33 Krom Kaplı Ray: Ø25 / 267 mm", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "149", code: "96517", name: "Rd96 MU Z Polietilen Piston Dayama Takozu", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "150", code: "50257", name: "SMC Tek Etkili Silindir CD75E32-80-B", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "151", code: "96501", name: "SMC C76-32PS Sızdırmazlık Kiti", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "152", code: "90766", name: "RD96 Alüminyum Lama Montaj Parçası", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "153", code: "16016", name: "Paslanmaz Altı köşe Civata M5 x10 mm", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "154", code: "16039", name: "Paslanmaz M5 Yaylı Rondela", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "155", code: "16034", name: "Paslanmaz M5 Pul", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "156", code: "41403", name: "Havşa Başlı İmbus Civata M8 x 10", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "157", code: "90767", name: "RD96 Cambaz Kolu Sacı", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "158", code: "91071", name: "KQ2L04-01Ns Dirsek Rakor 1/8\" 4mm", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "159", code: "90762", name: "Sensör tutucu: BM2-032: bant tipi 32mm", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "160", code: "90840", name: "Piston sensörü: DC73L: reed 3m kablolu", cat: "ELEKTRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "161", code: "41400", name: "Rd96 MU Z ekseni Yataklama Pim leri", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "162", code: "41401", name: "Rd96 MU Z eksen Gijonları 292mm*M6", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "163", code: "41300", name: "RD96-Mu Cambaz Pistonu Yeşil Takoz", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "164", code: "41402", name: "Rd96 MU Z ekseni Paslanmaz Yataklama Plakası", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "165", code: "91277", name: "RD96-Mu Polietilen Ağızlık", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "166", code: "54516", name: "Rd96 Full Z Axis Equipment", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "167", code: "90768", name: "Cambaz Kutusu Dolu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "168", code: "90769", name: "RD96 Boş Cambaz Kutusu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "169", code: "90782", name: "C85 Serisi Silindir Eklem Yer Bağlantı", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "170", code: "16032", name: "Paslanmaz Altı köşe Civata M6 x10 mm", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "171", code: "16041", name: "Paslanmaz M6 Yaylı Rondela", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "172", code: "16035", name: "Paslanmaz M6 Pul", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "173", code: "50260", name: "Pnömatik Silindir CD85N16-50-B (SMC)", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "174", code: "90759", name: "Sensör tutucu: BJ2-016", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "175", code: "50138", name: "Pnömatik rakor: KQ2L04-M5A 4mm dirsek", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "176", code: "91086", name: "Pnömatik T rakor: KQ2T04-M5A", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "177", code: "91045", name: "SMC Küresel Mafsal: KJ6D M6*1", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "178", code: "90770", name: "RD96 Cambaz Mekanizması", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "179", code: "16043", name: "Paslanmaz İmbus M5 Civata M5x20 mm", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
+      { id: "180", code: "16030", name: "Paslanmaz Altı köşe Civata M5 x20 mm", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
+      { id: "181", code: "90765", name: "RD96 Cambaz Kolu", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "182", code: "11906", name: "Altı Köşe Somun M6", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "183", code: "12302", name: "Fiberli Kör Somun M6", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "184", code: "41444", name: "Krom Ray: Ø25 / 1350 mm x ekseni", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "185", code: "91303", name: "Paslanmaz Araba 4 Delikli Rexroth", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "186", code: "50263", name: "Silindir: CD85N25-400C-B SMC", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "187", code: "91044", name: "SMC Küresel Mafsal: KJ10D M10*1,25", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "188", code: "54510", name: "Pnömatik rakor: KQ2VS04-01AS 1/8-4mm", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "189", code: "90761", name: "Sensör tutucu: BM2-025: bant tipi", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "190", code: "50262", name: "Silindir: CD85N25-300C-B (SMC)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "191", code: "41399", name: "Pnömatik rakor: KQ2U04-00 4mm Y", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "192", code: "50259", name: "Silindir CD85N16-200-B (SMC)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "193", code: "50258", name: "Silindir CD85N16-100-B (SMC)", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "194", code: "50261", name: "Silindir 80 mm Strok CD85N16-80-B", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "195", code: "91269", name: "RD96 X Ekseni mekanik yatak Kilidi", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "196", code: "91270", name: "RD96 Y Ekseni mekanik yatak Kilidi", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "197", code: "50278", name: "Manifold: SS5YJ3-S41-02-M5F-Q 2'li", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "198", code: "50293", name: "Valf: SYJ3243-5LOU-Q 5/2 çift bobin", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "199", code: "90725", name: "Hız ayar valfi: ASN2-02 1/8 susturuculu", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "200", code: "50040", name: "Dirsek Rakor 1/8x6mm / KQ2L06-01AS", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "201", code: "41396", name: "12'li Hareketli Kablo X3-X4 Valf", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "202", code: "41398", name: "Soket ucu SY100-30-A SMC", cat: "ELEKTRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "203", code: "54630", name: "SYJ3243 2'li full valf grubu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "204", code: "50270", name: "Manifold: SS3Y1-S41-04-M5-Q 4'lü", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "205", code: "50287", name: "Valf: SY114-5LOU-Q SMC", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "206", code: "91066", name: "Pnömatik rakor: KQ2H06-M5A M5-6mm", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "207", code: "91064", name: "Pnömatik rakor: KQ2H04-M5A M5-4mm düz", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "208", code: "41457", name: "Kör Tapa: M-5P: M5x0,8 (SMC)", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "209", code: "50238", name: "Susturucu: AN120-M5 (SMC)", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "210", code: "50156", name: "Pnömatik T rakor: KQ2T06-00A 6mm", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "211", code: "91043", name: "Valf Kablosu: SY114 için (EM)", cat: "ELEKTRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "212", code: "50269", name: "Manifold: SS3Y1-S41-02-M5-Q 2'li", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "213", code: "50289", name: "Valf: SY3220-5LOU-M5-Q çift bobin", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "214", code: "50291", name: "Valf: SYJ3143-5LOU-Q SMC", cat: "ELEKTRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "215", code: "90781", name: "SMC C85-25Ps Piston Keçesi X3-X4", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "216", code: "96404", name: "RD96-MU22 Paslanmaz Çelik Tabla", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "217", code: "41406", name: "RD96_MU33 PVC Tabla", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "218", code: "41405", name: "RD96-MU33 Paslanmaz Çelik Tabla 304", cat: "MEKATRONIK", qty: 1, loc: "MERKEZ-DEPO" },
+      { id: "219", code: "90484", name: "3/4\" Kimyasal Vana Kür.Vana+Elcik+Adaptör", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "220", code: "91490", name: "3/4 RD Vana Adaptör Bağlantı O-ringi", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "221", code: "91489", name: "3/4' RD Vana Conta Takımı", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "222", code: "90930", name: "EPDM Lastik Conta 25*40 Kare Oring", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "223", code: "91495", name: "3/4\" Şeffaf Kimyasal Hortum (MT)", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
+      { id: "224", code: "54661", name: "Rd96 Mu 22 Y eksen Kolu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "225", code: "54662", name: "Rd96 Mu 33 Y eksen Kolu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "226", code: "41437", name: "Flowmetre Dönüşüm Flanşı (Micromotion>E/H)", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "227", code: "90568", name: "66 Mm Teflon Takviyeli Diyafram Pulu", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "228", code: "50014", name: "Susturucu: AN15-02: 1/4\"", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "229", code: "91782", name: "Rd96-33 Hareketli Kablo (EM)", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "230", code: "91271", name: "RD96-22 Hareketli Kablo (EM)", cat: "ELEKTRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "231", code: "91268", name: "Rd96 Mu Fırça", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO" },
+      { id: "232", code: "90793", name: "Loblu Pompa Conta (Teflon Giydirme)", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "233", code: "90324", name: "SLR1-40 Lob Anahtarı", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "234", code: "16044", name: "Yıldız Tornavida başlı M4 x 5 mm vida", cat: "MEKATRONIK", qty: 25, loc: "MERKEZ-DEPO" },
+      { id: "235", code: "14847", name: "Klemp Kelepçesi: 1\" - Ø33.7mm Paslanmaz", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "236", code: "41290", name: "Soket muhafazası: HAN24 B-AGG-QB", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "237", code: "41287", name: "Socket Cover HDC HB 24TSVU 1/21 P", cat: "ELEKTRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "238", code: "41288", name: "Soket: HDC-HE-24BS: 24 pin dişi", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "239", code: "41289", name: "Soket: HDC-HE-24SS: 24 pin erkek", cat: "ELEKTRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "240", code: "54629", name: "SY114 4'lü Full Valf Grubu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "241", code: "54628", name: "SY114 2'li Full Valf Grubu", cat: "MEKATRONIK", qty: 2, loc: "MERKEZ-DEPO" },
+      { id: "242", code: "50024", name: "Hava hortumu: TU0604BU: 6mm mavi", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "243", code: "50025", name: "Hava hortumu: TU0806BU: 8mm mavi", cat: "MEKATRONIK", qty: 30, loc: "MERKEZ-DEPO" },
+      { id: "244", code: "91586", name: "Hava hortumu: TU1065BU: 10mm mavi", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "245", code: "50027", name: "Hava hortumu: TU0425BU: 4mm mavi", cat: "MEKATRONIK", qty: 20, loc: "MERKEZ-DEPO" },
+      { id: "246", code: "92038", name: "Regülatör: AW30-F03DE-B 3/8 NO tahliyeli", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "247", code: "54620", name: "G36-P10-01-X30 Manometre", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "248", code: "14577", name: "Nipel: 2010 3/8\"", cat: "MEKATRONIK", qty: 15, loc: "MERKEZ-DEPO" },
+      { id: "249", code: "14317", name: "Pnömatik Tee rakor: 4000 3/8\" D-D-D", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "250", code: "96449", name: "Orantılı nipel: 2030 1/4\"-3/8\"", cat: "MEKATRONIK", qty: 10, loc: "MERKEZ-DEPO" },
+      { id: "251", code: "91950", name: "Çek valf: U4: 1/4\"", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "252", code: "96219", name: "Küresel vana: 6310 3/8\" erkek dişi", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" },
+      { id: "253", code: "91453", name: "Pnömatik rakor: 57116 3/8\"-10mm dirsek", cat: "MEKATRONIK", qty: 12, loc: "MERKEZ-DEPO" },
+      { id: "254", code: "50008", name: "Tespit Elemanı AR30 / AW30", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "255", code: "50010", name: "Tespit Elemanı : AW23P-270AS", cat: "MEKATRONIK", qty: 8, loc: "MERKEZ-DEPO" },
+      { id: "256", code: "50046", name: "Regülatör: AW20-F02C-B SMC", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO" },
+      { id: "257", code: "50054", name: "Küresel vana: 6310 1/4\" erkek dişi", cat: "MEKATRONIK", qty: 6, loc: "MERKEZ-DEPO" }
+    ];
 
     let currentLang = localStorage.getItem('eliar_lang') || 'tr';
     let currentFlow = 'OMER_TO_KAMIL';
     let selectedCat = 'ALL';
-    let stocks = JSON.parse(localStorage.getItem('eliar_stocks')) || [];
-    let sales = JSON.parse(localStorage.getItem('eliar_sales')) || [];
 
-    const persist = () => { localStorage.setItem('eliar_stocks', JSON.stringify(stocks)); localStorage.setItem('eliar_sales', JSON.stringify(sales)); };
+    // Otomatik Önbellek Denetimi & Veri Yükleme
+    let stocks = JSON.parse(localStorage.getItem('eliar_stocks_rd96_v3'));
+    if (!stocks || stocks.length < 50) {
+      stocks = RD96_MASTER_CATALOG;
+      localStorage.setItem('eliar_stocks_rd96_v3', JSON.stringify(stocks));
+    }
+
+    let sales = JSON.parse(localStorage.getItem('eliar_sales_v2')) || [
+      {
+        id: "Q-1",
+        firm: "TERRY JAR TEKSTİL",
+        contact: "Mehmet Usta (0532 111 22 33)",
+        ref_no: "46189ND",
+        items: [{ code: "91514", name: "Rd96 SLR1-40 AISI 316L Loblu Pompa", qty: 1 }],
+        status: "APPROVED",
+        date: "28.10.2026 16:31",
+        timestamp: "2026-10-28T16:31:00"
+      }
+    ];
+
+    function persist() {
+      localStorage.setItem('eliar_stocks_rd96_v3', JSON.stringify(stocks));
+      localStorage.setItem('eliar_sales_v2', JSON.stringify(sales));
+    }
+
+    function forceResetToCatalog() {
+      if (confirm("Kataloğu sıfırlamak ve tüm RD96 parçalarını baştan yüklemek istiyor musunuz?")) {
+        stocks = RD96_MASTER_CATALOG;
+        persist();
+        renderStockTable();
+        alert("RD96 Kataloğundaki tüm parçalar başarıyla yüklendi!");
+      }
+    }
 
     function setLanguage(lang) {
       currentLang = lang;
       localStorage.setItem('eliar_lang', lang);
-      document.getElementById('lang-tr').className = lang === 'tr' ? "px-2.5 py-1 text-xs font-bold rounded-lg bg-brand-600 text-white" : "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400";
-      document.getElementById('lang-uz').className = lang === 'uz' ? "px-2.5 py-1 text-xs font-bold rounded-lg bg-brand-600 text-white" : "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400";
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const k = el.getAttribute('data-i18n');
-        if (I18N[lang][k]) el.innerText = I18N[lang][k];
-      });
+      document.getElementById('lang-tr').className = lang === 'tr' ? "px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white" : "px-2 py-0.5 text-xs font-bold rounded-lg text-slate-400";
+      document.getElementById('lang-uz').className = lang === 'uz' ? "px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white" : "px-2 py-0.5 text-xs font-bold rounded-lg text-slate-400";
       renderStockTable();
-      renderZReport();
     }
 
     function switchTab(t) {
@@ -291,16 +728,23 @@
       document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('bg-brand-600', 'text-white', 'shadow-md'); b.classList.add('text-slate-400'); });
       document.getElementById('tab-btn-' + t).classList.add('bg-brand-600', 'text-white', 'shadow-md');
       document.getElementById('tab-btn-' + t).classList.remove('text-slate-400');
+      
       if (t === 'reports') renderZReport();
     }
 
     function setWorkflowDirection(dir) {
       currentFlow = dir;
-      const isOtk = dir === 'OMER_TO_KAMIL';
-      document.getElementById('btn-flow-otk').className = isOtk ? "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md" : "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
-      document.getElementById('btn-flow-kto').className = !isOtk ? "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-cyan-600 text-white shadow-md" : "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
-      document.getElementById('form-omer-to-kamil').classList.toggle('hidden', !isOtk);
-      document.getElementById('form-kamil-to-omer').classList.toggle('hidden', isOtk);
+      if (dir === 'OMER_TO_KAMIL') {
+        document.getElementById('btn-flow-otk').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md";
+        document.getElementById('btn-flow-kto').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
+        document.getElementById('form-omer-to-kamil').classList.remove('hidden');
+        document.getElementById('form-kamil-to-omer').classList.add('hidden');
+      } else {
+        document.getElementById('btn-flow-kto').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-cyan-600 text-white shadow-md";
+        document.getElementById('btn-flow-otk').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
+        document.getElementById('form-kamil-to-omer').classList.remove('hidden');
+        document.getElementById('form-omer-to-kamil').classList.add('hidden');
+      }
     }
 
     function filterCategory(cat) {
@@ -309,47 +753,54 @@
         btn.classList.remove('bg-brand-600', 'text-white', 'shadow-sm');
         btn.classList.add('bg-cardbg', 'border', 'border-bordercol', 'text-slate-300');
       });
-      const active = document.getElementById('pill-' + cat);
-      if (active) {
-        active.classList.remove('bg-cardbg', 'border', 'border-bordercol', 'text-slate-300');
-        active.classList.add('bg-brand-600', 'text-white', 'shadow-sm');
+      const activeBtn = document.getElementById('pill-' + cat);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-cardbg', 'border', 'border-bordercol', 'text-slate-300');
+        activeBtn.classList.add('bg-brand-600', 'text-white', 'shadow-sm');
       }
       renderStockTable();
     }
 
     function getCategoryBadge(cat) {
-      if (cat === 'MEKATRONIK') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-950 text-purple-400 border border-purple-800">1. MEKATRONİK</span>`;
-      if (cat === 'ELEKTRONIK') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-400 border border-amber-800">2. ELEKTRONİK</span>`;
-      return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800">3. KONTROLÖR</span>`;
+      if (cat === 'KONTROL') {
+        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800">Kontrolör</span>`;
+      } else if (cat === 'ELEKTRONIK') {
+        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-400 border border-amber-800">Elektronik</span>`;
+      } else {
+        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-950 text-purple-400 border border-purple-800">Mekatronik</span>`;
+      }
     }
 
     function renderStockTable() {
       const s = document.getElementById('stock-search')?.value.toLowerCase() || "";
-      const order = { "MEKATRONIK": 1, "ELEKTRONIK": 2, "KONTROL": 3 };
-      const sorted = [...stocks].sort((a, b) => (order[a.cat] || 99) - (order[b.cat] || 99));
-      const filtered = sorted.filter(p => (p.name.toLowerCase().includes(s) || p.code.toLowerCase().includes(s)) && (selectedCat === 'ALL' || p.cat === selectedCat));
+      const filtered = stocks.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(s) || p.code.toLowerCase().includes(s);
+        const matchesCat = (selectedCat === 'ALL') || (p.cat === selectedCat);
+        return matchesSearch && matchesCat;
+      });
 
-      const list = document.getElementById('stock-list');
+      document.getElementById('count-all').innerText = stocks.length;
+
       if (filtered.length === 0) {
-        list.innerHTML = `<div class="p-8 text-center text-xs text-slate-500 bg-cardbg rounded-2xl border border-bordercol">Kayıtlı parça bulunamadı.</div>`;
+        document.getElementById('stock-list').innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-cardbg rounded-2xl border border-bordercol">Bu aramaya uygun parça bulunamadı.</div>`;
         return;
       }
 
-      list.innerHTML = filtered.map(i => `
-        <div class="bg-cardbg border border-bordercol rounded-2xl p-3 flex justify-between items-center shadow-md">
+      document.getElementById('stock-list').innerHTML = filtered.map(i => `
+        <div class="bg-cardbg border border-bordercol rounded-2xl p-3 flex justify-between items-center shadow-md hover:border-slate-600 transition">
           <div>
             <div class="flex items-center space-x-1.5">
               <span class="text-[10px] font-mono font-bold text-white bg-darkbg px-2 py-0.5 rounded border border-emerald-500/40">${i.code}</span>
               ${getCategoryBadge(i.cat || 'MEKATRONIK')}
             </div>
             <h4 class="text-xs font-semibold text-white mt-1 leading-tight">${i.name}</h4>
-            <p class="text-[11px] text-slate-400 mt-0.5">${I18N[currentLang].shelf}: <span class="text-slate-300 font-mono">${i.loc}</span></p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Konum: <span class="text-slate-300 font-mono">${i.loc}</span></p>
           </div>
           <div class="flex items-center space-x-2">
             <span class="text-xs font-black text-emerald-400 whitespace-nowrap">${i.qty} ADT</span>
             <div class="flex flex-col space-y-1">
-              <button onclick="increaseStock('${i.id}')" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-emerald-950 text-emerald-400 rounded-lg text-xs font-bold flex items-center justify-center">+</button>
-              <button onclick="openDeductModal('${i.id}')" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-rose-950 text-rose-400 rounded-lg text-xs font-bold flex items-center justify-center">-</button>
+              <button onclick="increaseStock('${i.id}')" title="Stok Ekle (+1)" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-emerald-950 text-emerald-400 rounded-lg text-xs font-bold flex items-center justify-center">+</button>
+              <button onclick="openDeductModal('${i.id}')" title="Stoktan Düş / Satış Yap" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-rose-950 text-rose-400 rounded-lg text-xs font-bold flex items-center justify-center">-</button>
             </div>
           </div>
         </div>
@@ -358,17 +809,15 @@
 
     function openDeductModal(id) {
       const it = stocks.find(x => x.id === id);
-      if (!it || it.qty <= 0) { alert("Stok tükenmiş!"); return; }
+      if (!it) return;
       document.getElementById('deduct-part-id').value = id;
       document.getElementById('deduct-part-header').innerText = `[${it.code}] ${it.name}`;
-      document.getElementById('deduct-current-stock').innerText = `Mevcut: ${it.qty} ADT`;
+      document.getElementById('deduct-current-stock').innerText = `Mevcut Depo: ${it.qty} ADT`;
       document.getElementById('deduct-qty').value = "1";
-      document.getElementById('deduct-qty').max = it.qty;
-      const dest = document.getElementById('deduct-destination');
-      dest.value = "";
+      document.getElementById('deduct-destination').value = "";
+      document.getElementById('deduct-contact').value = "";
       document.getElementById('modal-deduct').classList.remove('hidden');
       document.getElementById('modal-deduct').classList.add('flex');
-      setTimeout(() => dest.focus(), 100);
     }
 
     function closeDeductModal() {
@@ -379,47 +828,73 @@
     function setDeductQty(d) {
       const el = document.getElementById('deduct-qty');
       let val = (parseInt(el.value) || 1) + d;
-      el.value = Math.min(Math.max(val, 1), parseInt(el.max) || 999);
+      if (val < 1) val = 1;
+      el.value = val;
     }
 
     function confirmStockDeduction() {
       const id = document.getElementById('deduct-part-id').value;
       const it = stocks.find(x => x.id === id);
+      if (!it) return;
       const qty = parseInt(document.getElementById('deduct-qty').value) || 0;
       const dest = document.getElementById('deduct-destination').value.trim();
+      const contact = document.getElementById('deduct-contact').value.trim();
 
-      if (!it || qty <= 0 || qty > it.qty || !dest) {
-        alert("Lütfen tüm alanları doğru doldurun!"); return;
-      }
+      if (qty <= 0) { alert("Geçerli bir miktar girin!"); return; }
+      if (!dest) { alert("Lütfen Firma İsmini (Müşteri/Fabrika) yazın!"); return; }
 
-      it.qty -= qty;
-      sales.unshift({
-        id: "Q-" + Date.now(), firm: dest, ref_no: "MANUEL-ÇIKIŞ",
-        items: [{ code: it.code, name: it.name, qty }], status: "APPROVED",
+      it.qty = Math.max(0, it.qty - qty);
+      
+      const newSale = {
+        id: "Q-" + Date.now(),
+        firm: dest,
+        contact: contact || "Belirtilmedi",
+        ref_no: "MANUEL-ÇIKIŞ",
+        items: [{ code: it.code, name: it.name, qty: qty }],
+        status: "APPROVED",
         date: new Date().toLocaleString([], { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
         timestamp: new Date().toISOString()
-      });
+      };
+      sales.unshift(newSale);
 
       persist();
       renderStockTable();
       renderZReport();
       closeDeductModal();
 
-      if (tg?.sendData) {
-        tg.sendData(JSON.stringify({
-          direction: "STOCK_CHANGE", action: "DECREASE", delta: qty,
-          code: it.code, name: it.name, current_qty: it.qty, destination: dest, loc: it.loc
-        }));
-      }
+      const payload = {
+        direction: "STOCK_CHANGE",
+        action: "DECREASE",
+        delta: qty,
+        category: it.cat || "MEKATRONIK",
+        code: it.code,
+        name: it.name,
+        current_qty: it.qty,
+        destination: dest,
+        contact: contact,
+        loc: it.loc
+      };
+      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
+      alert(`Stoktan düşüldü: ${qty} Adet [${it.code}] ${it.name} ➔ ${dest}`);
     }
 
     function increaseStock(id) {
       const it = stocks.find(x => x.id === id);
-      if (!it || !confirm(`[${it.code}] stoğu +1 artırılsın mı?`)) return;
+      if (!it) return;
       it.qty += 1;
       persist();
       renderStockTable();
-      if (tg?.sendData) tg.sendData(JSON.stringify({ direction: "STOCK_CHANGE", action: "INCREASE", delta: 1, code: it.code, name: it.name, current_qty: it.qty, loc: it.loc }));
+      const payload = {
+        direction: "STOCK_CHANGE",
+        action: "INCREASE",
+        delta: 1,
+        category: it.cat || "MEKATRONIK",
+        code: it.code,
+        name: it.name,
+        current_qty: it.qty,
+        loc: it.loc
+      };
+      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
 
     function openStockModal() { document.getElementById('modal-stock').classList.remove('hidden'); document.getElementById('modal-stock').classList.add('flex'); }
@@ -431,197 +906,211 @@
       const name = document.getElementById('m-name').value.trim();
       const qty = parseInt(document.getElementById('m-qty').value) || 0;
       const loc = document.getElementById('m-loc').value.trim();
-
-      if (!code || !name || !loc) { alert("Lütfen zorunlu alanları doldurun!"); return; }
-      if (stocks.some(p => p.code.toLowerCase() === code.toLowerCase())) { alert("Bu ürün kodu zaten mevcut!"); return; }
+      if (!code || !name) { alert("Lütfen Ürün Kodu ve İsmini doldurun!"); return; }
 
       stocks.unshift({ id: Date.now().toString(), code, cat, name, qty, loc });
       persist();
       closeStockModal();
       renderStockTable();
-      if (tg?.sendData) tg.sendData(JSON.stringify({ direction: "STOCK_CHANGE", action: "NEW_ITEM", category: cat, code, name, qty, loc }));
+
+      const payload = { direction: "STOCK_CHANGE", action: "NEW_ITEM", category: cat, code, name, qty, loc };
+      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
+      
       document.getElementById('m-code').value = "";
       document.getElementById('m-name').value = "";
-      document.getElementById('m-loc').value = "";
     }
 
+    /* ---------------- AKILLI ARAMA (İŞ AKIŞI) ---------------- */
     function searchPartsLive(query) {
-      const drop = document.getElementById('otk-part-dropdown');
+      const dropdown = document.getElementById('otk-part-dropdown');
       const q = (query || "").trim().toLowerCase();
+      if (!q) { dropdown.classList.add('hidden'); return; }
+
       const matches = stocks.filter(p => p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q));
-      if (!matches.length) { drop.innerHTML = `<div class="p-2 text-xs text-slate-400 text-center">Eşleşen ürün yok</div>`; drop.classList.remove('hidden'); return; }
-      drop.innerHTML = matches.map(p => `
-        <div onclick="selectPart('${p.code}', '${p.name.replace(/'/g, "\\'")}')" class="p-2 hover:bg-slate-800 cursor-pointer flex justify-between text-xs">
-          <span><b>[${p.code}]</b> ${p.name}</span><span class="text-emerald-400 font-bold">${p.qty} ADT</span>
+      if (matches.length === 0) { 
+        dropdown.innerHTML = `<div class="p-2 text-xs text-slate-400 text-center">Eşleşen parça bulunamadı.</div>`; 
+        dropdown.classList.remove('hidden'); 
+        return; 
+      }
+
+      dropdown.innerHTML = matches.slice(0, 10).map(p => `
+        <div onclick="selectPart('${p.code}', '${p.name.replace(/'/g, "\\'")}', '${p.qty}')" class="p-2 hover:bg-slate-800 cursor-pointer flex justify-between items-center text-xs">
+          <div>
+            <span class="text-[9px] font-mono font-bold bg-darkbg border border-bordercol px-1 rounded text-emerald-400">${p.code}</span>
+            <span class="text-white ml-1">${p.name}</span>
+          </div>
+          <span class="text-[10px] font-bold text-emerald-400">${p.qty} ADT</span>
         </div>
       `).join('');
-      drop.classList.remove('hidden');
+      dropdown.classList.remove('hidden');
     }
 
-    function selectPart(code, name) {
+    function selectPart(code, name, qty) {
       document.getElementById('otk-selected-code').value = code;
+      document.getElementById('otk-selected-name').value = name;
       document.getElementById('otk-part-search').value = `${name} [${code}]`;
+      const badge = document.getElementById('otk-selected-badge');
+      badge.innerText = `✓ Kod: ${code} (Stok: ${qty})`;
+      badge.classList.remove('hidden');
       document.getElementById('otk-clear-btn').classList.remove('hidden');
       document.getElementById('otk-part-dropdown').classList.add('hidden');
     }
 
     function clearPartSelection() {
       document.getElementById('otk-selected-code').value = "";
+      document.getElementById('otk-selected-name').value = "";
       document.getElementById('otk-part-search').value = "";
+      document.getElementById('otk-selected-badge').classList.add('hidden');
       document.getElementById('otk-clear-btn').classList.add('hidden');
       document.getElementById('otk-part-dropdown').classList.add('hidden');
     }
 
     function dispatchOmerToKamil() {
       const firm = document.getElementById('otk-firm-name').value.trim();
-      const partCode = document.getElementById('otk-selected-code').value;
-      if (!firm || !partCode) { alert("Fabrika ve ürün seçilmelidir!"); return; }
+      const contact = document.getElementById('otk-firm-contact').value.trim();
+      const code = document.getElementById('otk-selected-code').value.trim();
+      const name = document.getElementById('otk-selected-name').value.trim();
+      const qty = document.getElementById('otk-qty').value;
+
+      if (!firm || !contact) { alert("Lütfen Firma İsmi ve İlgili Kişi bilgilerini girin!"); return; }
+      if (!code) { alert("Lütfen arama kutusundan bir parça seçin!"); return; }
 
       const payload = {
-        direction: "OMER_TO_KAMIL", request_type: document.getElementById('otk-req-type').value,
-        firm, contact: document.getElementById('otk-firm-contact').value.trim(),
-        part_code: partCode, quantity: document.getElementById('otk-qty').value,
-        priority: document.getElementById('otk-priority').value, notes: document.getElementById('otk-notes').value
+        direction: "OMER_TO_KAMIL",
+        firm: firm,
+        contact: contact,
+        part_code: code,
+        part_name: name,
+        quantity: qty,
+        priority: document.getElementById('otk-priority').value,
+        notes: document.getElementById('otk-notes').value
       };
+
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      alert("Talep iletildi.");
+      alert(`Talep Kamil'e iletildi:\nFirma: ${firm}\nİlgili Kişi: ${contact}\nParça: [${code}] ${name}\nAdet: ${qty}`);
     }
 
     function dispatchKamilToOmer() {
       const firm = document.getElementById('kto-firm-name').value.trim();
+      const contact = document.getElementById('kto-firm-contact').value.trim();
       const taskType = document.getElementById('kto-task-type').value.trim();
-      if (!firm || !taskType) { alert("Tesis ve görev tipi zorunludur!"); return; }
+
+      if (!firm || !taskType) { alert("Lütfen Firma İsmi ve Görev Başlığını yazın!"); return; }
 
       const payload = {
-        direction: "KAMIL_TO_OMER", firm, contact: document.getElementById('kto-firm-contact').value.trim(),
-        task_type: taskType, instructions: document.getElementById('kto-instructions').value
+        direction: "KAMIL_TO_OMER",
+        firm: firm,
+        contact: contact || "Belirtilmedi",
+        task_type: taskType,
+        instructions: document.getElementById('kto-instructions').value
       };
+
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      alert("Görev iletildi.");
+      alert(`İş Sahaya Gönderildi (Ömer'e iletildi):\nFirma: ${firm}\nGörev: ${taskType}`);
     }
 
-    function setDatePreset(type) {
-      const s = document.getElementById('z-start-date');
-      const e = document.getElementById('z-end-date');
-      const now = new Date();
-      const iso = d => d.toISOString().split('T')[0];
-
-      if (type === 'week') {
-        const d = new Date(); d.setDate(now.getDate() - 7);
-        s.value = iso(d); e.value = iso(now);
-      } else if (type === 'month') {
-        s.value = iso(new Date(now.getFullYear(), now.getMonth(), 1)); e.value = iso(now);
-      } else {
-        s.value = ""; e.value = "";
-      }
-      renderZReport();
-    }
-
-    function getFilteredZSales() {
-      const app = sales.filter(s => s.status === 'APPROVED');
-      const sVal = document.getElementById('z-start-date').value;
-      const eVal = document.getElementById('z-end-date').value;
-      if (!sVal && !eVal) return app;
-      return app.filter(s => {
-        const d = s.timestamp ? s.timestamp.split('T')[0] : "";
-        return (!sVal || d >= sVal) && (!eVal || d <= eVal);
-      });
-    }
-
+    /* ---------------- Z-RAPORU & GEÇMİŞ (TAB 3) ---------------- */
     function renderZReport() {
-      const list = getFilteredZSales();
-      let total = 0;
+      const startVal = document.getElementById('z-start-date').value;
+      const endVal = document.getElementById('z-end-date').value;
+
+      let filtered = sales.filter(s => s.status === 'APPROVED');
+      if (startVal || endVal) {
+        filtered = filtered.filter(s => {
+          const sDate = s.timestamp ? s.timestamp.split('T')[0] : "";
+          if (startVal && sDate < startVal) return false;
+          if (endVal && sDate > endVal) return false;
+          return true;
+        });
+      }
+
+      let totalQty = 0;
       const plants = new Set();
-      list.forEach(s => {
+      filtered.forEach(s => {
         plants.add(s.firm);
-        s.items.forEach(i => total += parseInt(i.qty || 1));
+        s.items.forEach(i => totalQty += parseInt(i.qty || 1));
       });
 
-      document.getElementById('z-total-qty').innerText = `${total} ADT`;
+      document.getElementById('z-total-qty').innerText = `${totalQty} ADT`;
       document.getElementById('z-total-plants').innerText = `${plants.size} Tesis`;
 
-      const box = document.getElementById('z-sales-list');
-      if (!list.length) {
-        box.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 bg-darkbg rounded-xl">Kayıtlı satış bulunamadı.</p>`;
+      const listContainer = document.getElementById('z-sales-list');
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 bg-darkbg rounded-xl">Kayıtlı satış/çıkış bulunamadı.</p>`;
         return;
       }
-      box.innerHTML = list.map(s => `
-        <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl text-xs flex justify-between items-center">
-          <div>
+
+      listContainer.innerHTML = filtered.map(s => `
+        <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl text-xs space-y-1">
+          <div class="flex justify-between items-center">
             <span class="font-bold text-white">${s.firm}</span>
-            <span class="text-[10px] text-slate-400 font-mono block">${s.items.map(i => `${i.code} (${i.qty} Adet)`).join(', ')}</span>
+            <span class="text-[10px] text-slate-500">${s.date}</span>
           </div>
-          <span class="text-[10px] text-slate-500">${s.date.split(' ')[0]}</span>
+          <p class="text-[10px] text-slate-400">İlgili Kişi: <span class="text-slate-300 font-medium">${s.contact || 'Belirtilmedi'}</span></p>
+          <div class="border-t border-bordercol/30 pt-1">
+            ${s.items.map(i => `<span class="text-[11px] text-emerald-400 font-mono">[${i.code}]</span> <span class="text-slate-200">${i.name}</span> (<b>${i.qty} Adet</b>)`).join('<br>')}
+          </div>
         </div>
       `).join('');
     }
 
     function exportZReportCSV() {
-      const list = getFilteredZSales();
-      if (!list.length) { alert("Kayıt yok."); return; }
-      let csv = "\uFEFFSıra;Tarih;Ref No;Müşteri / Fabrika;Ürün Kodu;Ürün Adı;Adet;Durum\n";
+      const filtered = sales.filter(s => s.status === 'APPROVED');
+      if (filtered.length === 0) { alert("İndirilecek kayıt bulunamadı!"); return; }
+      
+      let csv = "\uFEFFSıra;Tarih;Firma İsmi;İlgili Kişi;Ürün Kodu;Ürün İsmi;Adet;Durum\n";
       let cnt = 1;
-      list.forEach(s => s.items.forEach(i => {
-        csv += `${cnt};${s.date};${s.ref_no || 'YOK'};${s.firm};${i.code};${i.name};${i.qty};ONAYLANDI\n`;
-        cnt++;
-      }));
+      filtered.forEach(s => {
+        s.items.forEach(i => {
+          csv += `${cnt};${s.date};"${s.firm}";"${s.contact || ''}";"${i.code}";"${i.name}";${i.qty};ONAYLANDI\n`;
+          cnt++;
+        });
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
-      a.download = `Elips_Eliar_${new Date().toISOString().slice(0,10)}.csv`;
+      a.href = url;
+      a.download = `Eliar_RD96_Z_Raporu_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
     }
 
     function exportZReportPDF() {
-      const list = getFilteredZSales();
-      if (!list.length) { alert("Kayıt yok."); return; }
-      let total = 0, cnt = 1;
-      let html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapor</title><style>
-        body { font-family: sans-serif; padding: 20px; font-size: 11px; }
-        h2 { text-align: center; margin: 0; font-size: 16px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #CBD5E1; padding: 6px; }
-        th { background: #161F30; color: white; text-align: center; }
-        .center { text-align: center; }
-        .total { background: #E2E8F0; font-weight: bold; }
-      </style></head><body>
-      <h2>ELİPS TEKSTİL ELİAR PARÇA SATIŞ RAPORU</h2>
-      <table><thead><tr><th>Sıra</th><th>Tarih</th><th>Ref No</th><th>Müşteri</th><th>Kod</th><th>Ürün Adı</th><th>Adet</th></tr></thead><tbody>`;
-
-      list.forEach(s => s.items.forEach(i => {
-        const q = parseInt(i.qty || 1);
-        total += q;
-        html += `<tr><td class="center">${cnt++}</td><td class="center">${s.date.split(' ')[0]}</td><td class="center">${s.ref_no || 'YOK'}</td><td><b>${s.firm}</b></td><td>${i.code}</td><td>${i.name}</td><td class="center font-bold">${q}</td></tr>`;
-      }));
-
-      html += `<tr class="total"><td colspan="6" style="text-align:right;">GENEL TOPLAM:</td><td class="center">${total} ADT</td></tr></tbody></table></body></html>`;
-
-      const w = window.open('', '', 'width=900,height=700');
-      w.document.write(html);
-      w.document.close();
-      w.focus();
-      setTimeout(() => { w.print(); w.close(); }, 350);
+      window.print();
     }
-
-    function exportZReportBoth() { exportZReportCSV(); setTimeout(exportZReportPDF, 400); }
 
     function queryFacilityHistoryLive() {
       const q = document.getElementById('facility-search-input').value.trim().toLowerCase();
-      const box = document.getElementById('facility-history-results');
-      if (!q) { box.innerHTML = `<p class="text-slate-500 text-center py-2 text-[11px]">Fabrika adı giriniz.</p>`; return; }
+      const container = document.getElementById('facility-history-results');
+      if (!q) {
+        container.innerHTML = `<p class="text-slate-500 text-center py-2 text-[11px]">Geçmişini görmek istediğiniz fabrika adını yazın.</p>`;
+        return;
+      }
       const matched = sales.filter(s => s.status === 'APPROVED' && s.firm.toLowerCase().includes(q));
-      if (!matched.length) { box.innerHTML = `<p class="text-slate-400 text-center py-2 text-[11px]">Kayıt bulunamadı.</p>`; return; }
-      box.innerHTML = matched.map(s => `
+      if (matched.length === 0) {
+        container.innerHTML = `<p class="text-slate-400 text-center py-2 text-[11px]">Kayıtlı parça geçmişi bulunamadı.</p>`;
+        return;
+      }
+
+      container.innerHTML = matched.map(s => `
         <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl space-y-1">
-          <div class="flex justify-between text-[11px]"><span class="font-bold text-white">${s.firm}</span><span class="text-slate-500">${s.date}</span></div>
-          <div class="border-t border-bordercol/40 pt-1">${s.items.map(i => `<p class="text-slate-300">• <span class="font-mono text-emerald-400">${i.code}</span> — ${i.name} (<b>${i.qty} Adet</b>)</p>`).join('')}</div>
+          <div class="flex justify-between text-[11px]">
+            <span class="font-bold text-white">${s.firm}</span>
+            <span class="text-slate-500">${s.date}</span>
+          </div>
+          <p class="text-[10px] text-slate-400">İlgili Kişi: ${s.contact || 'Belirtilmedi'}</p>
+          <div class="border-t border-bordercol/40 pt-1">
+            ${s.items.map(i => `<p class="text-[11px] text-slate-300">• <span class="font-mono text-emerald-400">${i.code}</span> — ${i.name} (<b>${i.qty} Adet</b>)</p>`).join('')}
+          </div>
         </div>
       `).join('');
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       setLanguage(currentLang);
-      setDatePreset('week');
-      switchTab('stock');
+      renderStockTable();
     });
   </script>
 </body>
