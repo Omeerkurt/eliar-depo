@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Eliar Depo - Parça & İş Paylaşımı</title>
+  <title>Eliar Depo</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -22,490 +21,256 @@
     }
   </script>
   <style>
-    body { -webkit-tap-highlight-color: transparent; user-select: none; }
-    input, textarea, select { user-select: auto; }
+    body { -webkit-tap-highlight-color: transparent; }
+    input, textarea, select { user-select: auto !important; pointer-events: auto !important; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
 
-  <!-- ==================== HEADER ==================== -->
+  <!-- HEADER -->
   <header class="sticky top-0 z-40 bg-cardbg/95 backdrop-blur border-b border-bordercol px-4 py-3 flex items-center justify-between shadow-lg">
     <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-md shadow-brand-500/20">
-        <i class="fa-solid fa-boxes-stacked text-white text-base"></i>
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-md shadow-amber-500/20">
+        <i class="fa-solid fa-bolt text-white text-lg"></i>
       </div>
       <div>
         <h1 class="text-base font-bold tracking-wide text-white leading-tight">ELIAR DEPO</h1>
-        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ELİPS TEKSTİL İŞ PAYLAŞIMI</p>
+        <p class="text-[10px] text-amber-400 font-mono tracking-wider font-semibold">Eliar Elips İş Paylaşımı</p>
       </div>
     </div>
-
-    <!-- Dil Değiştirici -->
     <div class="flex items-center bg-darkbg border border-bordercol rounded-xl p-1 shadow-inner">
       <button id="lang-tr" onclick="setLanguage('tr')" class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all">TR</button>
       <button id="lang-uz" onclick="setLanguage('uz')" class="px-2.5 py-1 text-xs font-bold rounded-lg transition-all">UZ</button>
     </div>
   </header>
 
-  <!-- ==================== ANA ALAN ==================== -->
+  <!-- ANA ALAN -->
   <main class="p-3.5 max-w-2xl mx-auto space-y-4">
-
-    <!-- 3'LÜ ANA MENÜ -->
     <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
       <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
-        <i class="fa-solid fa-boxes-stacked text-sm"></i>
-        <span data-i18n="nav_stock">Stok</span>
+        <i class="fa-solid fa-boxes-stacked text-sm"></i><span data-i18n="nav_stock">Stok</span>
       </button>
       <button onclick="switchTab('workflow')" id="tab-btn-workflow" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
-        <i class="fa-solid fa-share-nodes text-sm"></i>
-        <span data-i18n="nav_workflow">İş Akışı</span>
+        <i class="fa-solid fa-share-nodes text-sm"></i><span data-i18n="nav_workflow">İş Akışı</span>
       </button>
       <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn py-3 rounded-xl transition-all flex flex-col items-center justify-center space-y-1 text-slate-400">
-        <i class="fa-solid fa-chart-line text-sm"></i>
-        <span data-i18n="nav_reports">Rapor / Tesis</span>
+        <i class="fa-solid fa-chart-line text-sm"></i><span data-i18n="nav_reports">Rapor / Tesis</span>
       </button>
     </div>
 
-    <!-- ==================== 1. TAB: KATEGORİZE STOK ==================== -->
+    <!-- TAB 1: STOK -->
     <section id="tab-stock" class="tab-content space-y-3">
       <div class="flex space-x-2">
         <div class="relative flex-1">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
           <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Ürün kodu veya isimle ara..." 
-            class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-brand-500 text-white placeholder-slate-500 shadow-inner">
+            class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
         </div>
         <button onclick="openStockModal()" class="px-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1 text-xs shadow-md">
-          <i class="fa-solid fa-plus"></i>
-          <span data-i18n="btn_add_part">Yeni</span>
+          <i class="fa-solid fa-plus"></i><span data-i18n="btn_add_part">Yeni</span>
         </button>
       </div>
 
-      <!-- Kategori Filtre Butonları -->
       <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
         <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white shadow-sm whitespace-nowrap" data-i18n="cat_all">Tümü</button>
-        <button onclick="filterCategory('KONTROL')" id="pill-KONTROL" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap" data-i18n="cat_control">Kontrolörler</button>
-        <button onclick="filterCategory('ELEKTRONIK')" id="pill-ELEKTRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap" data-i18n="cat_electronic">Elektronik</button>
-        <button onclick="filterCategory('MEKATRONIK')" id="pill-MEKATRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap" data-i18n="cat_mechatronic">Mekatronik</button>
+        <button onclick="filterCategory('MEKATRONIK')" id="pill-MEKATRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap" data-i18n="cat_mechatronic">1. Mekatronik</button>
+        <button onclick="filterCategory('ELEKTRONIK')" id="pill-ELEKTRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap" data-i18n="cat_electronic">2. Elektronik</button>
+        <button onclick="filterCategory('KONTROL')" id="pill-KONTROL" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap" data-i18n="cat_control">3. Kontrolörler</button>
       </div>
-
       <div id="stock-list" class="space-y-2"></div>
     </section>
 
-    <!-- ==================== 2. TAB: İŞ PAYLAŞIMI ==================== -->
+    <!-- TAB 2: İŞ AKIŞI -->
     <section id="tab-workflow" class="tab-content hidden space-y-3">
       <div class="grid grid-cols-2 p-1 bg-darkbg border border-bordercol rounded-2xl gap-1">
-        <button onclick="setWorkflowDirection('OMER_TO_KAMIL')" id="btn-flow-otk" 
-          class="py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md">
-          <i class="fa-solid fa-user-gear"></i>
-          <span data-i18n="btn_tab_request">Sahadan Talep</span>
+        <button onclick="setWorkflowDirection('OMER_TO_KAMIL')" id="btn-flow-otk" class="py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md">
+          <i class="fa-solid fa-user-gear"></i><span data-i18n="btn_tab_request">Sahadan Talep</span>
         </button>
-        <button onclick="setWorkflowDirection('KAMIL_TO_OMER')" id="btn-flow-kto" 
-          class="py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white">
-          <i class="fa-solid fa-paper-plane"></i>
-          <span data-i18n="btn_tab_dispatch">Sahaya İş Gönder</span>
+        <button onclick="setWorkflowDirection('KAMIL_TO_OMER')" id="btn-flow-kto" class="py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white">
+          <i class="fa-solid fa-paper-plane"></i><span data-i18n="btn_tab_dispatch">Sahaya İş Gönder</span>
         </button>
       </div>
 
-      <!-- FORM A: ÖMER ➔ KAMİL -->
+      <!-- FORM ÖMER -> KAMİL -->
       <div id="form-omer-to-kamil" class="bg-cardbg border border-bordercol rounded-2xl p-4 shadow-xl space-y-3">
         <div class="border-b border-bordercol pb-2">
           <h2 class="text-sm font-bold text-white flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-            <span data-i18n="title_otk">Sahadan Talep (Ömer ➔ Kamil)</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span><span data-i18n="title_otk">Sahadan Talep (Ömer ➔ Kamil)</span>
           </h2>
         </div>
-
         <div>
-          <label class="text-xs text-slate-400 font-semibold flex items-center">
-            <span data-i18n="lbl_request_type">Talep Türü</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
+          <label class="text-xs text-slate-400 font-semibold flex items-center"><span data-i18n="lbl_request_type">Talep Türü</span> *</label>
           <select id="otk-req-type" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-            <option value="PARCA" data-i18n="opt_part_req">📦 Parça Talebi</option>
-            <option value="SERVIS" data-i18n="opt_serv_req">🛠️ Servis Talebi</option>
-            <option value="SERVIS_PARCA" data-i18n="opt_both_req">⚡ Servis + Parça Talebi</option>
+            <option value="PARCA">📦 Parça Talebi</option>
+            <option value="SERVIS">🛠️ Servis Talebi</option>
+            <option value="SERVIS_PARCA">⚡ Servis + Parça Talebi</option>
           </select>
         </div>
-
         <div class="space-y-2">
-          <div>
-            <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span data-i18n="lbl_firm_name">Müşteri / Fabrika Adı</span> <span class="text-rose-400 ml-1">*</span>
-            </label>
-            <input type="text" id="otk-firm-name" placeholder="Fabrika Adı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-          </div>
-          <div>
-            <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span data-i18n="lbl_firm_contact">Yetkili Kişi & Telefon</span>
-            </label>
-            <input type="text" id="otk-firm-contact" placeholder="İsim ve Numara" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-          </div>
+          <input type="text" id="otk-firm-name" placeholder="Fabrika / Müşteri Adı *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+          <input type="text" id="otk-firm-contact" placeholder="Yetkili Kişi & Telefon" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
         </div>
-
-        <!-- Akıllı Ürün Arama -->
         <div class="relative">
-          <label class="text-xs text-slate-400 font-semibold flex items-center justify-between">
-            <span class="flex items-center"><span data-i18n="lbl_search_part">İstenen Ürün / Parça</span> <span class="text-rose-400 ml-1">*</span></span>
-            <span id="otk-selected-badge" class="text-[10px] text-emerald-400 font-mono font-bold hidden"></span>
-          </label>
           <div class="relative mt-1">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-            <input type="text" id="otk-part-search" oninput="searchPartsLive(this.value)" onfocus="searchPartsLive(this.value)" placeholder="Ürün adı veya kodu yazın..." autocomplete="off" class="w-full bg-darkbg border border-bordercol rounded-xl pl-8 pr-8 py-2 text-xs text-white focus:outline-none">
+            <input type="text" id="otk-part-search" oninput="searchPartsLive(this.value)" placeholder="Ürün adı veya kodu yazın... *" class="w-full bg-darkbg border border-bordercol rounded-xl pl-8 pr-8 py-2 text-xs text-white focus:outline-none">
             <button type="button" onclick="clearPartSelection()" id="otk-clear-btn" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-white text-xs">✕</button>
           </div>
           <div id="otk-part-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-52 overflow-y-auto hidden divide-y divide-bordercol/50"></div>
           <input type="hidden" id="otk-selected-code" value="">
         </div>
-
         <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span data-i18n="lbl_quantity">Miktar</span> <span class="text-rose-400 ml-1">*</span>
-            </label>
-            <input type="number" id="otk-qty" value="1" min="1" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-          </div>
-          <div>
-            <label class="text-xs text-slate-400 font-semibold">Durum</label>
-            <select id="otk-priority" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-              <option value="NORMAL" data-i18n="prio_normal">Normal Servis</option>
-              <option value="KRITIK" class="text-rose-400" data-i18n="prio_critical">Acil (Hat Duruşu!)</option>
-            </select>
-          </div>
+          <input type="number" id="otk-qty" value="1" min="1" placeholder="Adet" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+          <select id="otk-priority" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+            <option value="NORMAL">Normal Servis</option>
+            <option value="KRITIK" class="text-rose-400">Acil (Hat Duruşu!)</option>
+          </select>
         </div>
-
-        <div>
-          <label class="text-xs text-slate-400 font-semibold">Ömer'in Notu</label>
-          <textarea id="otk-notes" rows="2" placeholder="Açıklama..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
-        </div>
-
-        <button onclick="dispatchOmerToKamil()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg shadow-emerald-900/30">
-          <i class="fa-brands fa-telegram text-sm"></i>
-          <span data-i18n="btn_send_kamil">Kamil'e Gönder & Onay İste</span>
+        <textarea id="otk-notes" rows="2" placeholder="Ömer'in Notu..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
+        <button onclick="dispatchOmerToKamil()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg">
+          <i class="fa-brands fa-telegram text-sm"></i><span data-i18n="btn_send_kamil">Kamil'e Gönder & Onay İste</span>
         </button>
       </div>
 
-      <!-- FORM B: KAMİL ➔ ÖMER -->
+      <!-- FORM KAMİL -> ÖMER -->
       <div id="form-kamil-to-omer" class="bg-cardbg border border-bordercol rounded-2xl p-4 shadow-xl space-y-3 hidden">
         <div class="border-b border-bordercol pb-2">
           <h2 class="text-sm font-bold text-white flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
-            <span data-i18n="title_kto">Sahaya İş Gönder (Kamil ➔ Ömer)</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span><span data-i18n="title_kto">Sahaya İş Gönder (Kamil ➔ Ömer)</span>
           </h2>
         </div>
-
         <div class="space-y-2">
-          <div>
-            <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span data-i18n="lbl_firm_name">Gidilecek Müşteri / Tesis</span> <span class="text-rose-400 ml-1">*</span>
-            </label>
-            <input type="text" id="kto-firm-name" placeholder="Tesis Adı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-          </div>
-          <div>
-            <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span data-i18n="lbl_firm_contact">Tesis Sorumlusu & Telefon</span>
-            </label>
-            <input type="text" id="kto-firm-contact" placeholder="İsim ve Numara" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-          </div>
+          <input type="text" id="kto-firm-name" placeholder="Gidilecek Müşteri / Tesis *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+          <input type="text" id="kto-firm-contact" placeholder="Tesis Sorumlusu & Telefon" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
         </div>
-
-        <div>
-          <label class="text-xs text-slate-400 font-semibold flex items-center">
-            <span data-i18n="lbl_task_free">Görev Tipi / Başlığı</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
-          <input type="text" id="kto-task-type" placeholder="Arıza / Görev Detayı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-        </div>
-
-        <div>
-          <label class="text-xs text-slate-400 font-semibold">Talimatlar</label>
-          <textarea id="kto-instructions" rows="2" placeholder="Kamil'in talimatı..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
-        </div>
-
-        <button onclick="dispatchKamilToOmer()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg shadow-cyan-900/30">
-          <i class="fa-solid fa-paper-plane text-sm"></i>
-          <span data-i18n="btn_send_omer">Sahaya İş Gönder (Ömer'e Fırlat)</span>
+        <input type="text" id="kto-task-type" placeholder="Görev Tipi / Başlığı *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+        <textarea id="kto-instructions" rows="2" placeholder="Kamil'in Talimatları..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
+        <button onclick="dispatchKamilToOmer()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg">
+          <i class="fa-solid fa-paper-plane text-sm"></i><span data-i18n="btn_send_omer">Sahaya İş Gönder (Ömer'e)</span>
         </button>
       </div>
     </section>
 
-    <!-- ==================== 3. TAB: Z-RAPORU & TESİS GEÇMİŞİ ==================== -->
+    <!-- TAB 3: RAPORLAR -->
     <section id="tab-reports" class="tab-content hidden space-y-3">
-      
-      <!-- Canlı Z-Raporu Kartı (Tarih Seçicili + Excel / PDF / İkisi Formatı) -->
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
         <div class="flex justify-between items-center border-b border-bordercol pb-2">
           <div>
-            <h3 class="text-sm font-bold text-white flex items-center space-x-1.5">
-              <i class="fa-solid fa-chart-pie text-emerald-400"></i>
-              <span>Satış Z-Raporu</span>
-            </h3>
-            <p class="text-[10px] text-slate-400 mt-0.5">Tarih Aralığı Filtreli Döküm</p>
+            <h3 class="text-sm font-bold text-white flex items-center space-x-1.5"><i class="fa-solid fa-chart-pie text-emerald-400"></i><span>Satış Z-Raporu</span></h3>
+            <p class="text-[10px] text-slate-400">ELİPS TEKSTİL ELİAR SATIŞ DÖKÜMÜ</p>
           </div>
-          
-          <!-- EXCEL / PDF / İKİSİ İNDİRME BUTONLARI -->
           <div class="flex items-center space-x-1.5">
-            <button onclick="exportZReportCSV()" title="Excel / CSV İndir" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1 shadow-md">
-              <i class="fa-solid fa-file-excel"></i>
-              <span>Excel</span>
-            </button>
-            <button onclick="exportZReportPDF()" title="PDF Yazdır / Kaydet" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1 shadow-md">
-              <i class="fa-solid fa-file-pdf"></i>
-              <span>PDF</span>
-            </button>
-            <button onclick="exportZReportBoth()" title="Hem Excel Hem PDF Al" class="px-2.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1 shadow-md">
-              <i class="fa-solid fa-download"></i>
-              <span>İkisi</span>
-            </button>
+            <button onclick="exportZReportCSV()" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1"><i class="fa-solid fa-file-excel"></i><span>Excel</span></button>
+            <button onclick="exportZReportPDF()" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1"><i class="fa-solid fa-file-pdf"></i><span>PDF</span></button>
+            <button onclick="exportZReportBoth()" class="px-2.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1"><i class="fa-solid fa-download"></i><span>İkisi</span></button>
           </div>
         </div>
 
-        <!-- TARİH SEÇİCİ BÖLÜMÜ -->
         <div class="space-y-2 bg-darkbg p-2.5 rounded-xl border border-bordercol">
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <label class="text-slate-400 text-[10px] font-semibold block mb-1">Başlangıç Tarihi</label>
-              <input type="date" id="z-start-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
-            </div>
-            <div>
-              <label class="text-slate-400 text-[10px] font-semibold block mb-1">Bitiş Tarihi</label>
-              <input type="date" id="z-end-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
-            </div>
+            <input type="date" id="z-start-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
+            <input type="date" id="z-end-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
           </div>
           <div class="flex space-x-1.5 text-[10px]">
-            <button onclick="setDatePreset('week')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Hafta</button>
-            <button onclick="setDatePreset('month')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Ay</button>
-            <button onclick="setDatePreset('all')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Tüm Zamanlar</button>
+            <button onclick="setDatePreset('week')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300">Bu Hafta</button>
+            <button onclick="setDatePreset('month')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300">Bu Ay</button>
+            <button onclick="setDatePreset('all')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300">Tümü</button>
           </div>
         </div>
 
-        <!-- İstatistik Kutuları -->
         <div class="grid grid-cols-2 gap-2 text-center">
           <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl">
-            <span class="text-[10px] text-slate-400 block font-medium">Seçili Dönem Satılan Parça</span>
+            <span class="text-[10px] text-slate-400 block">Toplam Parça</span>
             <span id="z-total-qty" class="text-base font-black text-emerald-400">0 ADT</span>
           </div>
           <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl">
-            <span class="text-[10px] text-slate-400 block font-medium">Hizmet Verilen Tesis</span>
+            <span class="text-[10px] text-slate-400 block">Tesis Sayısı</span>
             <span id="z-total-plants" class="text-base font-black text-cyan-400">0 Tesis</span>
           </div>
         </div>
-
         <div class="space-y-1.5 max-h-56 overflow-y-auto no-scrollbar" id="z-sales-list"></div>
       </div>
 
-      <!-- Tesis Parça Geçmişi Sorgulama -->
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
-        <div class="border-b border-bordercol pb-2">
-          <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
-            <i class="fa-solid fa-industry text-cyan-400"></i>
-            <span>Tesis Parça Geçmişi ("Bu Müşteriye Ne Verdik?")</span>
-          </h3>
-        </div>
-
-        <div class="flex space-x-2">
-          <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Fabrika Adı Yazın (TERRY JAR, MICBRO)..." class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
-        </div>
-
+        <h3 class="text-xs font-bold text-white flex items-center space-x-1.5"><i class="fa-solid fa-industry text-cyan-400"></i><span>Tesis Parça Geçmişi</span></h3>
+        <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Fabrika Adı Yazın..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
         <div id="facility-history-results" class="space-y-1.5 max-h-60 overflow-y-auto text-xs">
-          <p class="text-slate-500 text-center py-2 text-[11px]">Geçmişini görmek istediğiniz fabrika adını yazın.</p>
+          <p class="text-slate-500 text-center py-2 text-[11px]">Geçmişini aradığınız fabrikayı yazın.</p>
         </div>
       </div>
-
     </section>
-
   </main>
 
-  <!-- ==================== MODAL: HIZLI STOK ÇIKIŞI ==================== -->
-  <div id="modal-deduct" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-4 shadow-2xl">
+  <!-- MODAL: STOK DÜŞ / SATIŞ -->
+  <div id="modal-deduct" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-4 shadow-2xl relative z-[10000]">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
         <div>
           <h3 class="font-bold text-white text-sm">Stok Çıkışı / Satış</h3>
-          <p id="deduct-part-header" class="text-[11px] text-emerald-400 font-mono font-semibold mt-0.5"></p>
+          <p id="deduct-part-header" class="text-[11px] text-emerald-400 font-mono mt-0.5"></p>
         </div>
-        <button onclick="closeDeductModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
+        <button type="button" onclick="closeDeductModal()" class="w-8 h-8 text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
-
       <div>
-        <div class="flex justify-between items-center text-xs">
-          <label class="text-slate-400 font-semibold flex items-center">
-            <span>Düşülecek Miktar</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
-          <span id="deduct-current-stock" class="text-slate-400 font-mono"></span>
-        </div>
+        <div class="flex justify-between text-xs text-slate-400"><span>Adet *</span><span id="deduct-current-stock"></span></div>
         <div class="flex items-center space-x-2 mt-1.5">
-          <input type="number" id="deduct-qty" value="1" min="1" class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-bold text-center text-base focus:border-brand-500">
-          <div class="flex space-x-1">
-            <button onclick="setDeductQty(1)" class="px-2.5 py-2 bg-darkbg border border-bordercol hover:bg-slate-800 text-xs font-bold rounded-xl text-slate-300">+1</button>
-            <button onclick="setDeductQty(2)" class="px-2.5 py-2 bg-darkbg border border-bordercol hover:bg-slate-800 text-xs font-bold rounded-xl text-slate-300">+2</button>
-            <button onclick="setDeductQty(5)" class="px-2.5 py-2 bg-darkbg border border-bordercol hover:bg-slate-800 text-xs font-bold rounded-xl text-slate-300">+5</button>
-          </div>
+          <input type="number" id="deduct-qty" value="1" min="1" class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-bold text-center">
+          <button type="button" onclick="setDeductQty(1)" class="px-2.5 py-2 bg-darkbg border border-bordercol text-xs rounded-xl">+1</button>
+          <button type="button" onclick="setDeductQty(2)" class="px-2.5 py-2 bg-darkbg border border-bordercol text-xs rounded-xl">+2</button>
+          <button type="button" onclick="setDeductQty(5)" class="px-2.5 py-2 bg-darkbg border border-bordercol text-xs rounded-xl">+5</button>
         </div>
       </div>
-
       <div>
-        <label class="text-xs text-slate-400 font-semibold flex items-center">
-          <span>Satılan Tesis / Müşteri</span> <span class="text-rose-400 ml-1">*</span>
-        </label>
-        <input type="text" id="deduct-destination" placeholder="Tesis Adı" class="w-full mt-1.5 bg-darkbg border border-bordercol rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+        <label class="text-xs text-slate-400">Satılan Müşteri / Tesis *</label>
+        <input type="text" id="deduct-destination" placeholder="Örn: TERRY JAR" class="w-full mt-1.5 bg-darkbg border border-bordercol rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
       </div>
-
       <input type="hidden" id="deduct-part-id" value="">
-
-      <button onclick="confirmStockDeduction()" class="w-full bg-rose-600 hover:bg-rose-500 py-3 rounded-xl font-bold text-white text-xs shadow-lg shadow-rose-900/30 flex items-center justify-center space-x-2">
-        <i class="fa-solid fa-arrow-down-from-bracket"></i>
-        <span>Stoktan Düş & Bildir</span>
-      </button>
+      <button type="button" onclick="confirmStockDeduction()" class="w-full bg-rose-600 hover:bg-rose-500 py-3 rounded-xl font-bold text-white text-xs">Stoktan Düş & Bildir</button>
     </div>
   </div>
 
-  <!-- ==================== MODAL: YENİ PARÇA EKLE ==================== -->
-  <div id="modal-stock" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
+  <!-- MODAL: YENİ PARÇA -->
+  <div id="modal-stock" class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3 relative z-[10000]">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
-        <h3 class="font-bold text-white text-sm">Yeni Endüstriyel Parça</h3>
-        <button onclick="closeStockModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
+        <h3 class="font-bold text-white text-sm">Yeni Parça Ekle</h3>
+        <button type="button" onclick="closeStockModal()" class="w-8 h-8 text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
-      
       <div class="grid grid-cols-2 gap-2 text-xs">
-        <div>
-          <label class="text-slate-400 font-medium flex items-center">
-            <span>Ürün Kodu</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
-          <input type="text" id="m-code" placeholder="EL-PLC-T390" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono focus:border-brand-500">
-        </div>
-        <div>
-          <label class="text-slate-400 font-medium flex items-center">
-            <span>Kategori</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
-          <select id="m-cat" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-2 py-2 text-white">
-            <option value="KONTROL">Kontrolörler</option>
-            <option value="ELEKTRONIK">Elektronik</option>
-            <option value="MEKATRONIK">Mekatronik</option>
-          </select>
-        </div>
+        <input type="text" id="m-code" placeholder="Ürün Kodu *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono">
+        <select id="m-cat" class="w-full bg-darkbg border border-bordercol rounded-xl px-2 py-2 text-white">
+          <option value="MEKATRONIK">1. Mekatronik</option>
+          <option value="ELEKTRONIK">2. Elektronik</option>
+          <option value="KONTROL">3. Kontrolörler</option>
+        </select>
       </div>
-
-      <div class="text-xs">
-        <label class="text-slate-400 font-medium flex items-center">
-          <span>Parça İsmi</span> <span class="text-rose-400 ml-1">*</span>
-        </label>
-        <input type="text" id="m-name" placeholder="Eliar T800 Boya Kontrolörü" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white focus:border-brand-500">
-      </div>
-      
+      <input type="text" id="m-name" placeholder="Parça Tanımı *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
       <div class="grid grid-cols-2 gap-2 text-xs">
-        <div>
-          <label class="text-slate-400 font-medium flex items-center">
-            <span>Miktar</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
-          <input type="number" id="m-qty" value="1" min="0" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
-        </div>
-        <div>
-          <label class="text-slate-400 font-medium flex items-center">
-            <span>Konum / Raf</span> <span class="text-rose-400 ml-1">*</span>
-          </label>
-          <input type="text" id="m-loc" placeholder="ÖMER-ARAÇ-RAF1" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white focus:border-brand-500">
-        </div>
+        <input type="number" id="m-qty" value="1" min="0" placeholder="Miktar *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+        <input type="text" id="m-loc" placeholder="Konum / Raf *" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
       </div>
-
-      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Stoka Kaydet & Bildir</button>
+      <button type="button" onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs">Stoka Kaydet</button>
     </div>
   </div>
 
-  <!-- ==================== UYGULAMA MOTORU ==================== -->
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.expand();
-      tg.ready();
-      tg.setHeaderColor('#161F30');
-      tg.setBackgroundColor('#0B0F19');
-    }
+    if (tg) { tg.expand(); tg.ready(); tg.setHeaderColor('#161F30'); tg.setBackgroundColor('#0B0F19'); }
 
     const I18N = {
-      tr: {
-        nav_stock: "Stok", nav_workflow: "İş Akışı", nav_reports: "Rapor/Tesis",
-        cat_all: "Tümü", cat_control: "Kontrolörler", cat_electronic: "Elektronik", cat_mechatronic: "Mekatronik",
-        btn_tab_request: "Sahadan Talep", btn_tab_dispatch: "Sahaya İş Gönder",
-        title_otk: "Sahadan Talep (Ömer ➔ Kamil)",
-        title_kto: "Sahaya İş Gönder (Kamil ➔ Ömer)",
-        lbl_request_type: "Talep Türü",
-        opt_part_req: "📦 Parça Talebi", opt_serv_req: "🛠️ Servis Talebi", opt_both_req: "⚡ Servis + Parça Talebi",
-        lbl_firm_name: "Müşteri / Fabrika Adı",
-        lbl_firm_contact: "Yetkili Kişi & Telefon",
-        lbl_search_part: "İstenen Ürün / Parça",
-        lbl_quantity: "Miktar",
-        prio_normal: "Normal Servis",
-        prio_critical: "Acil (Hat Duruşu!)",
-        btn_send_kamil: "Kamil'e Gönder & Onay İste",
-        lbl_task_free: "Görev Tipi / Başlığı",
-        btn_send_omer: "Sahaya İş Gönder (Ömer'e Fırlat)",
-        btn_add_part: "Yeni Parça",
-        shelf: "Konum"
-      },
-      uz: {
-        nav_stock: "Ombor", nav_workflow: "Ish Oqimi", nav_reports: "Hisobot/Tesis",
-        cat_all: "Hammasi", cat_control: "Kontrollerlar", cat_electronic: "Elektronika", cat_mechatronic: "Mexatronika",
-        btn_tab_request: "Maydondan So'rov", btn_tab_dispatch: "Maydonga Ish",
-        title_otk: "Maydondan So'rov (O'mar ➔ Komil)",
-        title_kto: "Maydonga Ish Yuborish (Komil ➔ O'mar)",
-        lbl_request_type: "So'rov Turi",
-        opt_part_req: "📦 Qism So'rovi", opt_serv_req: "🛠️ Servis Xizmati", opt_both_req: "⚡ Servis + Qism",
-        lbl_firm_name: "Mijoz / Fabrika Nomi",
-        lbl_firm_contact: "Mas'ul Shaxs & Telefon",
-        lbl_search_part: "Kerakli Mahsulot",
-        lbl_quantity: "Miqdori",
-        prio_normal: "Oddiy Servis",
-        prio_critical: "Shoshilinch (Zavod To'xtadi!)",
-        btn_send_kamil: "Komilga Yuborish & Tasdiq Olish",
-        lbl_task_free: "Vazifa Turi / Mavzusi",
-        btn_send_omer: "Maydonga Ish Yuborish (O'marga)",
-        btn_add_part: "Yangi Qism",
-        shelf: "Joy"
-      }
+      tr: { nav_stock: "Stok", nav_workflow: "İş Akışı", nav_reports: "Rapor/Tesis", cat_all: "Tümü", cat_control: "3. Kontrolörler", cat_electronic: "2. Elektronik", cat_mechatronic: "1. Mekatronik", btn_tab_request: "Sahadan Talep", btn_tab_dispatch: "Sahaya İş Gönder", title_otk: "Sahadan Talep (Ömer ➔ Kamil)", title_kto: "Sahaya İş Gönder (Kamil ➔ Ömer)", lbl_request_type: "Talep Türü", btn_send_kamil: "Kamil'e Gönder", btn_send_omer: "Sahaya İş Gönder", btn_add_part: "Yeni", shelf: "Konum" },
+      uz: { nav_stock: "Ombor", nav_workflow: "Ish Oqimi", nav_reports: "Hisobot/Tesis", cat_all: "Hammasi", cat_control: "3. Kontrollerlar", cat_electronic: "2. Elektronika", cat_mechatronic: "1. Mexatronika", btn_tab_request: "Maydondan So'rov", btn_tab_dispatch: "Maydonga Ish", title_otk: "Maydondan So'rov (O'mar ➔ Komil)", title_kto: "Maydonga Ish (Komil ➔ O'mar)", lbl_request_type: "So'rov Turi", btn_send_kamil: "Komilga Yuborish", btn_send_omer: "Maydonga Yuborish", btn_add_part: "Yangi", shelf: "Joy" }
     };
 
     let currentLang = localStorage.getItem('eliar_lang') || 'tr';
     let currentFlow = 'OMER_TO_KAMIL';
     let selectedCat = 'ALL';
+    let stocks = JSON.parse(localStorage.getItem('eliar_stocks')) || [];
+    let sales = JSON.parse(localStorage.getItem('eliar_sales')) || [];
 
-    const DEFAULT_STOCKS = [
-      { id: "1", code: "EL-PLC-T390", name: "Eliar T390 Boya Kontrolörü", cat: "KONTROL", qty: 6, loc: "ÖMER-ARAÇ-RAF1" },
-      { id: "2", code: "EL-MOD-16DI", name: "16 Kanal Dijital Giriş Modülü", cat: "ELEKTRONIK", qty: 18, loc: "ÖMER-ARAÇ-RAF2" },
-      { id: "3", code: "EL-SEN-PT100", name: "PT100 Sıcaklık Sensörü 3m", cat: "ELEKTRONIK", qty: 25, loc: "ÖMER-ÇANTA" },
-      { id: "4", code: "EL-VLV-DN25", name: "Oransal Buhar Vanası Motorlu DN25", cat: "MEKATRONIK", qty: 3, loc: "MERKEZ-DEPO-B2" },
-      { id: "5", code: "EL-INV-5KW", name: "5.5kW Asenkron Motor Sürücüsü", cat: "MEKATRONIK", qty: 4, loc: "MERKEZ-DEPO-A1" },
-      { id: "6", code: "41835", name: "Apexco Salmastra 7003TTG-20", cat: "MEKATRONIK", qty: 5, loc: "MERKEZ-DEPO" }
-    ];
-
-    const DEFAULT_SALES = [
-      {
-        id: "Q-1",
-        firm: "TERRY JAR TEKSTİL",
-        ref_no: "46189ND",
-        items: [{ code: "41835", name: "Apexco Salmastra 7003TTG-20", qty: 1 }],
-        status: "APPROVED",
-        date: "28.10.2026 16:31",
-        timestamp: "2026-10-28T16:31:00"
-      },
-      {
-        id: "Q-2",
-        firm: "MICBRO TEKSTİL",
-        ref_no: "48200ND",
-        items: [{ code: "EL-PLC-T390", name: "Eliar T390 Kontrolör", qty: 2 }],
-        status: "APPROVED",
-        date: "28.10.2026 17:15",
-        timestamp: "2026-10-28T17:15:00"
-      }
-    ];
-
-    let stocks = JSON.parse(localStorage.getItem('eliar_stocks')) || DEFAULT_STOCKS;
-    let sales = JSON.parse(localStorage.getItem('eliar_sales')) || DEFAULT_SALES;
-
-    function persist() {
-      localStorage.setItem('eliar_stocks', JSON.stringify(stocks));
-      localStorage.setItem('eliar_sales', JSON.stringify(sales));
-    }
+    const persist = () => { localStorage.setItem('eliar_stocks', JSON.stringify(stocks)); localStorage.setItem('eliar_sales', JSON.stringify(sales)); };
 
     function setLanguage(lang) {
       currentLang = lang;
@@ -526,23 +291,16 @@
       document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('bg-brand-600', 'text-white', 'shadow-md'); b.classList.add('text-slate-400'); });
       document.getElementById('tab-btn-' + t).classList.add('bg-brand-600', 'text-white', 'shadow-md');
       document.getElementById('tab-btn-' + t).classList.remove('text-slate-400');
-      
       if (t === 'reports') renderZReport();
     }
 
     function setWorkflowDirection(dir) {
       currentFlow = dir;
-      if (dir === 'OMER_TO_KAMIL') {
-        document.getElementById('btn-flow-otk').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md";
-        document.getElementById('btn-flow-kto').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
-        document.getElementById('form-omer-to-kamil').classList.remove('hidden');
-        document.getElementById('form-kamil-to-omer').classList.add('hidden');
-      } else {
-        document.getElementById('btn-flow-kto').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-cyan-600 text-white shadow-md";
-        document.getElementById('btn-flow-otk').className = "py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
-        document.getElementById('form-kamil-to-omer').classList.remove('hidden');
-        document.getElementById('form-omer-to-kamil').classList.add('hidden');
-      }
+      const isOtk = dir === 'OMER_TO_KAMIL';
+      document.getElementById('btn-flow-otk').className = isOtk ? "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md" : "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
+      document.getElementById('btn-flow-kto').className = !isOtk ? "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-cyan-600 text-white shadow-md" : "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
+      document.getElementById('form-omer-to-kamil').classList.toggle('hidden', !isOtk);
+      document.getElementById('form-kamil-to-omer').classList.toggle('hidden', isOtk);
     }
 
     function filterCategory(cat) {
@@ -551,43 +309,38 @@
         btn.classList.remove('bg-brand-600', 'text-white', 'shadow-sm');
         btn.classList.add('bg-cardbg', 'border', 'border-bordercol', 'text-slate-300');
       });
-      const activeBtn = document.getElementById('pill-' + cat);
-      if (activeBtn) {
-        activeBtn.classList.remove('bg-cardbg', 'border', 'border-bordercol', 'text-slate-300');
-        activeBtn.classList.add('bg-brand-600', 'text-white', 'shadow-sm');
+      const active = document.getElementById('pill-' + cat);
+      if (active) {
+        active.classList.remove('bg-cardbg', 'border', 'border-bordercol', 'text-slate-300');
+        active.classList.add('bg-brand-600', 'text-white', 'shadow-sm');
       }
       renderStockTable();
     }
 
     function getCategoryBadge(cat) {
-      if (cat === 'KONTROL') {
-        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800">${I18N[currentLang].cat_control}</span>`;
-      } else if (cat === 'ELEKTRONIK') {
-        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-400 border border-amber-800">${I18N[currentLang].cat_electronic}</span>`;
-      } else {
-        return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-950 text-purple-400 border border-purple-800">${I18N[currentLang].cat_mechatronic}</span>`;
-      }
+      if (cat === 'MEKATRONIK') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-950 text-purple-400 border border-purple-800">1. MEKATRONİK</span>`;
+      if (cat === 'ELEKTRONIK') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-400 border border-amber-800">2. ELEKTRONİK</span>`;
+      return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800">3. KONTROLÖR</span>`;
     }
 
     function renderStockTable() {
       const s = document.getElementById('stock-search')?.value.toLowerCase() || "";
-      const filtered = stocks.filter(p => {
-        const matchesSearch = p.name.toLowerCase().includes(s) || p.code.toLowerCase().includes(s);
-        const matchesCat = (selectedCat === 'ALL') || (p.cat === selectedCat);
-        return matchesSearch && matchesCat;
-      });
+      const order = { "MEKATRONIK": 1, "ELEKTRONIK": 2, "KONTROL": 3 };
+      const sorted = [...stocks].sort((a, b) => (order[a.cat] || 99) - (order[b.cat] || 99));
+      const filtered = sorted.filter(p => (p.name.toLowerCase().includes(s) || p.code.toLowerCase().includes(s)) && (selectedCat === 'ALL' || p.cat === selectedCat));
 
+      const list = document.getElementById('stock-list');
       if (filtered.length === 0) {
-        document.getElementById('stock-list').innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-cardbg rounded-2xl border border-bordercol">Bu kategoride parça bulunamadı.</div>`;
+        list.innerHTML = `<div class="p-8 text-center text-xs text-slate-500 bg-cardbg rounded-2xl border border-bordercol">Kayıtlı parça bulunamadı.</div>`;
         return;
       }
 
-      document.getElementById('stock-list').innerHTML = filtered.map(i => `
-        <div class="bg-cardbg border border-bordercol rounded-2xl p-3 flex justify-between items-center shadow-md hover:border-slate-600 transition">
+      list.innerHTML = filtered.map(i => `
+        <div class="bg-cardbg border border-bordercol rounded-2xl p-3 flex justify-between items-center shadow-md">
           <div>
             <div class="flex items-center space-x-1.5">
               <span class="text-[10px] font-mono font-bold text-white bg-darkbg px-2 py-0.5 rounded border border-emerald-500/40">${i.code}</span>
-              ${getCategoryBadge(i.cat || 'KONTROL')}
+              ${getCategoryBadge(i.cat || 'MEKATRONIK')}
             </div>
             <h4 class="text-xs font-semibold text-white mt-1 leading-tight">${i.name}</h4>
             <p class="text-[11px] text-slate-400 mt-0.5">${I18N[currentLang].shelf}: <span class="text-slate-300 font-mono">${i.loc}</span></p>
@@ -595,8 +348,8 @@
           <div class="flex items-center space-x-2">
             <span class="text-xs font-black text-emerald-400 whitespace-nowrap">${i.qty} ADT</span>
             <div class="flex flex-col space-y-1">
-              <button onclick="increaseStock('${i.id}')" title="Stok Ekle (+1)" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-emerald-950 text-emerald-400 rounded-lg text-xs font-bold flex items-center justify-center">+</button>
-              <button onclick="openDeductModal('${i.id}')" title="Stoktan Düş / Satış Yap" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-rose-950 text-rose-400 rounded-lg text-xs font-bold flex items-center justify-center">-</button>
+              <button onclick="increaseStock('${i.id}')" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-emerald-950 text-emerald-400 rounded-lg text-xs font-bold flex items-center justify-center">+</button>
+              <button onclick="openDeductModal('${i.id}')" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-rose-950 text-rose-400 rounded-lg text-xs font-bold flex items-center justify-center">-</button>
             </div>
           </div>
         </div>
@@ -605,15 +358,17 @@
 
     function openDeductModal(id) {
       const it = stocks.find(x => x.id === id);
-      if (!it || it.qty <= 0) { alert("Stoğu tükenmiş!"); return; }
+      if (!it || it.qty <= 0) { alert("Stok tükenmiş!"); return; }
       document.getElementById('deduct-part-id').value = id;
       document.getElementById('deduct-part-header').innerText = `[${it.code}] ${it.name}`;
       document.getElementById('deduct-current-stock').innerText = `Mevcut: ${it.qty} ADT`;
       document.getElementById('deduct-qty').value = "1";
       document.getElementById('deduct-qty').max = it.qty;
-      document.getElementById('deduct-destination').value = "";
+      const dest = document.getElementById('deduct-destination');
+      dest.value = "";
       document.getElementById('modal-deduct').classList.remove('hidden');
       document.getElementById('modal-deduct').classList.add('flex');
+      setTimeout(() => dest.focus(), 100);
     }
 
     function closeDeductModal() {
@@ -624,29 +379,23 @@
     function setDeductQty(d) {
       const el = document.getElementById('deduct-qty');
       let val = (parseInt(el.value) || 1) + d;
-      const max = parseInt(el.max) || 999;
-      if (val > max) val = max;
-      if (val < 1) val = 1;
-      el.value = val;
+      el.value = Math.min(Math.max(val, 1), parseInt(el.max) || 999);
     }
 
     function confirmStockDeduction() {
       const id = document.getElementById('deduct-part-id').value;
       const it = stocks.find(x => x.id === id);
-      if (!it) return;
       const qty = parseInt(document.getElementById('deduct-qty').value) || 0;
       const dest = document.getElementById('deduct-destination').value.trim();
-      if (qty <= 0 || qty > it.qty) { alert("Geçersiz miktar!"); return; }
-      if (!dest) { alert("Satılan tesis adı zorunludur!"); return; }
+
+      if (!it || qty <= 0 || qty > it.qty || !dest) {
+        alert("Lütfen tüm alanları doğru doldurun!"); return;
+      }
 
       it.qty -= qty;
-      
       sales.unshift({
-        id: "Q-" + Date.now(),
-        firm: dest,
-        ref_no: "MANUEL-ÇIKIŞ",
-        items: [{ code: it.code, name: it.name, qty: qty }],
-        status: "APPROVED",
+        id: "Q-" + Date.now(), firm: dest, ref_no: "MANUEL-ÇIKIŞ",
+        items: [{ code: it.code, name: it.name, qty }], status: "APPROVED",
         date: new Date().toLocaleString([], { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
         timestamp: new Date().toISOString()
       });
@@ -656,37 +405,21 @@
       renderZReport();
       closeDeductModal();
 
-      const payload = {
-        direction: "STOCK_CHANGE",
-        action: "DECREASE",
-        delta: qty,
-        category: it.cat || "KONTROL",
-        code: it.code,
-        name: it.name,
-        current_qty: it.qty,
-        destination: dest,
-        loc: it.loc
-      };
-      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
+      if (tg?.sendData) {
+        tg.sendData(JSON.stringify({
+          direction: "STOCK_CHANGE", action: "DECREASE", delta: qty,
+          code: it.code, name: it.name, current_qty: it.qty, destination: dest, loc: it.loc
+        }));
+      }
     }
 
     function increaseStock(id) {
       const it = stocks.find(x => x.id === id);
-      if (!it || !confirm(`[${it.code}] için stok +1 artırılsın mı?`)) return;
+      if (!it || !confirm(`[${it.code}] stoğu +1 artırılsın mı?`)) return;
       it.qty += 1;
       persist();
       renderStockTable();
-      const payload = {
-        direction: "STOCK_CHANGE",
-        action: "INCREASE",
-        delta: 1,
-        category: it.cat || "KONTROL",
-        code: it.code,
-        name: it.name,
-        current_qty: it.qty,
-        loc: it.loc
-      };
-      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
+      if (tg?.sendData) tg.sendData(JSON.stringify({ direction: "STOCK_CHANGE", action: "INCREASE", delta: 1, code: it.code, name: it.name, current_qty: it.qty, loc: it.loc }));
     }
 
     function openStockModal() { document.getElementById('modal-stock').classList.remove('hidden'); document.getElementById('modal-stock').classList.add('flex'); }
@@ -698,44 +431,36 @@
       const name = document.getElementById('m-name').value.trim();
       const qty = parseInt(document.getElementById('m-qty').value) || 0;
       const loc = document.getElementById('m-loc').value.trim();
-      if (!code || !name || !loc) { alert("Lütfen yıldızlı alanları doldurun!"); return; }
-      if (stocks.find(p => p.code.toLowerCase() === code.toLowerCase())) { alert("Bu ürün kodu zaten kayıtlı!"); return; }
+
+      if (!code || !name || !loc) { alert("Lütfen zorunlu alanları doldurun!"); return; }
+      if (stocks.some(p => p.code.toLowerCase() === code.toLowerCase())) { alert("Bu ürün kodu zaten mevcut!"); return; }
 
       stocks.unshift({ id: Date.now().toString(), code, cat, name, qty, loc });
       persist();
       closeStockModal();
       renderStockTable();
-      const payload = { direction: "STOCK_CHANGE", action: "NEW_ITEM", category: cat, code, name, qty, loc };
-      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
+      if (tg?.sendData) tg.sendData(JSON.stringify({ direction: "STOCK_CHANGE", action: "NEW_ITEM", category: cat, code, name, qty, loc }));
       document.getElementById('m-code').value = "";
       document.getElementById('m-name').value = "";
       document.getElementById('m-loc').value = "";
     }
 
-    /* ---------------- AKILLI ARAMA (İŞ AKIŞI) ---------------- */
     function searchPartsLive(query) {
-      const dropdown = document.getElementById('otk-part-dropdown');
+      const drop = document.getElementById('otk-part-dropdown');
       const q = (query || "").trim().toLowerCase();
       const matches = stocks.filter(p => p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q));
-      if (matches.length === 0) { dropdown.innerHTML = `<div class="p-2 text-xs text-slate-400 text-center">Eşleşen parça yok.</div>`; dropdown.classList.remove('hidden'); return; }
-      dropdown.innerHTML = matches.map(p => `
-        <div onclick="selectPart('${p.code}', '${p.name.replace(/'/g, "\\'")}', '${p.qty}')" class="p-2 hover:bg-slate-800 cursor-pointer flex justify-between items-center text-xs">
-          <div>
-            <span class="text-[9px] font-mono font-bold bg-darkbg border border-bordercol px-1 rounded text-emerald-400">${p.code}</span>
-            <span class="text-white ml-1">${p.name}</span>
-          </div>
-          <span class="text-[11px] font-bold text-emerald-400">${p.qty} ADT</span>
+      if (!matches.length) { drop.innerHTML = `<div class="p-2 text-xs text-slate-400 text-center">Eşleşen ürün yok</div>`; drop.classList.remove('hidden'); return; }
+      drop.innerHTML = matches.map(p => `
+        <div onclick="selectPart('${p.code}', '${p.name.replace(/'/g, "\\'")}')" class="p-2 hover:bg-slate-800 cursor-pointer flex justify-between text-xs">
+          <span><b>[${p.code}]</b> ${p.name}</span><span class="text-emerald-400 font-bold">${p.qty} ADT</span>
         </div>
       `).join('');
-      dropdown.classList.remove('hidden');
+      drop.classList.remove('hidden');
     }
 
-    function selectPart(code, name, qty) {
+    function selectPart(code, name) {
       document.getElementById('otk-selected-code').value = code;
       document.getElementById('otk-part-search').value = `${name} [${code}]`;
-      const badge = document.getElementById('otk-selected-badge');
-      badge.innerText = `✓ Kod: ${code} (Stok: ${qty})`;
-      badge.classList.remove('hidden');
       document.getElementById('otk-clear-btn').classList.remove('hidden');
       document.getElementById('otk-part-dropdown').classList.add('hidden');
     }
@@ -743,109 +468,84 @@
     function clearPartSelection() {
       document.getElementById('otk-selected-code').value = "";
       document.getElementById('otk-part-search').value = "";
-      document.getElementById('otk-selected-badge').classList.add('hidden');
       document.getElementById('otk-clear-btn').classList.add('hidden');
       document.getElementById('otk-part-dropdown').classList.add('hidden');
     }
 
     function dispatchOmerToKamil() {
       const firm = document.getElementById('otk-firm-name').value.trim();
-      const contact = document.getElementById('otk-firm-contact').value.trim();
-      const reqType = document.getElementById('otk-req-type').value;
       const partCode = document.getElementById('otk-selected-code').value;
-      if (!firm || !partCode) { alert("Fabrika adı ve ürün seçimi zorunludur!"); return; }
-      const partObj = stocks.find(p => p.code === partCode);
+      if (!firm || !partCode) { alert("Fabrika ve ürün seçilmelidir!"); return; }
+
       const payload = {
-        direction: "OMER_TO_KAMIL",
-        request_type: reqType,
-        firm, contact,
-        part_code: partCode,
-        part_name: partObj?.name || "",
-        quantity: document.getElementById('otk-qty').value,
-        priority: document.getElementById('otk-priority').value,
-        notes: document.getElementById('otk-notes').value
+        direction: "OMER_TO_KAMIL", request_type: document.getElementById('otk-req-type').value,
+        firm, contact: document.getElementById('otk-firm-contact').value.trim(),
+        part_code: partCode, quantity: document.getElementById('otk-qty').value,
+        priority: document.getElementById('otk-priority').value, notes: document.getElementById('otk-notes').value
       };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      alert("Talep Kamil'e iletildi.");
+      alert("Talep iletildi.");
     }
 
     function dispatchKamilToOmer() {
       const firm = document.getElementById('kto-firm-name').value.trim();
-      const contact = document.getElementById('kto-firm-contact').value.trim();
       const taskType = document.getElementById('kto-task-type').value.trim();
-      if (!firm || !taskType) { alert("Tesis adı ve görev başlığı zorunludur!"); return; }
+      if (!firm || !taskType) { alert("Tesis ve görev tipi zorunludur!"); return; }
+
       const payload = {
-        direction: "KAMIL_TO_OMER",
-        firm, contact, task_type: taskType,
-        instructions: document.getElementById('kto-instructions').value
+        direction: "KAMIL_TO_OMER", firm, contact: document.getElementById('kto-firm-contact').value.trim(),
+        task_type: taskType, instructions: document.getElementById('kto-instructions').value
       };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      alert("İş emri Ömer'e iletildi.");
+      alert("Görev iletildi.");
     }
 
-    /* ---------------- Z-RAPORU & TARİH SEÇİCİ (TAB 3) ---------------- */
     function setDatePreset(type) {
-      const startEl = document.getElementById('z-start-date');
-      const endEl = document.getElementById('z-end-date');
+      const s = document.getElementById('z-start-date');
+      const e = document.getElementById('z-end-date');
       const now = new Date();
-      const toIsoDate = (d) => d.toISOString().split('T')[0];
+      const iso = d => d.toISOString().split('T')[0];
 
       if (type === 'week') {
-        const weekAgo = new Date();
-        weekAgo.setDate(now.getDate() - 7);
-        startEl.value = toIsoDate(weekAgo);
-        endEl.value = toIsoDate(now);
+        const d = new Date(); d.setDate(now.getDate() - 7);
+        s.value = iso(d); e.value = iso(now);
       } else if (type === 'month') {
-        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-        startEl.value = toIsoDate(firstDay);
-        endEl.value = toIsoDate(now);
+        s.value = iso(new Date(now.getFullYear(), now.getMonth(), 1)); e.value = iso(now);
       } else {
-        startEl.value = "";
-        endEl.value = "";
+        s.value = ""; e.value = "";
       }
       renderZReport();
     }
 
     function getFilteredZSales() {
-      const approved = sales.filter(s => s.status === 'APPROVED');
-      const startVal = document.getElementById('z-start-date').value;
-      const endVal = document.getElementById('z-end-date').value;
-
-      if (!startVal && !endVal) return approved;
-
-      return approved.filter(s => {
-        try {
-          const sDate = s.timestamp ? s.timestamp.split('T')[0] : "";
-          if (!sDate) return true;
-          if (startVal && sDate < startVal) return false;
-          if (endVal && sDate > endVal) return false;
-          return true;
-        } catch {
-          return true;
-        }
+      const app = sales.filter(s => s.status === 'APPROVED');
+      const sVal = document.getElementById('z-start-date').value;
+      const eVal = document.getElementById('z-end-date').value;
+      if (!sVal && !eVal) return app;
+      return app.filter(s => {
+        const d = s.timestamp ? s.timestamp.split('T')[0] : "";
+        return (!sVal || d >= sVal) && (!eVal || d <= eVal);
       });
     }
 
     function renderZReport() {
-      const filtered = getFilteredZSales();
-      let totalQty = 0;
+      const list = getFilteredZSales();
+      let total = 0;
       const plants = new Set();
-
-      filtered.forEach(s => {
+      list.forEach(s => {
         plants.add(s.firm);
-        s.items.forEach(i => totalQty += parseInt(i.qty || 1));
+        s.items.forEach(i => total += parseInt(i.qty || 1));
       });
 
-      document.getElementById('z-total-qty').innerText = `${totalQty} ADT`;
+      document.getElementById('z-total-qty').innerText = `${total} ADT`;
       document.getElementById('z-total-plants').innerText = `${plants.size} Tesis`;
 
-      const listContainer = document.getElementById('z-sales-list');
-      if (filtered.length === 0) {
-        listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 bg-darkbg rounded-xl">Seçili tarih aralığında onaylı satış bulunamadı.</p>`;
+      const box = document.getElementById('z-sales-list');
+      if (!list.length) {
+        box.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 bg-darkbg rounded-xl">Kayıtlı satış bulunamadı.</p>`;
         return;
       }
-
-      listContainer.innerHTML = filtered.map((s) => `
+      box.innerHTML = list.map(s => `
         <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl text-xs flex justify-between items-center">
           <div>
             <span class="font-bold text-white">${s.firm}</span>
@@ -856,124 +556,64 @@
       `).join('');
     }
 
-    /* ---------------- EXCEL / PDF / İKİSİ İNDİRME MOTORU ---------------- */
     function exportZReportCSV() {
-      const filtered = getFilteredZSales();
-      if (filtered.length === 0) { alert("Seçili tarih aralığında indirilecek onaylı satış kaydı bulunmuyor."); return; }
-      
+      const list = getFilteredZSales();
+      if (!list.length) { alert("Kayıt yok."); return; }
       let csv = "\uFEFFSıra;Tarih;Ref No;Müşteri / Fabrika;Ürün Kodu;Ürün Adı;Adet;Durum\n";
       let cnt = 1;
-      filtered.forEach(s => {
-        s.items.forEach(i => {
-          csv += `${cnt};${s.date};${s.ref_no || 'YOK'};${s.firm};${i.code};${i.name};${i.qty};ONAYLANDI\n`;
-          cnt++;
-        });
-      });
-
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
+      list.forEach(s => s.items.forEach(i => {
+        csv += `${cnt};${s.date};${s.ref_no || 'YOK'};${s.firm};${i.code};${i.name};${i.qty};ONAYLANDI\n`;
+        cnt++;
+      }));
       const a = document.createElement("a");
-      a.href = url;
-      a.download = `Eliar_Z_Raporu_${new Date().toISOString().slice(0,10)}.csv`;
-      document.body.appendChild(a);
+      a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+      a.download = `Elips_Eliar_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
-      document.body.removeChild(a);
     }
 
     function exportZReportPDF() {
-      const filtered = getFilteredZSales();
-      if (filtered.length === 0) { alert("Yazdırılacak/Kaydedilecek onaylı satış kaydı bulunmuyor."); return; }
-      
-      let html = `
-        <html>
-        <head>
-          <title>Eliar Z-Raporu</title>
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 25px; color: #1E293B; }
-            h2 { margin: 0; color: #0F172A; font-size: 20px; }
-            p { color: #64748B; font-size: 11px; margin-top: 4px; margin-bottom: 16px; }
-            table { width: 100%; border-collapse: collapse; font-size: 11px; }
-            th, td { border: 1px solid #CBD5E1; padding: 7px 10px; text-align: left; }
-            th { background-color: #161F30; color: #FFFFFF; font-weight: bold; }
-            tr:nth-child(even) { background-color: #F8FAFC; }
-            .badge { font-family: monospace; font-weight: bold; }
-          </style>
-        </head>
-        <body>
-          <h2>ELIAR TEKSTIL OTOMASYON</h2>
-          <p>RESMI Z-RAPORU DOKUMU (Tarih: ${new Date().toLocaleDateString()})</p>
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 40px; text-align: center;">Sıra</th>
-                <th style="width: 85px;">Tarih</th>
-                <th style="width: 80px;">Ref No</th>
-                <th>Müşteri / Fabrika</th>
-                <th style="width: 90px;">Ürün Kodu</th>
-                <th>Ürün Adı</th>
-                <th style="width: 50px; text-align: center;">Adet</th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
-      
-      let cnt = 1;
-      filtered.forEach(s => {
-        s.items.forEach(i => {
-          html += `
-            <tr>
-              <td style="text-align: center;">${cnt}</td>
-              <td>${s.date}</td>
-              <td class="badge">${s.ref_no || 'YOK'}</td>
-              <td><b>${s.firm}</b></td>
-              <td class="badge">${i.code}</td>
-              <td>${i.name}</td>
-              <td style="text-align: center; font-weight: bold;">${i.qty}</td>
-            </tr>
-          `;
-          cnt++;
-        });
-      });
+      const list = getFilteredZSales();
+      if (!list.length) { alert("Kayıt yok."); return; }
+      let total = 0, cnt = 1;
+      let html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapor</title><style>
+        body { font-family: sans-serif; padding: 20px; font-size: 11px; }
+        h2 { text-align: center; margin: 0; font-size: 16px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #CBD5E1; padding: 6px; }
+        th { background: #161F30; color: white; text-align: center; }
+        .center { text-align: center; }
+        .total { background: #E2E8F0; font-weight: bold; }
+      </style></head><body>
+      <h2>ELİPS TEKSTİL ELİAR PARÇA SATIŞ RAPORU</h2>
+      <table><thead><tr><th>Sıra</th><th>Tarih</th><th>Ref No</th><th>Müşteri</th><th>Kod</th><th>Ürün Adı</th><th>Adet</th></tr></thead><tbody>`;
 
-      html += `</tbody></table></body></html>`;
+      list.forEach(s => s.items.forEach(i => {
+        const q = parseInt(i.qty || 1);
+        total += q;
+        html += `<tr><td class="center">${cnt++}</td><td class="center">${s.date.split(' ')[0]}</td><td class="center">${s.ref_no || 'YOK'}</td><td><b>${s.firm}</b></td><td>${i.code}</td><td>${i.name}</td><td class="center font-bold">${q}</td></tr>`;
+      }));
 
-      const printWindow = window.open('', '', 'width=900,height=700');
-      printWindow.document.write(html);
-      printWindow.document.close();
-      printWindow.focus();
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-      }, 300);
+      html += `<tr class="total"><td colspan="6" style="text-align:right;">GENEL TOPLAM:</td><td class="center">${total} ADT</td></tr></tbody></table></body></html>`;
+
+      const w = window.open('', '', 'width=900,height=700');
+      w.document.write(html);
+      w.document.close();
+      w.focus();
+      setTimeout(() => { w.print(); w.close(); }, 350);
     }
 
-    function exportZReportBoth() {
-      exportZReportCSV();
-      setTimeout(() => exportZReportPDF(), 400);
-    }
+    function exportZReportBoth() { exportZReportCSV(); setTimeout(exportZReportPDF, 400); }
 
     function queryFacilityHistoryLive() {
       const q = document.getElementById('facility-search-input').value.trim().toLowerCase();
-      const container = document.getElementById('facility-history-results');
-      if (!q) {
-        container.innerHTML = `<p class="text-slate-500 text-center py-2 text-[11px]">Geçmişini görmek istediğiniz fabrika adını yazın.</p>`;
-        return;
-      }
+      const box = document.getElementById('facility-history-results');
+      if (!q) { box.innerHTML = `<p class="text-slate-500 text-center py-2 text-[11px]">Fabrika adı giriniz.</p>`; return; }
       const matched = sales.filter(s => s.status === 'APPROVED' && s.firm.toLowerCase().includes(q));
-      if (matched.length === 0) {
-        container.innerHTML = `<p class="text-slate-400 text-center py-2 text-[11px]">Kayıtlı parça geçmişi bulunamadı.</p>`;
-        return;
-      }
-
-      container.innerHTML = matched.map(s => `
+      if (!matched.length) { box.innerHTML = `<p class="text-slate-400 text-center py-2 text-[11px]">Kayıt bulunamadı.</p>`; return; }
+      box.innerHTML = matched.map(s => `
         <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl space-y-1">
-          <div class="flex justify-between text-[11px]">
-            <span class="font-bold text-white">${s.firm}</span>
-            <span class="text-slate-500">${s.date}</span>
-          </div>
-          <div class="border-t border-bordercol/40 pt-1">
-            ${s.items.map(i => `<p class="text-[11px] text-slate-300">• <span class="font-mono text-emerald-400">${i.code}</span> — ${i.name} (<b>${i.qty} Adet</b>)</p>`).join('')}
-          </div>
+          <div class="flex justify-between text-[11px]"><span class="font-bold text-white">${s.firm}</span><span class="text-slate-500">${s.date}</span></div>
+          <div class="border-t border-bordercol/40 pt-1">${s.items.map(i => `<p class="text-slate-300">• <span class="font-mono text-emerald-400">${i.code}</span> — ${i.name} (<b>${i.qty} Adet</b>)</p>`).join('')}</div>
         </div>
       `).join('');
     }
