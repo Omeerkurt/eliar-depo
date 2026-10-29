@@ -22,7 +22,6 @@
   </script>
   <style>
     body { -webkit-tap-highlight-color: transparent; }
-    /* Mobil klavye açılmasını ve yazmayı engelleyen tüm kilitler kaldırıldı */
     input, textarea, select { 
       -webkit-user-select: text !important;
       user-select: text !important;
@@ -46,9 +45,10 @@
       </div>
     </div>
     <div class="flex items-center space-x-1.5">
-      <button onclick="forceResetToCatalog()" title="Stokları Sıfırla" class="px-2 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
+      <!-- ARTIK STOKLARI SIFIRLAMAZ, DOĞRUDAN SAYFAYI YENİLER -->
+      <button onclick="refreshPage()" title="Sayfayı Yenile" class="px-2 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
         <i class="fa-solid fa-arrows-rotate"></i>
-        <span class="text-[10px] hidden sm:inline">Sıfırla</span>
+        <span class="text-[10px] hidden sm:inline">Yenile</span>
       </button>
       <div class="flex items-center bg-darkbg border border-bordercol rounded-xl p-1 shadow-inner">
         <button id="lang-tr" onclick="setLanguage('tr')" class="px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white">TR</button>
@@ -418,6 +418,11 @@
       tg.setBackgroundColor('#0B0F19');
     }
 
+    // SAYFA YENİLEME FONKSİYONU (Stokları sıfırlamaz, sadece ekranı yeniler)
+    function refreshPage() {
+      window.location.reload();
+    }
+
     // %100 GERÇEK STOK LİSTESİ
     const REAL_STOCKS_DATA = [
       {id:"s1",code:"Pd320",name:"Pd320 Kontrol Cihazı",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
@@ -618,14 +623,14 @@
       {id:"h29",firm:"TERRY JAR",contact:"-",date:"21.10.2026",status:"APPROVED",timestamp:"2026-10-21",items:[{code:"90879",name:"DST CEKVALF O-RINGI",qty:2},{code:"90881",name:"DST CEKVALF YAYI",qty:2},{code:"91284",name:"BONESSI VALF:P00112200",qty:2}]}
     ];
 
-    const STORAGE_KEY = 'elips_depo_v10';
+    const STORAGE_KEY = 'elips_depo_v11';
     let stocks = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!stocks || stocks.length < 50) {
       stocks = REAL_STOCKS_DATA;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
     }
 
-    let sales = JSON.parse(localStorage.getItem('elips_sales_v10')) || REAL_PAST_SALES;
+    let sales = JSON.parse(localStorage.getItem('elips_sales_v11')) || REAL_PAST_SALES;
     let selectedCat = 'ALL';
     let currentLang = 'tr';
     let currentFlow = 'OMER_TO_KAMIL';
@@ -638,18 +643,7 @@
 
     function persist() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
-      localStorage.setItem('elips_sales_v10', JSON.stringify(sales));
-    }
-
-    function forceResetToCatalog() {
-      if (confirm("Elips Depo stoklarını ve satışlarını orijinal listeye sıfırlamak istiyor musunuz?")) {
-        stocks = REAL_STOCKS_DATA;
-        sales = REAL_PAST_SALES;
-        persist();
-        renderStockTable();
-        renderZReport();
-        alert("Elips Depo verileri başarıyla sıfırlandı!");
-      }
+      localStorage.setItem('elips_sales_v11', JSON.stringify(sales));
     }
 
     function switchTab(t) {
@@ -859,7 +853,7 @@
       const contact = document.getElementById('deduct-contact').value.trim();
 
       if (qty <= 0) { alert("Geçerli bir miktar girin!"); return; }
-      if (!dest) { alert("Lütfen Firma İsmini (Müşteri / Fabrika) yazın!"); return; }
+      if (!dest) { alert("Lütfen Firma İsmini yazın!"); return; }
 
       it.qty = Math.max(0, it.qty - qty);
       sales.unshift({
