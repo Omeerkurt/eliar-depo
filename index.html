@@ -21,6 +21,11 @@
 </head>
 <body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
 
+  <!-- TEST MODU UYARI ŞERİDİ (Sadece aktifken görünür) -->
+  <div id="test-mode-banner" class="hidden bg-amber-500 text-black text-[11px] font-black py-1 px-3 text-center tracking-wide">
+    ⚠️ SİMÜLASYON / TEST MODU AKTİF (Kamil'e bildirim gitmez, kayıtlar korunur)
+  </div>
+
   <!-- HEADER -->
   <header class="sticky top-0 z-40 bg-cardbg/95 backdrop-blur border-b border-bordercol px-4 py-3 flex items-center justify-between shadow-lg">
     <div class="flex items-center space-x-3">
@@ -35,9 +40,17 @@
         <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ÖZBEKİSTAN MERKEZ SERVİS</p>
       </div>
     </div>
-    <button onclick="window.location.reload()" title="Yenile" class="px-2.5 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
-      <i class="fa-solid fa-arrows-rotate"></i>
-    </button>
+    
+    <!-- SAĞ ÜST KULLANICI & PROFİL BUTONU -->
+    <div class="flex items-center space-x-2">
+      <button onclick="openUserDrawer()" id="user-badge-btn" class="px-2.5 py-1.5 bg-darkbg border border-bordercol rounded-xl text-xs flex items-center space-x-1.5 hover:border-slate-500 transition shadow">
+        <span id="user-avatar-icon">👑</span>
+        <span id="user-name-display" class="font-bold text-white text-[11px]">Giriş</span>
+      </button>
+      <button onclick="window.location.reload()" title="Yenile" class="p-2 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs">
+        <i class="fa-solid fa-arrows-rotate"></i>
+      </button>
+    </div>
   </header>
 
   <!-- 3'LÜ MENÜ -->
@@ -65,15 +78,18 @@
           <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Kod veya isimle ara..." 
             class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none">
         </div>
+        <!-- HEM ÖMER HEM KAMİL YENİ PARÇA BELİRLEYEBİLİR -->
         <button onclick="openStockModal()" class="px-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1 text-xs shadow-md">
           <i class="fa-solid fa-plus"></i>
           <span>Yeni</span>
         </button>
       </div>
 
+      <!-- KATEGORİLER (SENSÖRLER DAHİL) -->
       <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
         <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white whitespace-nowrap">Tümü (<span id="count-all">0</span>)</button>
         <button onclick="filterCategory('YENI')" id="pill-YENI" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-amber-300 whitespace-nowrap">✨ Yeni (<span id="count-yeni">0</span>)</button>
+        <button onclick="filterCategory('SENSOR')" id="pill-SENSOR" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-blue-400 whitespace-nowrap">Sensörler (<span id="count-sensor">0</span>)</button>
         <button onclick="filterCategory('KONTROL')" id="pill-KONTROL" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Kontrolör (<span id="count-kontrol">0</span>)</button>
         <button onclick="filterCategory('ELEKTRONIK')" id="pill-ELEKTRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Elektronik (<span id="count-elektronik">0</span>)</button>
         <button onclick="filterCategory('MEKATRONIK')" id="pill-MEKATRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Mekatronik (<span id="count-mekatronik">0</span>)</button>
@@ -82,15 +98,15 @@
       <div id="stock-list" class="space-y-2"></div>
     </section>
 
-    <!-- 2. TAB: EKRAN TAMİR MODÜLÜ -->
+    <!-- 2. TAB: EKRAN TAMİR & SERVİS MODÜLÜ -->
     <section id="tab-repair" class="tab-content hidden space-y-3">
       <div class="flex justify-between items-center bg-cardbg border border-bordercol rounded-2xl p-3 shadow-md">
         <div>
           <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
             <i class="fa-solid fa-microchip text-cyan-400"></i>
-            <span>Ekran & Cihaz Tamir Takibi</span>
+            <span>Ekran & Cihaz Servis Takibi</span>
           </h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Özbekistan / Türkiye Servis Süreçleri</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">Özbekistan / Türkiye Onarım Süreçleri</p>
         </div>
         <button onclick="openRepairModal()" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow">
           <i class="fa-solid fa-plus"></i>
@@ -133,6 +149,77 @@
     </section>
   </main>
 
+  <!-- MODAL: KULLANICI / PROFİL ÇEKMECESİ -->
+  <div id="modal-user-drawer" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-4">
+      <div class="flex justify-between items-center border-b border-bordercol pb-2">
+        <h3 class="font-bold text-white text-sm flex items-center space-x-2">
+          <span id="drawer-user-icon">👑</span>
+          <span id="drawer-user-title">Kullanıcı Profili</span>
+        </h3>
+        <button onclick="closeUserDrawer()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
+      </div>
+
+      <div class="p-3 bg-darkbg rounded-2xl border border-bordercol space-y-1 text-xs">
+        <div class="flex justify-between"><span class="text-slate-400">Aktif Kullanıcı:</span><span id="drawer-username" class="font-bold text-white">Ömer (Admin)</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Yetki Düzeyi:</span><span id="drawer-role" class="font-bold text-emerald-400">Süper Yönetici</span></div>
+      </div>
+
+      <!-- SADECE ÖMER'E ÖZEL TEST MODU ANAHTARI -->
+      <div id="admin-test-mode-box" class="p-3 bg-darkbg rounded-2xl border border-amber-500/40 space-y-2">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="text-xs font-bold text-amber-300 flex items-center space-x-1">
+              <span>🧪 Test / Simülasyon Modu</span>
+            </span>
+            <p class="text-[10px] text-slate-400">Açıldığında Kamil'e mesaj gitmez, veritabanı korunur.</p>
+          </div>
+          <input type="checkbox" id="test-mode-toggle" onchange="toggleTestMode(this.checked)" class="w-5 h-5 accent-amber-500 cursor-pointer">
+        </div>
+      </div>
+
+      <!-- SADECE ÖMER'E ÖZEL: KAMİL'İN ŞİFRESİNİ SIFIRLAMA BUTONU -->
+      <div id="admin-kamil-reset-box" class="pt-1">
+        <button onclick="resetKamilPassword()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 py-2 rounded-xl text-xs font-bold text-slate-300">
+          🔑 Kamil'in Şifresini Sıfırla
+        </button>
+      </div>
+
+      <button onclick="logoutUser()" class="w-full bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 py-2.5 rounded-xl font-bold text-xs">
+        🚪 Çıkış Yap / Başka Kullanıcı Gir
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: GİRİŞ EKRANI -->
+  <div id="modal-login" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-cardbg border border-bordercol w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
+      <div class="text-center space-y-1 border-b border-bordercol pb-3">
+        <h3 class="font-black text-white text-base">ELİPS DEPO GİRİŞ</h3>
+        <p class="text-[11px] text-slate-400">Lütfen kullanıcı bilgilerinizi giriniz.</p>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 font-semibold block mb-1">Kullanıcı Adı</label>
+          <input type="text" id="login-username" placeholder="omeerkurt veya komil" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+        </div>
+        <div id="login-pass-group">
+          <label class="text-slate-400 font-semibold block mb-1">Şifre</label>
+          <input type="password" id="login-password" placeholder="Şifreniz" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+        </div>
+
+        <!-- KAMİL İLK KEZ GİRİYORSA ŞİFRE BELİRLEME PENCERESİ -->
+        <div id="kamil-first-setup" class="hidden space-y-2 p-3 bg-darkbg rounded-xl border border-cyan-500/40">
+          <span class="text-[11px] font-bold text-cyan-300 block">👋 Hoş geldiniz Kamil Bey!</span>
+          <p class="text-[10px] text-slate-400">Sisteme ilk kez giriyorsunuz. Lütfen bundan sonra kullanacağınız kendi şifrenizi belirleyin:</p>
+          <input type="password" id="kamil-new-pass" placeholder="Yeni Şifreniz" class="w-full bg-cardbg border border-bordercol rounded-lg px-2.5 py-1.5 text-white text-xs">
+          <button onclick="saveKamilFirstPassword()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-1.5 rounded-lg font-bold text-white text-[11px]">Şifremi Kaydet & Giriş Yap</button>
+        </div>
+      </div>
+      <button onclick="handleLoginSubmit()" id="login-submit-btn" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Giriş Yap</button>
+    </div>
+  </div>
+
   <!-- MODAL: YENİ EKRAN TAMİR KAYDI -->
   <div id="modal-repair" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
@@ -174,7 +261,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ÜRÜN DÜZENLEME -->
+  <!-- MODAL: ÜRÜN DÜZENLEME (SİLME BUTONU SADECE ÖMER'E ÇIKAR) -->
   <div id="modal-edit-part" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -190,9 +277,10 @@
         <div>
           <label class="text-slate-400 font-semibold">Kategori</label>
           <select id="edit-cat" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-2 py-2 text-white font-bold">
-            <option value="MEKATRONIK">Mekatronik</option>
-            <option value="ELEKTRONIK">Elektronik</option>
+            <option value="SENSOR">Sensör / Algılayıcı</option>
             <option value="KONTROL">Kontrolör</option>
+            <option value="ELEKTRONIK">Elektronik</option>
+            <option value="MEKATRONIK">Mekatronik</option>
           </select>
         </div>
       </div>
@@ -211,11 +299,13 @@
         </div>
       </div>
       <div class="flex items-center space-x-2 bg-darkbg p-2 rounded-xl border border-bordercol text-xs">
-        <input type="checkbox" id="edit-is-new" class="w-4 h-4 accent-amber-500 rounded">
-        <label for="edit-is-new" class="text-slate-300 font-semibold">✨ Bu parçada [YENİ] rozeti göster</label>
+        <input type="checkbox" id="edit-is-new" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+        <label for="edit-is-new" class="text-slate-300 font-semibold cursor-pointer">✨ Bu parçada [YENİ] rozeti göster</label>
       </div>
       <button onclick="savePartChanges()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Değişiklikleri Kaydet</button>
-      <div class="pt-2 border-t border-bordercol/40 flex space-x-2">
+
+      <!-- SİLME BUTONLARI (KAMİL'DE GİZLENİR, SADECE ÖMER'E AÇILIR) -->
+      <div id="admin-delete-buttons-group" class="pt-2 border-t border-bordercol/40 flex space-x-2">
         <button onclick="deletePartFromModal(true)" class="flex-1 bg-slate-800 border border-slate-600 text-slate-300 py-2 rounded-xl font-bold text-[11px]">🔕 Bildirimsiz Sil</button>
         <button onclick="deletePartFromModal(false)" class="flex-1 bg-rose-950 border border-rose-800 text-rose-300 py-2 rounded-xl font-bold text-[11px]">📢 Bildirerek Sil</button>
       </div>
@@ -242,7 +332,7 @@
     </div>
   </div>
 
-  <!-- MODAL: YENİ PARÇA -->
+  <!-- MODAL: YENİ PARÇA (HEM ÖMER HEM KAMİL BELİRLEYEBİLİR) -->
   <div id="modal-stock" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -257,9 +347,10 @@
         <div>
           <label class="text-slate-400 font-medium">Kategori <span class="text-rose-400">*</span></label>
           <select id="m-cat" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-2 py-2 text-white">
-            <option value="MEKATRONIK">Mekatronik</option>
-            <option value="ELEKTRONIK">Elektronik</option>
+            <option value="SENSOR">Sensör / Algılayıcı</option>
             <option value="KONTROL">Kontrolör</option>
+            <option value="ELEKTRONIK">Elektronik</option>
+            <option value="MEKATRONIK">Mekatronik</option>
           </select>
         </div>
       </div>
@@ -293,6 +384,129 @@
       tg.setHeaderColor('#161F30'); tg.setBackgroundColor('#0B0F19');
     }
 
+    // ==========================================
+    // KULLANICI & YETKİLENDİRME SİSTEMİ
+    // ==========================================
+    const DEFAULT_ADMIN = { user: "omeerkurt", pass: "6152665", name: "Ömer", role: "ADMIN" };
+    let currentUser = JSON.parse(localStorage.getItem('elips_user_session')) || DEFAULT_ADMIN;
+    let kamilPass = localStorage.getItem('elips_kamil_pass') || null;
+    let isTestMode = JSON.parse(localStorage.getItem('elips_test_mode')) || false;
+
+    function applyUserPermissions() {
+      const isAdm = currentUser && currentUser.role === "ADMIN";
+      document.getElementById('user-name-display').innerText = currentUser.name;
+      document.getElementById('user-avatar-icon').innerText = isAdm ? "👑" : "👷";
+      
+      // Test modu şeridi
+      document.getElementById('test-mode-banner').classList.toggle('hidden', !isTestMode);
+      document.getElementById('test-mode-toggle').checked = isTestMode;
+
+      // Drawer içi bilgiler
+      document.getElementById('drawer-user-icon').innerText = isAdm ? "👑" : "👷";
+      document.getElementById('drawer-username').innerText = `${currentUser.name} (${currentUser.user})`;
+      document.getElementById('drawer-role').innerText = isAdm ? "Süper Yönetici (Admin)" : "Teknisyen (Kamil)";
+
+      // Kamil için gizlenecek / kilitlenecek alanlar
+      document.getElementById('admin-test-mode-box').classList.toggle('hidden', !isAdm);
+      document.getElementById('admin-kamil-reset-box').classList.toggle('hidden', !isAdm);
+      document.getElementById('admin-delete-buttons-group').classList.toggle('hidden', !isAdm);
+    }
+
+    function openUserDrawer() {
+      document.getElementById('modal-user-drawer').classList.remove('hidden');
+      document.getElementById('modal-user-drawer').classList.add('flex');
+    }
+    function closeUserDrawer() {
+      document.getElementById('modal-user-drawer').classList.add('hidden');
+      document.getElementById('modal-user-drawer').classList.remove('flex');
+    }
+
+    function toggleTestMode(active) {
+      if (currentUser.role !== "ADMIN") return;
+      isTestMode = active;
+      localStorage.setItem('elips_test_mode', JSON.stringify(isTestMode));
+      document.getElementById('test-mode-banner').classList.toggle('hidden', !isTestMode);
+      if (tg?.sendData) tg.sendData(JSON.stringify({ direction: "TEST_MODE_TOGGLE", active: isTestMode }));
+    }
+
+    function resetKamilPassword() {
+      if (currentUser.role !== "ADMIN") return;
+      if (!confirm("Kamil'in şifresi sıfırlansın mı? Bir sonraki girişinde yeni şifre belirleyebilecek.")) return;
+      localStorage.removeItem('elips_kamil_pass');
+      kamilPass = null;
+      alert("Kamil Bey'in şifresi sıfırlandı.");
+    }
+
+    function logoutUser() {
+      closeUserDrawer();
+      document.getElementById('login-username').value = "";
+      document.getElementById('login-password').value = "";
+      document.getElementById('kamil-first-setup').classList.add('hidden');
+      document.getElementById('login-pass-group').classList.remove('hidden');
+      document.getElementById('login-submit-btn').classList.remove('hidden');
+      document.getElementById('modal-login').classList.remove('hidden');
+      document.getElementById('modal-login').classList.add('flex');
+    }
+
+    function handleLoginSubmit() {
+      const u = document.getElementById('login-username').value.trim().toLowerCase();
+      const p = document.getElementById('login-password').value.trim();
+
+      if (u === "omeerkurt" && p === "6152665") {
+        currentUser = { user: "omeerkurt", name: "Ömer", role: "ADMIN" };
+        localStorage.setItem('elips_user_session', JSON.stringify(currentUser));
+        document.getElementById('modal-login').classList.add('hidden');
+        document.getElementById('modal-login').classList.remove('flex');
+        applyUserPermissions();
+        renderStockTable();
+        return;
+      }
+
+      if (u === "komil") {
+        kamilPass = localStorage.getItem('elips_kamil_pass');
+        if (!kamilPass) {
+          // Kamil ilk kez giriyor -> Şifre belirleme alanı aç
+          document.getElementById('login-pass-group').classList.add('hidden');
+          document.getElementById('login-submit-btn').classList.add('hidden');
+          document.getElementById('kamil-first-setup').classList.remove('hidden');
+          return;
+        }
+
+        if (p === kamilPass) {
+          currentUser = { user: "komil", name: "Kamil", role: "STAFF" };
+          localStorage.setItem('elips_user_session', JSON.stringify(currentUser));
+          document.getElementById('modal-login').classList.add('hidden');
+          document.getElementById('modal-login').classList.remove('flex');
+          applyUserPermissions();
+          renderStockTable();
+          return;
+        } else {
+          alert("Kamil Bey için şifre hatalı!");
+          return;
+        }
+      }
+
+      alert("Kullanıcı adı veya şifre hatalı!");
+    }
+
+    function saveKamilFirstPassword() {
+      const np = document.getElementById('kamil-new-pass').value.trim();
+      if (!np || np.length < 3) { alert("Lütfen en az 3 haneli bir şifre belirleyin!"); return; }
+
+      localStorage.setItem('elips_kamil_pass', np);
+      kamilPass = np;
+      currentUser = { user: "komil", name: "Kamil", role: "STAFF" };
+      localStorage.setItem('elips_user_session', JSON.stringify(currentUser));
+      document.getElementById('modal-login').classList.add('hidden');
+      document.getElementById('modal-login').classList.remove('flex');
+      applyUserPermissions();
+      renderStockTable();
+      alert("Şifreniz başarıyla kaydedildi! Hoş geldiniz Kamil Bey.");
+    }
+
+    // ==========================================
+    // CANLI ÇEVRİMİÇİ / ÇEVRİMDIŞI MODU
+    // ==========================================
     function updateOnlineStatus() {
       const badge = document.getElementById('connection-status');
       if (!badge) return;
@@ -326,7 +540,6 @@
       localStorage.setItem('elips_repairs_v11', JSON.stringify(repairs));
     }
 
-    // İLK AÇILIŞTA STOKLARI OTOMATİK ÇEKME
     async function initData() {
       if (!stocks || stocks.length === 0) {
         try {
@@ -339,6 +552,7 @@
           console.log("Offline mode", e);
         }
       }
+      applyUserPermissions();
       renderStockTable();
       renderRepairs();
       updateOnlineStatus();
@@ -370,6 +584,13 @@
       renderStockTable();
     }
 
+    function getCategoryBadge(cat) {
+      if (cat === 'SENSOR') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-blue-950 text-blue-400 border border-blue-800">Sensör</span>`;
+      if (cat === 'KONTROL') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800">Kontrolör</span>`;
+      if (cat === 'ELEKTRONIK') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-400 border border-amber-800">Elektronik</span>`;
+      return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-950 text-purple-400 border border-purple-800">Mekatronik</span>`;
+    }
+
     function renderStockTable() {
       const s = normalizeTr(document.getElementById('stock-search')?.value || "");
       let filtered = stocks.filter(p => {
@@ -380,6 +601,7 @@
 
       document.getElementById('count-all').innerText = stocks.length;
       document.getElementById('count-yeni').innerText = stocks.filter(p => p.is_new).length;
+      document.getElementById('count-sensor').innerText = stocks.filter(p => p.cat === 'SENSOR').length;
       document.getElementById('count-kontrol').innerText = stocks.filter(p => p.cat === 'KONTROL').length;
       document.getElementById('count-elektronik').innerText = stocks.filter(p => p.cat === 'ELEKTRONIK').length;
       document.getElementById('count-mekatronik').innerText = stocks.filter(p => p.cat === 'MEKATRONIK').length;
@@ -388,13 +610,16 @@
       const listEl = document.getElementById('stock-list');
       if (filtered.length === 0) { listEl.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-cardbg rounded-2xl">Parça bulunamadı.</div>`; return; }
 
+      const isAdm = currentUser && currentUser.role === "ADMIN";
+
       listEl.innerHTML = filtered.map(i => `
         <div class="bg-cardbg border border-bordercol rounded-2xl p-3 flex justify-between items-center shadow-md">
           <div class="flex-1 pr-2">
             <div class="flex items-center space-x-1.5">
               <span class="text-[10px] font-mono font-bold text-white bg-darkbg px-2 py-0.5 rounded border border-emerald-500/40">${i.code}</span>
+              ${getCategoryBadge(i.cat || 'MEKATRONIK')}
               ${i.is_new ? '<span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">YENİ</span>' : ''}
-              <button onclick="openEditPartModal('${i.id}')" class="text-slate-400 hover:text-emerald-400 text-xs px-1"><i class="fa-solid fa-pen-to-square"></i></button>
+              ${isAdm ? `<button onclick="openEditPartModal('${i.id}')" class="text-slate-400 hover:text-emerald-400 text-xs px-1"><i class="fa-solid fa-pen-to-square"></i></button>` : ''}
             </div>
             <h4 class="text-xs font-semibold text-white mt-1 leading-tight">${i.name}</h4>
             <p class="text-[10px] text-slate-400 mt-0.5">Konum: <span class="text-slate-300 font-mono">${i.loc}</span></p>
@@ -507,7 +732,9 @@
         model: newRecord.model,
         sn: newRecord.sn,
         issue: newRecord.issue,
-        status_text: stNames[status]
+        status_text: stNames[status],
+        sender: currentUser.name,
+        test_mode: isTestMode
       };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
@@ -526,7 +753,9 @@
         model: r.model,
         sn: r.sn,
         issue: r.issue,
-        status_text: stNames[newStatus]
+        status_text: stNames[newStatus],
+        sender: currentUser.name,
+        test_mode: isTestMode
       };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
@@ -539,6 +768,7 @@
     }
 
     function openEditPartModal(id) {
+      if (currentUser.role !== "ADMIN") return;
       const it = stocks.find(x => x.id === id);
       if (!it) return;
       document.getElementById('edit-id').value = id;
@@ -558,6 +788,7 @@
     }
 
     function savePartChanges() {
+      if (currentUser.role !== "ADMIN") return;
       const id = document.getElementById('edit-id').value;
       const it = stocks.find(x => x.id === id);
       if (!it) return;
@@ -575,6 +806,7 @@
     }
 
     function deletePartFromModal(silent) {
+      if (currentUser.role !== "ADMIN") return;
       const id = document.getElementById('edit-id').value;
       const it = stocks.find(x => x.id === id);
       if (!it) return;
@@ -586,7 +818,7 @@
       renderStockTable();
       closeEditPartModal();
 
-      const payload = { direction: "STOCK_DELETE", code: it.code, name: it.name, silent: silent };
+      const payload = { direction: "STOCK_DELETE", code: it.code, name: it.name, silent: silent, sender: currentUser.name, test_mode: isTestMode };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
 
@@ -630,7 +862,7 @@
       renderZReport();
       closeDeductModal();
 
-      const payload = { direction: "STOCK_CHANGE", action: "DECREASE", delta: qty, code: it.code, name: it.name, destination: dest };
+      const payload = { direction: "STOCK_CHANGE", action: "DECREASE", delta: qty, code: it.code, name: it.name, destination: dest, sender: currentUser.name, test_mode: isTestMode };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
 
@@ -640,13 +872,14 @@
       it.qty += 1;
       persist();
       renderStockTable();
-      const payload = { direction: "STOCK_CHANGE", action: "INCREASE", delta: 1, code: it.code, name: it.name, is_new: it.is_new || false };
+      const payload = { direction: "STOCK_CHANGE", action: "INCREASE", delta: 1, code: it.code, name: it.name, is_new: it.is_new || false, sender: currentUser.name, test_mode: isTestMode };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
 
     function openStockModal() { document.getElementById('modal-stock').classList.remove('hidden'); document.getElementById('modal-stock').classList.add('flex'); }
     function closeStockModal() { document.getElementById('modal-stock').classList.add('hidden'); document.getElementById('modal-stock').classList.remove('flex'); }
 
+    // HEM ÖMER HEM KAMİL YENİ PARÇA KAYDEDEBİLİR
     function saveStockItem() {
       const code = document.getElementById('m-code').value.trim();
       const cat = document.getElementById('m-cat').value;
@@ -662,7 +895,7 @@
       closeStockModal();
       renderStockTable();
 
-      const payload = { direction: "STOCK_CHANGE", action: "INCREASE", delta: qty, code, name, is_new: isNew };
+      const payload = { direction: "STOCK_CHANGE", action: "INCREASE", delta: qty, code, name, category: cat, is_new: isNew, sender: currentUser.name, test_mode: isTestMode };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
 
