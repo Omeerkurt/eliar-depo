@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Elips Depo - Envanter & İş Paylaşımı</title>
+  <title>Elips Depo - Envanter & Lojistik</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,20 +33,22 @@
 </head>
 <body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
 
-  <!-- HEADER -->
+  <!-- HEADER (ONLINE / OFFLINE ROZETİ ENTEGRELİ) -->
   <header class="sticky top-0 z-40 bg-cardbg/95 backdrop-blur border-b border-bordercol px-4 py-3 flex items-center justify-between shadow-lg">
     <div class="flex items-center space-x-3">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-md shadow-brand-500/20">
         <i class="fa-solid fa-boxes-stacked text-white text-base"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-wide text-white leading-tight">ELİPS DEPO</h1>
-        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">GÜNCEL DEPO ENVANTERİ</p>
+        <div class="flex items-center space-x-2">
+          <h1 class="text-base font-bold tracking-wide text-white leading-tight">ELİPS DEPO</h1>
+          <span id="connection-status" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">🟢 Çevrimiçi</span>
+        </div>
+        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ÖZBEKİSTAN MERKEZ ENVANTERİ</p>
       </div>
     </div>
     <div class="flex items-center space-x-1.5">
-      <!-- ARTIK STOKLARI SIFIRLAMAZ, DOĞRUDAN SAYFAYI YENİLER -->
-      <button onclick="refreshPage()" title="Sayfayı Yenile" class="px-2 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
+      <button onclick="refreshPage()" title="Sayfayı Yenile" class="px-2.5 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
         <i class="fa-solid fa-arrows-rotate"></i>
         <span class="text-[10px] hidden sm:inline">Yenile</span>
       </button>
@@ -59,15 +61,15 @@
 
   <!-- ANA İÇERİK -->
   <main class="p-3.5 max-w-2xl mx-auto space-y-4">
-    <!-- 3'LÜ ANA MENÜ -->
+    <!-- 3'LÜ YENİ MENÜ (İş Akışı Çıkarıldı, Yoldaki Kargolar Eklendi) -->
     <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
       <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
         <i class="fa-solid fa-boxes-stacked text-sm"></i>
         <span>Depo Stok</span>
       </button>
-      <button onclick="switchTab('workflow')" id="tab-btn-workflow" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 text-slate-400">
-        <i class="fa-solid fa-share-nodes text-sm"></i>
-        <span>İş Akışı / Talep</span>
+      <button onclick="switchTab('cargo')" id="tab-btn-cargo" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 text-slate-400">
+        <i class="fa-solid fa-plane-arrival text-sm text-cyan-400"></i>
+        <span>Yoldaki Kargo (<span id="count-in-transit">0</span>)</span>
       </button>
       <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 text-slate-400">
         <i class="fa-solid fa-chart-line text-sm"></i>
@@ -95,6 +97,7 @@
         <span class="text-slate-400 text-[11px] font-semibold whitespace-nowrap">Sırala:</span>
         <select id="stock-sort-select" onchange="renderStockTable()" class="bg-darkbg text-slate-200 border border-bordercol rounded-lg px-2 py-1 text-xs flex-1 focus:outline-none">
           <option value="DEFAULT">Varsayılan Liste</option>
+          <option value="NEW_FIRST">✨ Yeni Eklenenler En Başta</option>
           <option value="QTY_ASC">📉 Stok: Azdan Çoka (Kritikler Önce)</option>
           <option value="QTY_DESC">📈 Stok: Çoktan Aza (En Fazla Olanlar)</option>
           <option value="MEK_FIRST">⚙️ Kategori: Mekatronik Önce</option>
@@ -104,9 +107,10 @@
         </select>
       </div>
 
-      <!-- KATEGORİ SEÇİCİLER -->
+      <!-- KATEGORİ SEÇİCİLER (✨ YENİ FİLTRESİ ENTEGRELİ) -->
       <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
         <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white shadow-sm whitespace-nowrap">Tümü (<span id="count-all">0</span>)</button>
+        <button onclick="filterCategory('YENI')" id="pill-YENI" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-amber-300 hover:text-white whitespace-nowrap">✨ Yeni (<span id="count-yeni">0</span>)</button>
         <button onclick="filterCategory('KONTROL')" id="pill-KONTROL" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Kontrolör (<span id="count-kontrol">0</span>)</button>
         <button onclick="filterCategory('ELEKTRONIK')" id="pill-ELEKTRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Elektronik (<span id="count-elektronik">0</span>)</button>
         <button onclick="filterCategory('MEKATRONIK')" id="pill-MEKATRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Mekatronik (<span id="count-mekatronik">0</span>)</button>
@@ -115,107 +119,23 @@
       <div id="stock-list" class="space-y-2"></div>
     </section>
 
-    <!-- 2. TAB: İŞ AKIŞI & TALEP -->
-    <section id="tab-workflow" class="tab-content hidden space-y-3">
-      <div class="grid grid-cols-2 p-1 bg-darkbg border border-bordercol rounded-2xl gap-1">
-        <button onclick="setWorkflowDirection('OMER_TO_KAMIL')" id="btn-flow-otk" class="py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md">
-          <i class="fa-solid fa-user-gear"></i>
-          <span>Sahadan Talep</span>
-        </button>
-        <button onclick="setWorkflowDirection('KAMIL_TO_OMER')" id="btn-flow-kto" class="py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white">
-          <i class="fa-solid fa-paper-plane"></i>
-          <span>Sahaya İş Gönder</span>
+    <!-- 2. TAB: YOLDAKİ KARGOLAR (TR ➔ ÖZBEKİSTAN LOJİSTİK TAKİBİ) -->
+    <section id="tab-cargo" class="tab-content hidden space-y-3">
+      <div class="flex justify-between items-center bg-cardbg border border-bordercol rounded-2xl p-3 shadow-md">
+        <div>
+          <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
+            <i class="fa-solid fa-plane-departure text-cyan-400"></i>
+            <span>Türkiye'den Yoldaki Kargolar</span>
+          </h3>
+          <p class="text-[10px] text-slate-400 mt-0.5">Taşkent'e Ulaşan Kolileri Tek Tıkla Depoya Aktar</p>
+        </div>
+        <button onclick="openCargoModal()" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow">
+          <i class="fa-solid fa-plus"></i>
+          <span>Yeni Paket</span>
         </button>
       </div>
 
-      <!-- FORM A: ÖMER ➔ KAMİL -->
-      <div id="form-omer-to-kamil" class="bg-cardbg border border-bordercol rounded-2xl p-4 shadow-xl space-y-3">
-        <h2 class="text-sm font-bold text-white flex items-center space-x-2 border-b border-bordercol pb-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-          <span>Sahadan Talep (Ömer ➔ Kamil)</span>
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div class="relative">
-            <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span>Müşteri / Firma İsmi</span> <span class="text-rose-400 ml-1">*</span>
-            </label>
-            <input type="text" id="otk-firm-name" oninput="showFirmSuggestions(this.value, 'otk-firm-dropdown', 'otk-firm-name')" autocomplete="off" placeholder="Örn: TERRY JAR" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-            <div id="otk-firm-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-40 overflow-y-auto hidden"></div>
-          </div>
-          <div>
-            <label class="text-xs text-slate-400 font-semibold flex items-center">
-              <span>İlgili Kişi & Telefon</span> <span class="text-rose-400 ml-1">*</span>
-            </label>
-            <input type="text" id="otk-firm-contact" placeholder="Örn: +998 88 984 5595" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-          </div>
-        </div>
-        <div class="relative">
-          <label class="text-xs text-slate-400 font-semibold flex items-center justify-between">
-            <span>İstenen Parça <span class="text-rose-400">*</span></span>
-            <span id="otk-selected-badge" class="text-[10px] text-emerald-400 font-mono font-bold hidden"></span>
-          </label>
-          <div class="relative mt-1">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-            <input type="text" id="otk-part-search" oninput="searchPartsLive(this.value)" onfocus="searchPartsLive(this.value)" placeholder="Kod veya isim yazın..." autocomplete="off" class="w-full bg-darkbg border border-bordercol rounded-xl pl-8 pr-8 py-2 text-xs text-white focus:outline-none">
-            <button type="button" onclick="clearPartSelection()" id="otk-clear-btn" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-white text-xs">✕</button>
-          </div>
-          <div id="otk-part-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-52 overflow-y-auto hidden divide-y divide-bordercol/50"></div>
-          <input type="hidden" id="otk-selected-code" value="">
-          <input type="hidden" id="otk-selected-name" value="">
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-xs text-slate-400 font-semibold">Miktar (Adet) <span class="text-rose-400">*</span></label>
-            <input type="number" id="otk-qty" value="1" min="1" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white font-bold">
-          </div>
-          <div>
-            <label class="text-xs text-slate-400 font-semibold">Öncelik</label>
-            <select id="otk-priority" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-              <option value="NORMAL">Normal Servis</option>
-              <option value="KRITIK" class="text-rose-400">🚨 Acil (Hat Duruşu!)</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label class="text-xs text-slate-400 font-semibold">Talep Notu & Detay</label>
-          <textarea id="otk-notes" rows="2" placeholder="Not veya detay..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
-        </div>
-        <button onclick="dispatchOmerToKamil()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg shadow-emerald-900/30">
-          <i class="fa-brands fa-telegram text-sm"></i>
-          <span>Kamil'e Gönder & Onay İste</span>
-        </button>
-      </div>
-
-      <!-- FORM B: KAMİL ➔ ÖMER -->
-      <div id="form-kamil-to-omer" class="bg-cardbg border border-bordercol rounded-2xl p-4 shadow-xl space-y-3 hidden">
-        <h2 class="text-sm font-bold text-white flex items-center space-x-2 border-b border-bordercol pb-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
-          <span>Sahaya İş Gönder (Kamil ➔ Ömer)</span>
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div class="relative">
-            <label class="text-xs text-slate-400 font-semibold">Gidilecek Firma İsmi <span class="text-rose-400">*</span></label>
-            <input type="text" id="kto-firm-name" oninput="showFirmSuggestions(this.value, 'kto-firm-dropdown', 'kto-firm-name')" autocomplete="off" placeholder="Firma Adı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-            <div id="kto-firm-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-40 overflow-y-auto hidden"></div>
-          </div>
-          <div>
-            <label class="text-xs text-slate-400 font-semibold">İlgili Kişi & Telefon</label>
-            <input type="text" id="kto-firm-contact" placeholder="Tesis Sorumlusu" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-          </div>
-        </div>
-        <div>
-          <label class="text-xs text-slate-400 font-semibold">Görev Başlığı <span class="text-rose-400">*</span></label>
-          <input type="text" id="kto-task-type" placeholder="Örn: Dozajlama Pompası Bakımı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-        </div>
-        <div>
-          <label class="text-xs text-slate-400 font-semibold">Özel Talimatlar</label>
-          <textarea id="kto-instructions" rows="2" placeholder="Ömer'e talimatlar..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white"></textarea>
-        </div>
-        <button onclick="dispatchKamilToOmer()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded-xl font-bold flex items-center justify-center space-x-2 text-xs shadow-lg shadow-cyan-900/30">
-          <i class="fa-solid fa-paper-plane text-sm"></i>
-          <span>Sahaya Görev Olarak İlet (Ömer'e Bildir)</span>
-        </button>
-      </div>
+      <div id="cargo-list" class="space-y-2.5"></div>
     </section>
 
     <!-- 3. TAB: Z-RAPORU & GEÇMİŞ -->
@@ -286,7 +206,7 @@
     </section>
   </main>
 
-  <!-- MODAL: ÜRÜN & KATEGORİ DÜZENLEME -->
+  <!-- MODAL: ÜRÜN & KATEGORİ DÜZENLEME (BİLDİRİMSİZ SİLME VE YENİ ROZETİ EKLENDİ) -->
   <div id="modal-edit-part" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3 shadow-2xl">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -322,7 +242,30 @@
           <input type="text" id="edit-loc" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
         </div>
       </div>
+
+      <!-- YENİ LOGOSU AÇ/KAPA KUTUSU -->
+      <div class="flex items-center space-x-2 bg-darkbg p-2.5 rounded-xl border border-bordercol text-xs">
+        <input type="checkbox" id="edit-is-new" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+        <label for="edit-is-new" class="text-slate-300 font-semibold cursor-pointer flex items-center space-x-1.5">
+          <span>✨ Bu parçada</span>
+          <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">YENİ</span>
+          <span>logosunu göster</span>
+        </label>
+      </div>
+
       <button onclick="savePartChanges()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Değişiklikleri Kaydet</button>
+
+      <!-- SİLME SEÇENEKLERİ (BİLDİRİMSİZ / BİLDİRİMLİ) -->
+      <div class="pt-2 border-t border-bordercol/40 flex space-x-2">
+        <button onclick="deletePartFromModal(true)" title="Kimseye bildirim göndermeden sessizce sil" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 py-2 rounded-xl font-bold text-[11px] flex items-center justify-center space-x-1 shadow">
+          <i class="fa-solid fa-bell-slash text-amber-400 text-xs"></i>
+          <span>Bildirimsiz Sil</span>
+        </button>
+        <button onclick="deletePartFromModal(false)" title="Kamil'e Telegram bildirimi göndererek sil" class="flex-1 bg-rose-950/80 hover:bg-rose-900 border border-rose-800/80 text-rose-300 py-2 rounded-xl font-bold text-[11px] flex items-center justify-center space-x-1 shadow">
+          <i class="fa-solid fa-trash text-xs"></i>
+          <span>Bildirerek Sil</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -369,7 +312,7 @@
     </div>
   </div>
 
-  <!-- MODAL: YENİ PARÇA TANIMLAMA -->
+  <!-- MODAL: YENİ PARÇA TANIMLAMA (YENİ LOGOSU ONAYI DAHİL) -->
   <div id="modal-stock" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -404,7 +347,44 @@
           <input type="text" id="m-loc" value="ELIPS-DEPO" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
         </div>
       </div>
+
+      <!-- YENİ PARÇA LOGOSU SEÇENEĞİ -->
+      <div class="flex items-center space-x-2 bg-darkbg p-2.5 rounded-xl border border-bordercol text-xs">
+        <input type="checkbox" id="m-is-new" checked class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+        <label for="m-is-new" class="text-slate-300 font-semibold cursor-pointer flex items-center space-x-1.5">
+          <span>✨ Bu parçaya</span>
+          <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">YENİ</span>
+          <span>logosu ekle</span>
+        </label>
+      </div>
+
       <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Kaydet & Ekle</button>
+    </div>
+  </div>
+
+  <!-- MODAL: YENİ YOLDAKİ KARGO PAKETİ EKLE -->
+  <div id="modal-cargo" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
+      <div class="flex justify-between items-center border-b border-bordercol pb-2">
+        <h3 class="font-bold text-white text-sm flex items-center space-x-1.5">
+          <i class="fa-solid fa-plane-departure text-cyan-400"></i>
+          <span>Yoldaki Kargo Paketi Ekle</span>
+        </h3>
+        <button onclick="closeCargoModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
+      </div>
+      <div class="text-xs">
+        <label class="text-slate-400 font-medium">Paket / Kargo Başlığı <span class="text-rose-400">*</span></label>
+        <input type="text" id="crg-title" placeholder="Örn: Kargo #16 (Silkway Hava Kargo)" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+      </div>
+      <div class="text-xs">
+        <label class="text-slate-400 font-medium">İçindeki Parçalar & Adetler (Her satıra bir parça) <span class="text-rose-400">*</span></label>
+        <textarea id="crg-items" rows="3" placeholder="Örnek:&#10;90567 - 5 adet&#10;90880 - 2 adet" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono text-xs"></textarea>
+      </div>
+      <div class="text-xs">
+        <label class="text-slate-400 font-medium">Kargo Notu / Takip No</label>
+        <input type="text" id="crg-notes" placeholder="Örn: Cuma günü Taşkent havaalanında" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+      </div>
+      <button onclick="saveCargoPackage()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-cyan-900/30">Yoldaki Kargoyu Kaydet</button>
     </div>
   </div>
 
@@ -418,7 +398,23 @@
       tg.setBackgroundColor('#0B0F19');
     }
 
-    // SAYFA YENİLEME FONKSİYONU (Stokları sıfırlamaz, sadece ekranı yeniler)
+    // ==========================================
+    // CANLI ÇEVRİMİÇİ / ÇEVRİMDIŞI (ONLINE/OFFLINE) MODU
+    // ==========================================
+    function updateOnlineStatus() {
+      const badge = document.getElementById('connection-status');
+      if (!badge) return;
+      if (navigator.onLine) {
+        badge.className = "text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+        badge.innerHTML = "🟢 Çevrimiçi";
+      } else {
+        badge.className = "text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40";
+        badge.innerHTML = "📴 Çevrimdışı (Hafızadan)";
+      }
+    }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
     function refreshPage() {
       window.location.reload();
     }
@@ -560,35 +556,7 @@
       {id:"s133",code:"TEST",name:"Güç Kaynağı: DRL-24V75W1AZ",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
       {id:"s134",code:"90880",name:"DST Çekvalf Teflonu",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
       {id:"s135",code:"90567",name:"66 Mm Teflon Takviyeli Diyafram",cat:"MEKATRONIK",qty:9,loc:"ELIPS-DEPO"},
-      {id:"s136",code:"90620",name:"PH Sensörü: SPH-1-DJ-6M Ph Sensör - 6mt Kablosu",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c1",code:"91410",name:"Wat 3 faz Motor (Q2E112M6C) 2,2 kW 3 HP",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c2",code:"91411",name:"WAT Motor Ayağı (Q2E112M6C)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c3",code:"41436",name:"Rd96 SLR1-40 Pompa Çıkış Bağlantı Rakor ve Dirsekleri",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c4",code:"41435",name:"Rd96 SLR1-40 Pompa Giriş Bağlantı Rakor ve Dirsekleri",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c5",code:"96469",name:"Rakor Contası - Gasket - Nw 40 Dın - EPDM",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c6",code:"60002",name:"Klemp Contası: EPDM (DN25) 1''- Ø33.7mm",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c7",code:"91661",name:"Sürücü VZAB2P2BAA V1000 3/2,2 kW",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c8",code:"40642",name:"PLC CPU: CJ1M-CPU21",cat:"KONTROL",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c9",code:"40645",name:"Güç kaynağı: CJ1W-PA202",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c10",code:"40643",name:"Dijital giriş modülü: CJ1W-ID211",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c11",code:"40644",name:"Dijital çıkış modülü: CJ1W-OC211",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c12",code:"90802",name:"Güç Kaynağı: CQM1-PA203 (omron)",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c13",code:"91514",name:"Rd96 SLR1-40 AISI 316L Loblu Pompa",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c14",code:"41381",name:"Rd96 22 Li Pompa Altı Paslanmaz Tava",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c15",code:"90338",name:"SLR1-40 ASI 316L Salmastra Bileziği",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c16",code:"91128",name:"SLR 1-40 Mec. Seal Si.Carbon/Si.Carbide",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c17",code:"91516",name:"SLR1-40 NBR O-Ring (Part No 80D)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c18",code:"41538",name:"SLR1-40 Cover Seal (Part No: 09)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c19",code:"41407",name:"SLR1-40 Pump Housing (CF-8M)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c20",code:"90484",name:"3/4\" Kimyasal Vana (Kür. Vana + Elcik + Adaptör)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c21",code:"91490",name:"3/4 RD Vana Adaptör Bağlantı O-ringi",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c22",code:"91489",name:"3/4' RD Vana Conta Takımı",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c23",code:"91488",name:"3/4 RD Vana Küre",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c24",code:"90930",name:"EPDM Lastik Conta 25*40 Kare Oring",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c25",code:"91495",name:"3/4\" Şeffaf Kimyasal Hortum",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c26",code:"96404",name:"RD96-MU22 Paslanmaz Çelik Tabla",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c27",code:"41406",name:"RD96_MU33 PVC Tabla",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"c28",code:"41405",name:"RD96-MU33 Paslanmaz Çelik Tabla",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"}
+      {id:"s136",code:"90620",name:"PH Sensörü: SPH-1-DJ-6M Ph Sensör - 6mt Kablosu",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"}
     ];
 
     const REAL_PAST_SALES = [
@@ -623,6 +591,21 @@
       {id:"h29",firm:"TERRY JAR",contact:"-",date:"21.10.2026",status:"APPROVED",timestamp:"2026-10-21",items:[{code:"90879",name:"DST CEKVALF O-RINGI",qty:2},{code:"90881",name:"DST CEKVALF YAYI",qty:2},{code:"91284",name:"BONESSI VALF:P00112200",qty:2}]}
     ];
 
+    // ÖRNEK YOLDAKİ KARGOLAR (TÜRKİYE ➔ ÖZBEKİSTAN)
+    const REAL_CARGOS_DATA = [
+      {
+        id: "crg-1",
+        title: "Kargo #15 (Silkway Hava Kargo - Taşkent)",
+        date: "04.11.2026",
+        status: "IN_TRANSIT",
+        notes: "Acil diyaframlar ve çekvalf teflonları",
+        items: [
+          { code: "90567", name: "Diyafram 66 Mm", qty: 5 },
+          { code: "90880", name: "DST Çekvalf Teflonu", qty: 4 }
+        ]
+      }
+    ];
+
     const STORAGE_KEY = 'elips_depo_v11';
     let stocks = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!stocks || stocks.length < 50) {
@@ -631,9 +614,9 @@
     }
 
     let sales = JSON.parse(localStorage.getItem('elips_sales_v11')) || REAL_PAST_SALES;
+    let cargos = JSON.parse(localStorage.getItem('elips_cargos_v11')) || REAL_CARGOS_DATA;
     let selectedCat = 'ALL';
     let currentLang = 'tr';
-    let currentFlow = 'OMER_TO_KAMIL';
 
     function normalizeTr(text) {
       if (!text) return "";
@@ -644,30 +627,21 @@
     function persist() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
       localStorage.setItem('elips_sales_v11', JSON.stringify(sales));
+      localStorage.setItem('elips_cargos_v11', JSON.stringify(cargos));
     }
 
+    // 3'LÜ SEKME GEÇİŞİ
     function switchTab(t) {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden'));
       document.getElementById('tab-' + t).classList.remove('hidden');
-      document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('bg-brand-600', 'text-white', 'shadow-md'); b.classList.add('text-slate-400'); });
+      document.querySelectorAll('.tab-btn').forEach(b => { 
+        b.classList.remove('bg-brand-600', 'text-white', 'shadow-md'); 
+        b.classList.add('text-slate-400'); 
+      });
       document.getElementById('tab-btn-' + t).classList.add('bg-brand-600', 'text-white', 'shadow-md');
       document.getElementById('tab-btn-' + t).classList.remove('text-slate-400');
       if (t === 'reports') renderZReport();
-    }
-
-    function setWorkflowDirection(dir) {
-      currentFlow = dir;
-      if (dir === 'OMER_TO_KAMIL') {
-        document.getElementById('btn-flow-otk').className = "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-brand-600 text-white shadow-md";
-        document.getElementById('btn-flow-kto').className = "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
-        document.getElementById('form-omer-to-kamil').classList.remove('hidden');
-        document.getElementById('form-kamil-to-omer').classList.add('hidden');
-      } else {
-        document.getElementById('btn-flow-kto').className = "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-cyan-600 text-white shadow-md";
-        document.getElementById('btn-flow-otk').className = "py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-400 hover:text-white";
-        document.getElementById('form-kamil-to-omer').classList.remove('hidden');
-        document.getElementById('form-omer-to-kamil').classList.add('hidden');
-      }
+      if (t === 'cargo') renderCargoList();
     }
 
     function filterCategory(cat) {
@@ -690,16 +664,23 @@
       return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-950 text-purple-400 border border-purple-800">Mekatronik</span>`;
     }
 
+    // ==========================================
+    // 1. DEPO STOK LİSTESİ ÇİZİMİ
+    // ==========================================
     function renderStockTable() {
       const s = normalizeTr(document.getElementById('stock-search')?.value || "");
       let filtered = stocks.filter(p => {
         const matchesSearch = normalizeTr(p.name).includes(s) || normalizeTr(p.code).includes(s);
-        const matchesCat = (selectedCat === 'ALL') || (p.cat === selectedCat);
+        let matchesCat = false;
+        if (selectedCat === 'ALL') matchesCat = true;
+        else if (selectedCat === 'YENI') matchesCat = !!p.is_new;
+        else matchesCat = (p.cat === selectedCat);
         return matchesSearch && matchesCat;
       });
 
       const sortMode = document.getElementById('stock-sort-select')?.value || 'DEFAULT';
-      if (sortMode === 'QTY_ASC') filtered.sort((a, b) => a.qty - b.qty);
+      if (sortMode === 'NEW_FIRST') filtered.sort((a, b) => (b.is_new ? 1 : 0) - (a.is_new ? 1 : 0));
+      else if (sortMode === 'QTY_ASC') filtered.sort((a, b) => a.qty - b.qty);
       else if (sortMode === 'QTY_DESC') filtered.sort((a, b) => b.qty - a.qty);
       else if (sortMode === 'MEK_FIRST') filtered.sort((a, b) => (b.cat === 'MEKATRONIK' ? 1 : 0) - (a.cat === 'MEKATRONIK' ? 1 : 0));
       else if (sortMode === 'KONT_FIRST') filtered.sort((a, b) => (b.cat === 'KONTROL' ? 1 : 0) - (a.cat === 'KONTROL' ? 1 : 0));
@@ -707,26 +688,33 @@
       else if (sortMode === 'NAME_ASC') filtered.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
 
       document.getElementById('count-all').innerText = stocks.length;
+      document.getElementById('count-yeni').innerText = stocks.filter(p => p.is_new).length;
       document.getElementById('count-kontrol').innerText = stocks.filter(p => p.cat === 'KONTROL').length;
       document.getElementById('count-elektronik').innerText = stocks.filter(p => p.cat === 'ELEKTRONIK').length;
       document.getElementById('count-mekatronik').innerText = stocks.filter(p => p.cat === 'MEKATRONIK').length;
 
+      const inTransitCargos = cargos.filter(c => c.status === 'IN_TRANSIT');
+      document.getElementById('count-in-transit').innerText = inTransitCargos.length;
+
       const listEl = document.getElementById('stock-list');
       if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-cardbg rounded-2xl border border-bordercol">Bu aramaya uygun parça bulunamadı.</div>`;
+        listEl.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-cardbg rounded-2xl border border-bordercol">Bu kategori veya aramaya uygun parça bulunamadı.</div>`;
         return;
       }
 
       listEl.innerHTML = filtered.map(i => {
         const hasStock = i.qty > 0;
         const qtyDisplay = hasStock ? `${i.qty} ADT` : `<span class="text-rose-400">0 ADT (Tükendi)</span>`;
+        const newBadge = i.is_new ? `<span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">YENİ</span>` : '';
+
         return `
           <div class="bg-cardbg border border-bordercol rounded-2xl p-3 flex justify-between items-center shadow-md hover:border-slate-600 transition">
             <div class="flex-1 pr-2">
               <div class="flex items-center space-x-1.5">
                 <span class="text-[10px] font-mono font-bold text-white bg-darkbg px-2 py-0.5 rounded border border-emerald-500/40">${i.code}</span>
                 ${getCategoryBadge(i.cat || 'MEKATRONIK')}
-                <button onclick="openEditPartModal('${i.id}')" title="Ürünü ve Kategoriyi Düzenle" class="text-slate-400 hover:text-emerald-400 text-xs px-1">
+                ${newBadge}
+                <button onclick="openEditPartModal('${i.id}')" title="Ürünü, Kategoriyi ve YENİ Rozetini Düzenle" class="text-slate-400 hover:text-emerald-400 text-xs px-1">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
               </div>
@@ -745,7 +733,156 @@
       }).join('');
     }
 
-    // AKILLI FİRMA İSMİ ÖNERİ VE TAMAMLAMA SİSTEMİ
+    // ==========================================
+    // 2. YOLDAKİ KARGOLAR (TR ➔ ÖZBEKİSTAN)
+    // ==========================================
+    function renderCargoList() {
+      const container = document.getElementById('cargo-list');
+      const inTransit = cargos.filter(c => c.status === 'IN_TRANSIT');
+      const received = cargos.filter(c => c.status === 'RECEIVED');
+
+      document.getElementById('count-in-transit').innerText = inTransit.length;
+
+      if (cargos.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6 bg-cardbg rounded-2xl border border-bordercol">Kayıtlı kargo bulunamadı.</p>`;
+        return;
+      }
+
+      let htmlContent = '';
+
+      if (inTransit.length > 0) {
+        htmlContent += `<h4 class="text-xs font-bold text-cyan-400 px-1">✈️ Yoldaki Paketler (${inTransit.length})</h4>`;
+        htmlContent += inTransit.map(c => `
+          <div class="bg-cardbg border border-cyan-500/40 rounded-2xl p-3.5 space-y-2 shadow-lg">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-bold text-white">${c.title}</span>
+                <p class="text-[10px] text-slate-400 mt-0.5">${c.notes || 'Not yok'}</p>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-700">YOLDA</span>
+            </div>
+            <div class="bg-darkbg p-2 rounded-xl text-xs space-y-1">
+              <span class="text-[10px] text-slate-400 font-semibold block">Paket İçeriği:</span>
+              ${c.items.map(it => `
+                <div class="flex justify-between items-center text-[11px]">
+                  <span class="text-slate-300"><span class="font-mono text-cyan-400">[${it.code}]</span> ${it.name}</span>
+                  <span class="font-bold text-white">${it.qty} Adet</span>
+                </div>
+              `).join('')}
+            </div>
+            <div class="flex space-x-2 pt-1">
+              <button onclick="acceptCargoToWarehouse('${c.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded-xl font-bold text-white text-xs shadow flex items-center justify-center space-x-1.5">
+                <i class="fa-solid fa-box-open"></i>
+                <span>Depoya Kabul Et (+Stoklara Ekle)</span>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      if (received.length > 0) {
+        htmlContent += `<h4 class="text-xs font-bold text-slate-400 px-1 pt-3">📦 Teslim Alınanlar & Depoya Eklenenler</h4>`;
+        htmlContent += received.slice(0, 5).map(c => `
+          <div class="bg-cardbg/60 border border-bordercol rounded-2xl p-3 text-xs space-y-1 opacity-80">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-300">${c.title}</span>
+              <span class="text-[9px] text-emerald-400 font-bold">✓ KABUL EDİLDİ</span>
+            </div>
+            <p class="text-[10px] text-slate-400">${c.date} tarihinde depoya aktarıldı.</p>
+          </div>
+        `).join('');
+      }
+
+      container.innerHTML = htmlContent;
+    }
+
+    function openCargoModal() {
+      document.getElementById('modal-cargo').classList.remove('hidden');
+      document.getElementById('modal-cargo').classList.add('flex');
+    }
+    function closeCargoModal() {
+      document.getElementById('modal-cargo').classList.add('hidden');
+      document.getElementById('modal-cargo').classList.remove('flex');
+    }
+
+    function saveCargoPackage() {
+      const title = document.getElementById('crg-title').value.trim();
+      const rawItems = document.getElementById('crg-items').value.trim();
+      const notes = document.getElementById('crg-notes').value.trim();
+
+      if (!title || !rawItems) {
+        alert("Lütfen kargo başlığını ve içindeki parçaları yazın!");
+        return;
+      }
+
+      const parsedItems = [];
+      rawItems.split('\n').forEach(line => {
+        const clean = line.trim();
+        if (!clean) return;
+        const parts = clean.split('-');
+        const code = parts[0].trim();
+        const qtyMatch = clean.match(/(\d+)/);
+        const qty = qtyMatch ? parseInt(qtyMatch[0]) : 1;
+        parsedItems.push({ code: code, name: code, qty: qty });
+      });
+
+      cargos.unshift({
+        id: "crg-" + Date.now(),
+        title: title,
+        date: new Date().toLocaleDateString('tr-TR'),
+        status: "IN_TRANSIT",
+        notes: notes,
+        items: parsedItems
+      });
+
+      persist();
+      closeCargoModal();
+      renderCargoList();
+      document.getElementById('crg-title').value = '';
+      document.getElementById('crg-items').value = '';
+      document.getElementById('crg-notes').value = '';
+      alert("Yoldaki kargo paketi başarıyla kaydedildi!");
+    }
+
+    // TEK TIKLA KARGOYU DEPO STOKLARINA EKLEME
+    function acceptCargoToWarehouse(cargoId) {
+      const cargo = cargos.find(c => c.id === cargoId);
+      if (!cargo) return;
+
+      if (!confirm(`"${cargo.title}" içindeki parçalar depodaki mevcut stoklarınıza eklensin mi?`)) return;
+
+      cargo.items.forEach(it => {
+        let p = stocks.find(s => s.code.toLowerCase() === it.code.toLowerCase());
+        if (p) {
+          p.qty += it.qty;
+        } else {
+          stocks.unshift({
+            id: "s" + Date.now() + Math.random(),
+            code: it.code,
+            name: it.name || it.code,
+            cat: "MEKATRONIK",
+            qty: it.qty,
+            loc: "ELIPS-DEPO",
+            is_new: true
+          });
+        }
+      });
+
+      cargo.status = "RECEIVED";
+      persist();
+      renderStockTable();
+      renderCargoList();
+
+      const payload = {
+        direction: "CARGO_RECEIVED",
+        title: cargo.title,
+        items: cargo.items
+      };
+      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
+
+      alert("Kargo depoya kabul edildi ve tüm parçalar doğrudan depo stoklarınıza eklendi!");
+    }
+
     function showFirmSuggestions(val, dropdownId, inputId) {
       const dd = document.getElementById(dropdownId);
       if (!dd) return;
@@ -775,7 +912,6 @@
       if (dd) dd.classList.add('hidden');
     }
 
-    // ÜRÜN DÜZENLEME MODAL FONKSİYONLARI
     function openEditPartModal(id) {
       const it = stocks.find(x => x.id === id);
       if (!it) return;
@@ -785,6 +921,7 @@
       document.getElementById('edit-cat').value = it.cat || 'MEKATRONIK';
       document.getElementById('edit-qty').value = it.qty;
       document.getElementById('edit-loc').value = it.loc || 'ELIPS-DEPO';
+      document.getElementById('edit-is-new').checked = !!it.is_new;
       document.getElementById('modal-edit-part').classList.remove('hidden');
       document.getElementById('modal-edit-part').classList.add('flex');
     }
@@ -804,6 +941,7 @@
       const newCat = document.getElementById('edit-cat').value;
       const newQty = parseInt(document.getElementById('edit-qty').value) || 0;
       const newLoc = document.getElementById('edit-loc').value.trim() || 'ELIPS-DEPO';
+      const isNew = document.getElementById('edit-is-new').checked;
 
       if (!newCode || !newName) { alert("Lütfen ürün kodu ve ismini doldurun!"); return; }
 
@@ -812,11 +950,40 @@
       it.cat = newCat;
       it.qty = Math.max(0, newQty);
       it.loc = newLoc;
+      it.is_new = isNew;
 
       persist();
       renderStockTable();
       closeEditPartModal();
       alert(`[${it.code}] ${it.name} güncellendi!`);
+    }
+
+    // BİLDİRİMSİZ VEYA BİLDİRİMLİ PARÇA SİLME
+    function deletePartFromModal(silent) {
+      const id = document.getElementById('edit-id').value;
+      const it = stocks.find(x => x.id === id);
+      if (!it) return;
+
+      const confirmMsg = silent
+        ? `[${it.code}] ${it.name} parçasını KİMSEYE BİLDİRİM GÖNDERMEDEN depodan kalıcı olarak silmek istediğinize emin misiniz?`
+        : `[${it.code}] ${it.name} parçasını Kamil'e ve gruba Telegram bildirimi göndererek silmek istiyor musunuz?`;
+
+      if (!confirm(confirmMsg)) return;
+
+      stocks = stocks.filter(x => x.id !== id);
+      persist();
+      renderStockTable();
+      closeEditPartModal();
+
+      const payload = {
+        direction: "STOCK_DELETE",
+        code: it.code,
+        name: it.name,
+        silent: silent
+      };
+      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
+
+      alert(silent ? "Parça kimseye bildirilmeden sessizce depodan silindi." : "Parça depodan silindi ve bildirim iletildi.");
     }
 
     function openDeductModal(id) {
@@ -901,7 +1068,8 @@
         code: it.code,
         name: it.name,
         current_qty: it.qty,
-        loc: it.loc
+        loc: it.loc,
+        is_new: it.is_new || false
       };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
@@ -915,103 +1083,32 @@
       const name = document.getElementById('m-name').value.trim();
       const qty = parseInt(document.getElementById('m-qty').value) || 0;
       const loc = document.getElementById('m-loc').value.trim() || 'ELIPS-DEPO';
+      const isNew = document.getElementById('m-is-new').checked;
+
       if (!code || !name) { alert("Lütfen Ürün Kodu ve İsmini doldurun!"); return; }
 
-      stocks.unshift({ id: "s" + Date.now(), code, cat, name, qty, loc });
+      stocks.unshift({ id: "s" + Date.now(), code, cat, name, qty, loc, is_new: isNew });
       persist();
       closeStockModal();
       renderStockTable();
+
+      const payload = {
+        direction: "STOCK_CHANGE",
+        action: "INCREASE",
+        delta: qty,
+        category: cat,
+        code: code,
+        name: name,
+        current_qty: qty,
+        loc: loc,
+        is_new: isNew
+      };
+      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
+
       document.getElementById('m-code').value = "";
       document.getElementById('m-name').value = "";
     }
 
-    function searchPartsLive(query) {
-      const dropdown = document.getElementById('otk-part-dropdown');
-      const q = normalizeTr(query.trim());
-      if (!q) { dropdown.classList.add('hidden'); return; }
-
-      const matches = stocks.filter(p => normalizeTr(p.name).includes(q) || normalizeTr(p.code).includes(q));
-      if (matches.length === 0) { 
-        dropdown.innerHTML = `<div class="p-2 text-xs text-slate-400 text-center">Eşleşen parça bulunamadı.</div>`; 
-        dropdown.classList.remove('hidden'); 
-        return; 
-      }
-
-      dropdown.innerHTML = matches.slice(0, 10).map(p => `
-        <div onclick="selectPart('${p.code}', '${p.name.replace(/'/g, "\\'")}', '${p.qty}')" class="p-2 hover:bg-slate-800 cursor-pointer flex justify-between items-center text-xs">
-          <div>
-            <span class="text-[9px] font-mono font-bold bg-darkbg border border-bordercol px-1 rounded text-emerald-400">${p.code}</span>
-            <span class="text-white ml-1">${p.name}</span>
-          </div>
-          <span class="text-[10px] font-bold ${p.qty > 0 ? 'text-emerald-400' : 'text-slate-500'}">${p.qty} ADT</span>
-        </div>
-      `).join('');
-      dropdown.classList.remove('hidden');
-    }
-
-    function selectPart(code, name, qty) {
-      document.getElementById('otk-selected-code').value = code;
-      document.getElementById('otk-selected-name').value = name;
-      document.getElementById('otk-part-search').value = `${name} [${code}]`;
-      const badge = document.getElementById('otk-selected-badge');
-      badge.innerText = `✓ Kod: ${code} (Depo: ${qty} ADT)`;
-      badge.classList.remove('hidden');
-      document.getElementById('otk-clear-btn').classList.remove('hidden');
-      document.getElementById('otk-part-dropdown').classList.add('hidden');
-    }
-
-    function clearPartSelection() {
-      document.getElementById('otk-selected-code').value = "";
-      document.getElementById('otk-selected-name').value = "";
-      document.getElementById('otk-part-search').value = "";
-      document.getElementById('otk-selected-badge').classList.add('hidden');
-      document.getElementById('otk-clear-btn').classList.add('hidden');
-      document.getElementById('otk-part-dropdown').classList.add('hidden');
-    }
-
-    function dispatchOmerToKamil() {
-      const firm = document.getElementById('otk-firm-name').value.trim();
-      const contact = document.getElementById('otk-firm-contact').value.trim();
-      const code = document.getElementById('otk-selected-code').value.trim();
-      const name = document.getElementById('otk-selected-name').value.trim();
-      const qty = document.getElementById('otk-qty').value;
-
-      if (!firm || !contact) { alert("Lütfen Firma İsmi ve İlgili Kişi bilgilerini doldurun!"); return; }
-      if (!code) { alert("Lütfen listeden bir parça arayıp seçin!"); return; }
-
-      const payload = {
-        direction: "OMER_TO_KAMIL",
-        firm: firm,
-        contact: contact,
-        part_code: code,
-        part_name: name,
-        quantity: qty,
-        priority: document.getElementById('otk-priority').value,
-        notes: document.getElementById('otk-notes').value
-      };
-      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      alert(`Talep iletildi:\nFirma: ${firm}\nParça: [${code}] ${name}\nAdet: ${qty}`);
-    }
-
-    function dispatchKamilToOmer() {
-      const firm = document.getElementById('kto-firm-name').value.trim();
-      const contact = document.getElementById('kto-firm-contact').value.trim();
-      const taskType = document.getElementById('kto-task-type').value.trim();
-
-      if (!firm || !taskType) { alert("Lütfen Firma İsmi ve Görev Başlığını yazın!"); return; }
-
-      const payload = {
-        direction: "KAMIL_TO_OMER",
-        firm: firm,
-        contact: contact || "Belirtilmedi",
-        task_type: taskType,
-        instructions: document.getElementById('kto-instructions').value
-      };
-      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      alert(`İş Sahaya Gönderildi:\nFirma: ${firm}\nGörev: ${taskType}`);
-    }
-
-    /* ---------------- Z-RAPORU & GEÇMİŞ (TAB 3) ---------------- */
     function setDatePreset(type) {
       const startEl = document.getElementById('z-start-date');
       const endEl = document.getElementById('z-end-date');
@@ -1136,6 +1233,8 @@
       setLanguage('tr');
       setDatePreset('all');
       renderStockTable();
+      renderCargoList();
+      updateOnlineStatus();
     });
   </script>
 </body>
