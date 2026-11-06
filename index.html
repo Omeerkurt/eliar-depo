@@ -40,7 +40,7 @@
     </button>
   </header>
 
-  <!-- 3'LÜ MENÜ (Depo Stok | Ekran Tamir | Rapor) -->
+  <!-- 3'LÜ MENÜ -->
   <main class="p-3.5 max-w-2xl mx-auto space-y-4">
     <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
       <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
@@ -82,7 +82,7 @@
       <div id="stock-list" class="space-y-2"></div>
     </section>
 
-    <!-- 2. TAB: EKRAN TAMİR & SERVİS MODÜLÜ -->
+    <!-- 2. TAB: EKRAN TAMİR MODÜLÜ -->
     <section id="tab-repair" class="tab-content hidden space-y-3">
       <div class="flex justify-between items-center bg-cardbg border border-bordercol rounded-2xl p-3 shadow-md">
         <div>
@@ -156,7 +156,7 @@
       </div>
       <div class="text-xs">
         <label class="text-slate-400 font-medium">Arıza / Sıkıntı <span class="text-rose-400">*</span></label>
-        <input type="text" id="r-issue" placeholder="Örn: Dokunmatik basmıyor, besleme kartı yandı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+        <input type="text" id="r-issue" placeholder="Örn: Dokunmatik basmıyor" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
       </div>
       <div class="text-xs">
         <label class="text-slate-400 font-medium">Servis Durumu</label>
@@ -307,153 +307,8 @@
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
 
-    // TÜM GERÇEK PARÇA LİSTESİ (TAMAMI GERİ YÜKLENDİ)
-    const REAL_STOCKS_DATA = [
-      {id:"s1",code:"Pd320",name:"Pd320 Kontrol Cihazı",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s2",code:"PD330",name:"PD330 Kontrol Cihazı",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s3",code:"Aim8-A",name:"Aim8-A Analog Giriş Modülü",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s4",code:"Aim8-B",name:"Aim8-B Analog Giriş Modülü",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
-      {id:"s5",code:"Dim32",name:"Dim32 Dijital Giriş Modülü",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s6",code:"Dom16-PLC",name:"Dom16-PLC Çıkış Modülü",cat:"ELEKTRONIK",qty:6,loc:"ELIPS-DEPO"},
-      {id:"s7",code:"P44",name:"P44 Panel Kartı",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s8",code:"Pd300",name:"Pd300 Kontrol Cihazı",cat:"KONTROL",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s9",code:"Pd340",name:"Pd340 Kontrol Cihazı",cat:"KONTROL",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s10",code:"Pd350",name:"Pd350 Kontrol Cihazı",cat:"KONTROL",qty:10,loc:"ELIPS-DEPO"},
-      {id:"s11",code:"S400",name:"S400 Kontrol Cihazı",cat:"KONTROL",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s12",code:"S42",name:"S42 Kontrol Cihazı",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s13",code:"Umf-ILETISIM20",name:"Umf-ILETISIM20 kablosu",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s14",code:"TBBPLC-F",name:"TBBPLC-F Modülü",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s15",code:"Edc T7000",name:"Edc T7000 Kontrolör",cat:"KONTROL",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s16",code:"Edc M7700",name:"Edc M7700 Kontrolör",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s17",code:"Edc T710",name:"Edc T710 Kontrolör",cat:"KONTROL",qty:9,loc:"ELIPS-DEPO"},
-      {id:"s18",code:"Edc T712",name:"Edc T712 Kontrolör",cat:"KONTROL",qty:8,loc:"ELIPS-DEPO"},
-      {id:"s19",code:"Powerfail",name:"Powerfail Güç Koruma Kartı",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s20",code:"P42",name:"P42 Panel Kartı",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s21",code:"P300",name:"P300 Panel Kartı",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
-      {id:"s22",code:"P40",name:"P40 Panel Kartı",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s23",code:"Edc T7701EX",name:"Edc T7701EX Kontrolör",cat:"KONTROL",qty:10,loc:"ELIPS-DEPO"},
-      {id:"s24",code:"Edc T7700",name:"Edc T7700 Kontrolör",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s25",code:"T7700",name:"T7700 Cihazı",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s26",code:"P43",name:"P43 Panel Kartı",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s27",code:"AOM8",name:"AOM8 Çıkış Modülü",cat:"ELEKTRONIK",qty:7,loc:"ELIPS-DEPO"},
-      {id:"s28",code:"T7701 EX G",name:"T7701 EX G Cihazı",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s29",code:"T7RACK 6 PLC",name:"T7RACK 6 PLC Ünitesi",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s30",code:"T7RACK 10 PLC",name:"T7RACK 10 PLC Ünitesi",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s31",code:"T7PAC-POWER 30",name:"T7PAC-POWER 30 Güç Kaynağı",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s32",code:"T7PAC-POWER 20",name:"T7PAC-POWER 20 Güç Kaynağı",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s33",code:"T7PAC-DIM32V5",name:"T7PAC-DIM32V5 Giriş Modülü",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
-      {id:"s34",code:"T7PAC-DOM32V5",name:"T7PAC-DOM32V5 Çıkış Modülü",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
-      {id:"s35",code:"T7PAC-DIM16V5",name:"T7PAC-DIM16V5 Giriş Modülü",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s36",code:"T7PAC-AIO88SV1",name:"T7PAC-AIO88SV1 Modülü",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
-      {id:"s37",code:"T7PAC-AI8SV1",name:"T7PAC-AI8SV1 Analog Giriş",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s38",code:"T7PAC-AO8SV1",name:"T7PAC-AO8SV1 Analog Çıkış",cat:"ELEKTRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s39",code:"PANELSET-T7701 ex",name:"PANELSET-T7701 ex Ön Panel Seti",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s40",code:"PANELSET-T7700",name:"PANELSET-T7700 Ön Panel Seti",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s41",code:"T7PAC-T7CPURIO",name:"T7PAC-T7CPURIO İşlemci",cat:"KONTROL",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s42",code:"T7PAC-DOM16V5",name:"T7PAC-DOM16V5 Çıkış Modülü",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s43",code:"40025",name:"PLC CPU: DVP12SA211R: 8DI 4DO",cat:"KONTROL",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s44",code:"SP-01",name:"Saha panosu (SPU su yok)",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s45",code:"RA032DA",name:"RA032DA09036000 aktuator",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s46",code:"1013",name:"Vana TORK (ko'k) 3/4\" 3 yollu + aktuator",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s47",code:"1015",name:"SLD Kanal Vanası Full 3/4\" TORK 2 yollu",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s48",code:"5022",name:"Salmastra (Geylani ile geldi)",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s49",code:"30010",name:"EBARA 15MM SIL/SIL/VITON SALMASTRA",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s50",code:"30076",name:"SANTOPRENE DIAPHRAGM POMKAR PK10",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s51",code:"40597",name:"BES005M BALLUFF Sensör",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s52",code:"40634",name:"BES0057: Balluff M12MI-NSC40B-BV03",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s53",code:"40647",name:"Smc CJPB15-10H6 Tek Etkili Silindir",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s54",code:"41300",name:"RD96 - MU CAMBAZ PISTONU POLIETILEN TAKOZ",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s55",code:"41316",name:"Lab120 encoder",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s56",code:"41396",name:"12'li Hareketli Kablo (X3-X4 Pistonu)",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s57",code:"42184",name:"PIPETLEME SIRINGA UCU",cat:"MEKATRONIK",qty:200,loc:"ELIPS-DEPO"},
-      {id:"s58",code:"50014",name:"SUSTURUCU: AN15-02: 1/4\"",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s59",code:"50018",name:"VALF: SY5140-5YO-Q",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s60",code:"50090",name:"Tork çift etkili aktüatör",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s61",code:"50138",name:"PNOMATIK RAKOR: KQ2L04-M5A 4MM DIRSEK",cat:"MEKATRONIK",qty:11,loc:"ELIPS-DEPO"},
-      {id:"s62",code:"50156",name:"T RAKOR: KQ2T06-22A 6MM",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s63",code:"50227",name:"KISICILI RAKOR: AS2201F-01-04SA 1/8\"-4MM",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s64",code:"50238",name:"SUSTURUCU: AN 120-M5 (SMC)",cat:"MEKATRONIK",qty:5,loc:"ELIPS-DEPO"},
-      {id:"s65",code:"50242",name:"KISICILI RAKOR: AS2002F-06 6MM HAT TIPI",cat:"MEKATRONIK",qty:7,loc:"ELIPS-DEPO"},
-      {id:"s66",code:"50257",name:"TEK ETLKILI PNOMATIK SILINDIR CD75E32",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s67",code:"50258",name:"SILINDIR CD85N16-100-B (SMC)",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s68",code:"50259",name:"SILINDIR CD85N16-200-B (SMC)",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s69",code:"50260",name:"PISTON CD85N16-50-B",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s70",code:"50261",name:"PISTON CD85N16-80-B",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s71",code:"50269",name:"Manifold: SS3Y1-S41-02-M5-Q 2'li",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s72",code:"50270",name:"Manifold: SS3Y1-S41-04-M5-Q 4'lü",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s73",code:"50287",name:"VALF: SY114-5LOU-Q",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s74",code:"50289",name:"VALF: SY3220-5LOU-M5-Q",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s75",code:"50291",name:"VALF: SYJ3143-5LOU-Q",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s76",code:"50292",name:"VALF: SYJ3240-5LOU-Q",cat:"ELEKTRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s77",code:"50293",name:"VALF: SYJ3243-5LOU-Q",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s78",code:"50294",name:"VALF: SYJ7120-5DZ-01F-Q",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s79",code:"50295",name:"VALF: SYJ7220-5DZ-01F-Q",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s80",code:"52156",name:"PNOMATIK T RAKOR: KQ2T06-00A 6MM",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s81",code:"54626",name:"A03/0-24VDC B00123525: 5W 22mm",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s82",code:"54654",name:"LOP POMPA FILTRE ORINGI 30*3 MM",cat:"MEKATRONIK",qty:10,loc:"ELIPS-DEPO"},
-      {id:"s83",code:"90416",name:"SOLENOID VALF: 00125317 24VDC",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s84",code:"90501",name:"SMC C76-32PS PISTON KECESI",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s85",code:"90715",name:"REGULATOR: AR10-M5H: 0-8 BAR",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s86",code:"90726",name:"HIZ AYAR VALFI: ASN2-02 1/4\" SUSTURUCULU",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s87",code:"90759",name:"SENSOR TUTUCU: BJ2-016",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s88",code:"90761",name:"SENSOR TUTUCU: BM2-025",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s89",code:"90765",name:"RD96 CAMBAZ KOLU",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s90",code:"90766",name:"RD96 ALIMINYUM LAMA MONTAJ PARCASI",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s91",code:"90769",name:"RD96 BOS CAMBAZ KUTUSU",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s92",code:"90771",name:"RD96 CAMBAZ MEKANIZMASI",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s93",code:"90781",name:"SMC C85-25PS PISTON KECESI",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s94",code:"90782",name:"C85C16 EKLEM BAGLANTI PARCASI",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s95",code:"90840",name:"PISTON SENSORU: DC73L",cat:"ELEKTRONIK",qty:6,loc:"ELIPS-DEPO"},
-      {id:"s96",code:"90879",name:"DST CEKVALF O-RINGI",cat:"MEKATRONIK",qty:5,loc:"ELIPS-DEPO"},
-      {id:"s97",code:"90881",name:"DST CEKVALF YAYI",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s98",code:"90946",name:"SLR1-40 FILTRE",cat:"MEKATRONIK",qty:12,loc:"ELIPS-DEPO"},
-      {id:"s99",code:"90948",name:"FIP25 BAKALIT FLANŞ",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s100",code:"91035",name:"OMAL TAMIR TAKIMI: KGBV4505 3/4\"",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s101",code:"91036",name:"1\" OMAL VANA TAMIR TAKIMI",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
-      {id:"s102",code:"91037",name:"Omal küresel vana conta tamir takımı",cat:"MEKATRONIK",qty:5,loc:"ELIPS-DEPO"},
-      {id:"s103",code:"91043",name:"VALF KABLOSU",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
-      {id:"s104",code:"91045",name:"SMC KURESEL MAFSAL: KJ6D M6*1",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s105",code:"91064",name:"PNOMATIK RAKOR: KQ2H04-M5A 4MM DUZ",cat:"MEKATRONIK",qty:13,loc:"ELIPS-DEPO"},
-      {id:"s106",code:"91071",name:"1/8\"-4MM DIRSEK RAKOR KQ2L04-01NS",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s107",code:"91074",name:"PNOMATIK RAKOR: KQ2L6M5N 6MM DIRSEK",cat:"MEKATRONIK",qty:10,loc:"ELIPS-DEPO"},
-      {id:"s108",code:"91086",name:"PNOMATIK T RAKOR: KQ2T04-M5A 4MM",cat:"MEKATRONIK",qty:10,loc:"ELIPS-DEPO"},
-      {id:"s109",code:"91088",name:"T RAKOR: KQ2T08-06 8-6MM",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s110",code:"91238",name:"FIP25 POMPA KAPAK O-RINGI",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s111",code:"91277",name:"RD96-Mu Polietilen Ağızlık",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s112",code:"91284",name:"BONESSI VALF: P00112200 E1A/4",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s113",code:"91303",name:"PASLANMAZ ARABA 4 DELIKLI REXROTH",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s114",code:"91332",name:"FESTO BASINC ANAHTARI",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s115",code:"91406",name:"FIP25 SALMASTRA",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
-      {id:"s116",code:"91448",name:"PNOMATIK RAKOR: 57116 1/8\"-6MM DIRSEK",cat:"MEKATRONIK",qty:8,loc:"ELIPS-DEPO"},
-      {id:"s117",code:"91463",name:"EUROTEC REDUCER-KAFA ADAPTORU",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s118",code:"91502",name:"LAB120 mikser kayışı",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s119",code:"91590",name:"U4 CEKVALF",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s120",code:"91594",name:"VALF: SY5240-5YO-Q",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s121",code:"91603",name:"Omal Vana: V451H405 3 Yollu L Port 3/4\"",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s122",code:"91604",name:"1\" 3 YOLLU L PORT VANA",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s123",code:"91633",name:"OMAL VIP VANA VNC10004",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s124",code:"96185",name:"PISTON: CD76E32-50-B",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s125",code:"96412",name:"1\" > 3/4\" POLIETILEN DST CEK VALF ADAPTORU",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s126",code:"96467",name:"Omal Aktüatör: DAN0030411S F03-F05",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s127",code:"96496",name:"Omal Çift Etkili Aktüatör: DAN0015411S",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s128",code:"96515",name:"DST Polietilen Z Eksen dayama takozu",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s129",code:"96516",name:"DST Z Ekseni Polietilen Ağızlık",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s130",code:"96517",name:"Rd96_MU Z Polietilen Dayama Takozu",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s131",code:"96570",name:"Ø19mm Şeffaf Telli Hortum (Mavi)",cat:"MEKATRONIK",qty:10,loc:"ELIPS-DEPO"},
-      {id:"s132",code:"C-137161",name:"Tuz rofinadsiyon filtr kapagi",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s133",code:"TEST",name:"Güç Kaynağı: DRL-24V75W1AZ",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s134",code:"90880",name:"DST Çekvalf Teflonu",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
-      {id:"s135",code:"90567",name:"66 Mm Teflon Takviyeli Diyafram",cat:"MEKATRONIK",qty:9,loc:"ELIPS-DEPO"},
-      {id:"s136",code:"90620",name:"PH Sensörü: SPH-1-DJ-6M Ph Sensör",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"}
-    ];
-
     const STORAGE_KEY = 'elips_depo_v11';
-    let stocks = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!stocks || stocks.length < 50) {
-      stocks = REAL_STOCKS_DATA;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
-    }
-
+    let stocks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     let sales = JSON.parse(localStorage.getItem('elips_sales_v11')) || [];
     let repairs = JSON.parse(localStorage.getItem('elips_repairs_v11')) || [];
     let selectedCat = 'ALL';
@@ -469,6 +324,24 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
       localStorage.setItem('elips_sales_v11', JSON.stringify(sales));
       localStorage.setItem('elips_repairs_v11', JSON.stringify(repairs));
+    }
+
+    // İLK AÇILIŞTA STOKLARI OTOMATİK ÇEKME
+    async function initData() {
+      if (!stocks || stocks.length === 0) {
+        try {
+          const res = await fetch('stocks_db.json');
+          if (res.ok) {
+            stocks = await res.json();
+            persist();
+          }
+        } catch (e) {
+          console.log("Offline mode", e);
+        }
+      }
+      renderStockTable();
+      renderRepairs();
+      updateOnlineStatus();
     }
 
     function switchTab(t) {
@@ -537,6 +410,7 @@
       `).join('');
     }
 
+    // --- EKRAN TAMİR FONKSİYONLARI ---
     function filterRepairs(f) {
       selectedRepairFilter = f;
       document.querySelectorAll('.rf-pill').forEach(btn => {
@@ -562,7 +436,7 @@
       document.getElementById('rc-tr').innerText = repairs.filter(r => r.status === 'TURKIYE').length;
 
       if (filtered.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6 bg-cardbg rounded-2xl">Kayıtlı tamir kaydı bulunamadı.</p>`;
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6 bg-cardbg rounded-2xl">Tamir kaydı yok.</p>`;
         return;
       }
 
@@ -608,7 +482,7 @@
       const status = document.getElementById('r-status').value;
       const notes = document.getElementById('r-notes').value.trim();
 
-      if (!firm || !model || !issue) { alert("Lütfen Firma, Model ve Arıza alanlarını doldurun!"); return; }
+      if (!firm || !model || !issue) { alert("Lütfen gerekli alanları doldurun!"); return; }
 
       const newRecord = {
         id: "rep-" + Date.now(),
@@ -636,7 +510,6 @@
         status_text: stNames[status]
       };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      alert("Ekran tamir kaydı açıldı!");
     }
 
     function changeRepairStatus(id, newStatus) {
@@ -659,7 +532,7 @@
     }
 
     function deleteRepairRecord(id) {
-      if (!confirm("Bu tamir kaydını silmek istediğinize emin misiniz?")) return;
+      if (!confirm("Bu kaydı silmek istediğinize emin misiniz?")) return;
       repairs = repairs.filter(x => x.id !== id);
       persist();
       renderRepairs();
@@ -846,11 +719,7 @@
       `).join('');
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      renderStockTable();
-      renderRepairs();
-      updateOnlineStatus();
-    });
+    window.addEventListener('DOMContentLoaded', initData);
   </script>
 </body>
 </html>
