@@ -3,40 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Elips Depo - Envanter & Lojistik</title>
+  <title>Elips Depo & Ekran Servis</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: { 500: '#22c55e', 600: '#16a34a', 700: '#15803d' },
-            darkbg: '#0B0F19', cardbg: '#161F30', bordercol: '#233047'
-          }
-        }
-      }
+      theme: { extend: { colors: { brand: { 500: '#22c55e', 600: '#16a34a' }, darkbg: '#0B0F19', cardbg: '#161F30', bordercol: '#233047' } } }
     }
   </script>
   <style>
     body { -webkit-tap-highlight-color: transparent; }
-    input, textarea, select { 
-      -webkit-user-select: text !important;
-      user-select: text !important;
-      touch-action: manipulation !important;
-    }
+    input, textarea, select { -webkit-user-select: text !important; user-select: text !important; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
 
-  <!-- HEADER (ONLINE / OFFLINE ROZETİ ENTEGRELİ) -->
+  <!-- HEADER -->
   <header class="sticky top-0 z-40 bg-cardbg/95 backdrop-blur border-b border-bordercol px-4 py-3 flex items-center justify-between shadow-lg">
     <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-md shadow-brand-500/20">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-emerald-700 flex items-center justify-center shadow-md">
         <i class="fa-solid fa-boxes-stacked text-white text-base"></i>
       </div>
       <div>
@@ -44,32 +32,24 @@
           <h1 class="text-base font-bold tracking-wide text-white leading-tight">ELİPS DEPO</h1>
           <span id="connection-status" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">🟢 Çevrimiçi</span>
         </div>
-        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ÖZBEKİSTAN MERKEZ ENVANTERİ</p>
+        <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ÖZBEKİSTAN MERKEZ SERVİS</p>
       </div>
     </div>
-    <div class="flex items-center space-x-1.5">
-      <button onclick="refreshPage()" title="Sayfayı Yenile" class="px-2.5 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
-        <i class="fa-solid fa-arrows-rotate"></i>
-        <span class="text-[10px] hidden sm:inline">Yenile</span>
-      </button>
-      <div class="flex items-center bg-darkbg border border-bordercol rounded-xl p-1 shadow-inner">
-        <button id="lang-tr" onclick="setLanguage('tr')" class="px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white">TR</button>
-        <button id="lang-uz" onclick="setLanguage('uz')" class="px-2 py-0.5 text-xs font-bold rounded-lg text-slate-400">UZ</button>
-      </div>
-    </div>
+    <button onclick="window.location.reload()" title="Yenile" class="px-2.5 py-1.5 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs flex items-center space-x-1">
+      <i class="fa-solid fa-arrows-rotate"></i>
+    </button>
   </header>
 
-  <!-- ANA İÇERİK -->
+  <!-- 3'LÜ MENÜ (Depo Stok | Ekran Tamir | Rapor) -->
   <main class="p-3.5 max-w-2xl mx-auto space-y-4">
-    <!-- 3'LÜ YENİ MENÜ (İş Akışı Çıkarıldı, Yoldaki Kargolar Eklendi) -->
     <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
       <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
         <i class="fa-solid fa-boxes-stacked text-sm"></i>
         <span>Depo Stok</span>
       </button>
-      <button onclick="switchTab('cargo')" id="tab-btn-cargo" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 text-slate-400">
-        <i class="fa-solid fa-plane-arrival text-sm text-cyan-400"></i>
-        <span>Yoldaki Kargo (<span id="count-in-transit">0</span>)</span>
+      <button onclick="switchTab('repair')" id="tab-btn-repair" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 text-slate-400">
+        <i class="fa-solid fa-tv text-sm text-cyan-400"></i>
+        <span>Ekran Tamir (<span id="count-repair-active">0</span>)</span>
       </button>
       <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 text-slate-400">
         <i class="fa-solid fa-chart-line text-sm"></i>
@@ -82,8 +62,8 @@
       <div class="flex space-x-2">
         <div class="relative flex-1">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-          <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Kod (91463, 90880) veya isimle ara..." 
-            class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500 shadow-inner">
+          <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Kod veya isimle ara..." 
+            class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none">
         </div>
         <button onclick="openStockModal()" class="px-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1 text-xs shadow-md">
           <i class="fa-solid fa-plus"></i>
@@ -91,26 +71,9 @@
         </button>
       </div>
 
-      <!-- AKILLI SIRALAMA SEÇİCİ -->
-      <div class="flex items-center space-x-2 bg-cardbg border border-bordercol px-3 py-1.5 rounded-xl text-xs">
-        <i class="fa-solid fa-arrow-down-short-wide text-brand-500"></i>
-        <span class="text-slate-400 text-[11px] font-semibold whitespace-nowrap">Sırala:</span>
-        <select id="stock-sort-select" onchange="renderStockTable()" class="bg-darkbg text-slate-200 border border-bordercol rounded-lg px-2 py-1 text-xs flex-1 focus:outline-none">
-          <option value="DEFAULT">Varsayılan Liste</option>
-          <option value="NEW_FIRST">✨ Yeni Eklenenler En Başta</option>
-          <option value="QTY_ASC">📉 Stok: Azdan Çoka (Kritikler Önce)</option>
-          <option value="QTY_DESC">📈 Stok: Çoktan Aza (En Fazla Olanlar)</option>
-          <option value="MEK_FIRST">⚙️ Kategori: Mekatronik Önce</option>
-          <option value="KONT_FIRST">🎛️ Kategori: Kontrolör Önce</option>
-          <option value="ELK_FIRST">⚡ Kategori: Elektronik Önce</option>
-          <option value="NAME_ASC">🔤 İsim: A'dan Z'ye</option>
-        </select>
-      </div>
-
-      <!-- KATEGORİ SEÇİCİLER (✨ YENİ FİLTRESİ ENTEGRELİ) -->
       <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
-        <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white shadow-sm whitespace-nowrap">Tümü (<span id="count-all">0</span>)</button>
-        <button onclick="filterCategory('YENI')" id="pill-YENI" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-amber-300 hover:text-white whitespace-nowrap">✨ Yeni (<span id="count-yeni">0</span>)</button>
+        <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white whitespace-nowrap">Tümü (<span id="count-all">0</span>)</button>
+        <button onclick="filterCategory('YENI')" id="pill-YENI" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-amber-300 whitespace-nowrap">✨ Yeni (<span id="count-yeni">0</span>)</button>
         <button onclick="filterCategory('KONTROL')" id="pill-KONTROL" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Kontrolör (<span id="count-kontrol">0</span>)</button>
         <button onclick="filterCategory('ELEKTRONIK')" id="pill-ELEKTRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Elektronik (<span id="count-elektronik">0</span>)</button>
         <button onclick="filterCategory('MEKATRONIK')" id="pill-MEKATRONIK" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-slate-300 whitespace-nowrap">Mekatronik (<span id="count-mekatronik">0</span>)</button>
@@ -119,104 +82,109 @@
       <div id="stock-list" class="space-y-2"></div>
     </section>
 
-    <!-- 2. TAB: YOLDAKİ KARGOLAR (TR ➔ ÖZBEKİSTAN LOJİSTİK TAKİBİ) -->
-    <section id="tab-cargo" class="tab-content hidden space-y-3">
+    <!-- 2. TAB: EKRAN TAMİR & SERVİS MODÜLÜ -->
+    <section id="tab-repair" class="tab-content hidden space-y-3">
       <div class="flex justify-between items-center bg-cardbg border border-bordercol rounded-2xl p-3 shadow-md">
         <div>
           <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
-            <i class="fa-solid fa-plane-departure text-cyan-400"></i>
-            <span>Türkiye'den Yoldaki Kargolar</span>
+            <i class="fa-solid fa-microchip text-cyan-400"></i>
+            <span>Ekran & Cihaz Tamir Takibi</span>
           </h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Taşkent'e Ulaşan Kolileri Tek Tıkla Depoya Aktar</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">Özbekistan / Türkiye Servis Süreçleri</p>
         </div>
-        <button onclick="openCargoModal()" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow">
+        <button onclick="openRepairModal()" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow">
           <i class="fa-solid fa-plus"></i>
-          <span>Yeni Paket</span>
+          <span>Ekran Kaydı</span>
         </button>
       </div>
 
-      <div id="cargo-list" class="space-y-2.5"></div>
+      <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
+        <button onclick="filterRepairs('ALL')" id="rf-ALL" class="rf-pill px-2.5 py-1 rounded-xl font-bold bg-cyan-600 text-white whitespace-nowrap">Tümü (<span id="rc-all">0</span>)</button>
+        <button onclick="filterRepairs('BEKLEMEDE')" id="rf-BEKLEMEDE" class="rf-pill px-2.5 py-1 rounded-xl font-semibold bg-cardbg border border-bordercol text-amber-300 whitespace-nowrap">⏳ Bekleyen (<span id="rc-wait">0</span>)</button>
+        <button onclick="filterRepairs('OZBEKISTAN')" id="rf-OZBEKISTAN" class="rf-pill px-2.5 py-1 rounded-xl font-semibold bg-cardbg border border-bordercol text-emerald-400 whitespace-nowrap">🇺🇿 Özbekistan (<span id="rc-uz">0</span>)</button>
+        <button onclick="filterRepairs('TURKIYE')" id="rf-TURKIYE" class="rf-pill px-2.5 py-1 rounded-xl font-semibold bg-cardbg border border-bordercol text-rose-400 whitespace-nowrap">🇹🇷 Türkiye'de (<span id="rc-tr">0</span>)</button>
+      </div>
+
+      <div id="repair-list" class="space-y-2.5"></div>
     </section>
 
-    <!-- 3. TAB: Z-RAPORU & GEÇMİŞ -->
+    <!-- 3. TAB: RAPOR & TESİS GEÇMİŞİ -->
     <section id="tab-reports" class="tab-content hidden space-y-3">
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
         <div class="flex justify-between items-center border-b border-bordercol pb-2">
-          <div>
-            <h3 class="text-sm font-bold text-white flex items-center space-x-1.5">
-              <i class="fa-solid fa-chart-pie text-emerald-400"></i>
-              <span>Satış & Çıkış Z-Raporu</span>
-            </h3>
-            <p class="text-[10px] text-slate-400 mt-0.5">Tarih Aralıklı Canlı Döküm</p>
-          </div>
-          <div class="flex items-center space-x-1.5">
-            <button onclick="exportZReportCSV()" title="Excel İndir" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1">
-              <i class="fa-solid fa-file-excel"></i>
-              <span>Excel</span>
-            </button>
-            <button onclick="exportZReportPDF()" title="PDF Yazdır" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-[11px] font-bold flex items-center space-x-1">
-              <i class="fa-solid fa-file-pdf"></i>
-              <span>PDF</span>
-            </button>
-          </div>
+          <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
+            <i class="fa-solid fa-chart-pie text-emerald-400"></i>
+            <span>Satış Z-Raporu</span>
+          </h3>
+          <button onclick="exportZReportCSV()" class="px-2.5 py-1 bg-emerald-600 text-white rounded-xl text-[11px] font-bold">Excel İndir</button>
         </div>
-
-        <div class="space-y-2 bg-darkbg p-2.5 rounded-xl border border-bordercol">
-          <div class="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <label class="text-slate-400 text-[10px] font-semibold block mb-1">Başlangıç</label>
-              <input type="date" id="z-start-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
-            </div>
-            <div>
-              <label class="text-slate-400 text-[10px] font-semibold block mb-1">Bitiş</label>
-              <input type="date" id="z-end-date" onchange="renderZReport()" class="w-full bg-cardbg border border-bordercol rounded-lg px-2 py-1 text-white text-xs">
-            </div>
-          </div>
-          <div class="flex space-x-1.5 text-[10px]">
-            <button onclick="setDatePreset('all')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Tümü</button>
-            <button onclick="setDatePreset('month')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Ay</button>
-            <button onclick="setDatePreset('week')" class="px-2.5 py-1 bg-cardbg border border-bordercol rounded-md text-slate-300 hover:text-white font-medium">Bu Hafta</button>
-          </div>
-        </div>
-
         <div class="grid grid-cols-2 gap-2 text-center">
-          <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl">
-            <span class="text-[10px] text-slate-400 block font-medium">Satılan Toplam Parça</span>
-            <span id="z-total-qty" class="text-base font-black text-emerald-400">0 ADT</span>
-          </div>
-          <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl">
-            <span class="text-[10px] text-slate-400 block font-medium">Hizmet Verilen Tesis</span>
-            <span id="z-total-plants" class="text-base font-black text-cyan-400">0 Tesis</span>
-          </div>
+          <div class="p-2 bg-darkbg rounded-xl"><span class="text-[10px] text-slate-400 block">Toplam Parça</span><span id="z-total-qty" class="text-base font-black text-emerald-400">0 ADT</span></div>
+          <div class="p-2 bg-darkbg rounded-xl"><span class="text-[10px] text-slate-400 block">Hizmet Verilen</span><span id="z-total-plants" class="text-base font-black text-cyan-400">0 Tesis</span></div>
         </div>
         <div class="space-y-1.5 max-h-56 overflow-y-auto no-scrollbar" id="z-sales-list"></div>
       </div>
 
-      <!-- Tesis Geçmişi Sorgulama -->
-      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
-        <h3 class="text-xs font-bold text-white flex items-center space-x-1.5 border-b border-bordercol pb-2">
-          <i class="fa-solid fa-industry text-cyan-400"></i>
-          <span>Tesis Parça Geçmişi ("Bu Müşteriye Ne Verdik?")</span>
-        </h3>
-        <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Firma Adı Yazın (TERRY JAR, ASAKA, ZELAL)..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
-        <div id="facility-history-results" class="space-y-1.5 max-h-60 overflow-y-auto text-xs">
-          <p class="text-slate-500 text-center py-2 text-[11px]">Geçmişini görmek istediğiniz fabrika adını yazın.</p>
-        </div>
+      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-2 shadow-xl">
+        <h3 class="text-xs font-bold text-white">🏭 Tesis Parça Geçmişi</h3>
+        <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Fabrika Adı Yazın (TERRY JAR)..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
+        <div id="facility-history-results" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
       </div>
     </section>
   </main>
 
-  <!-- MODAL: ÜRÜN & KATEGORİ DÜZENLEME (BİLDİRİMSİZ SİLME VE YENİ ROZETİ EKLENDİ) -->
-  <div id="modal-edit-part" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3 shadow-2xl">
+  <!-- MODAL: YENİ EKRAN TAMİR KAYDI -->
+  <div id="modal-repair" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
-        <h3 class="font-bold text-white text-sm">Ürünü & Kategoriyi Düzenle</h3>
+        <h3 class="font-bold text-white text-sm">Yeni Ekran / Cihaz Servis Kaydı</h3>
+        <button onclick="closeRepairModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div>
+          <label class="text-slate-400 font-medium">Müşteri / Fabrika <span class="text-rose-400">*</span></label>
+          <input type="text" id="r-firm" placeholder="Örn: TERRY JAR" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+        </div>
+        <div>
+          <label class="text-slate-400 font-medium">Model <span class="text-rose-400">*</span></label>
+          <input type="text" id="r-model" placeholder="Örn: Pd320, T7700" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+        </div>
+      </div>
+      <div class="text-xs">
+        <label class="text-slate-400 font-medium">Ekran Seri No</label>
+        <input type="text" id="r-sn" placeholder="Örn: SN-92841" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono">
+      </div>
+      <div class="text-xs">
+        <label class="text-slate-400 font-medium">Arıza / Sıkıntı <span class="text-rose-400">*</span></label>
+        <input type="text" id="r-issue" placeholder="Örn: Dokunmatik basmıyor, besleme kartı yandı" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+      </div>
+      <div class="text-xs">
+        <label class="text-slate-400 font-medium">Servis Durumu</label>
+        <select id="r-status" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-2 py-2 text-white font-bold">
+          <option value="BEKLEMEDE">⏳ İncelemede / Depoda Bekliyor</option>
+          <option value="OZBEKISTAN">🇺🇿 Özbekistan'da Onarıldı</option>
+          <option value="TURKIYE">🇹🇷 Türkiye'ye Onarıma Gönderildi</option>
+        </select>
+      </div>
+      <div class="text-xs">
+        <label class="text-slate-400 font-medium">Notlar</label>
+        <input type="text" id="r-notes" placeholder="Varsa kargo veya teslimat notu..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
+      </div>
+      <button onclick="saveRepairRecord()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Servis Kaydını Kaydet</button>
+    </div>
+  </div>
+
+  <!-- MODAL: ÜRÜN DÜZENLEME -->
+  <div id="modal-edit-part" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
+      <div class="flex justify-between items-center border-b border-bordercol pb-2">
+        <h3 class="font-bold text-white text-sm">Ürünü Düzenle</h3>
         <button onclick="closeEditPartModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
       <input type="hidden" id="edit-id">
       <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
-          <label class="text-slate-400 font-semibold">Parça Kodu</label>
+          <label class="text-slate-400 font-semibold">Kod</label>
           <input type="text" id="edit-code" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono">
         </div>
         <div>
@@ -229,7 +197,7 @@
         </div>
       </div>
       <div class="text-xs">
-        <label class="text-slate-400 font-semibold">Ürün Adı</label>
+        <label class="text-slate-400 font-semibold">Ad</label>
         <input type="text" id="edit-name" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
       </div>
       <div class="grid grid-cols-2 gap-2 text-xs">
@@ -238,81 +206,43 @@
           <input type="number" id="edit-qty" min="0" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-emerald-400 font-bold">
         </div>
         <div>
-          <label class="text-slate-400 font-semibold">Depo / Konum</label>
+          <label class="text-slate-400 font-semibold">Konum</label>
           <input type="text" id="edit-loc" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
         </div>
       </div>
-
-      <!-- YENİ LOGOSU AÇ/KAPA KUTUSU -->
-      <div class="flex items-center space-x-2 bg-darkbg p-2.5 rounded-xl border border-bordercol text-xs">
-        <input type="checkbox" id="edit-is-new" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
-        <label for="edit-is-new" class="text-slate-300 font-semibold cursor-pointer flex items-center space-x-1.5">
-          <span>✨ Bu parçada</span>
-          <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">YENİ</span>
-          <span>logosunu göster</span>
-        </label>
+      <div class="flex items-center space-x-2 bg-darkbg p-2 rounded-xl border border-bordercol text-xs">
+        <input type="checkbox" id="edit-is-new" class="w-4 h-4 accent-amber-500 rounded">
+        <label for="edit-is-new" class="text-slate-300 font-semibold">✨ Bu parçada [YENİ] rozeti göster</label>
       </div>
-
-      <button onclick="savePartChanges()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Değişiklikleri Kaydet</button>
-
-      <!-- SİLME SEÇENEKLERİ (BİLDİRİMSİZ / BİLDİRİMLİ) -->
+      <button onclick="savePartChanges()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Değişiklikleri Kaydet</button>
       <div class="pt-2 border-t border-bordercol/40 flex space-x-2">
-        <button onclick="deletePartFromModal(true)" title="Kimseye bildirim göndermeden sessizce sil" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 py-2 rounded-xl font-bold text-[11px] flex items-center justify-center space-x-1 shadow">
-          <i class="fa-solid fa-bell-slash text-amber-400 text-xs"></i>
-          <span>Bildirimsiz Sil</span>
-        </button>
-        <button onclick="deletePartFromModal(false)" title="Kamil'e Telegram bildirimi göndererek sil" class="flex-1 bg-rose-950/80 hover:bg-rose-900 border border-rose-800/80 text-rose-300 py-2 rounded-xl font-bold text-[11px] flex items-center justify-center space-x-1 shadow">
-          <i class="fa-solid fa-trash text-xs"></i>
-          <span>Bildirerek Sil</span>
-        </button>
+        <button onclick="deletePartFromModal(true)" class="flex-1 bg-slate-800 border border-slate-600 text-slate-300 py-2 rounded-xl font-bold text-[11px]">🔕 Bildirimsiz Sil</button>
+        <button onclick="deletePartFromModal(false)" class="flex-1 bg-rose-950 border border-rose-800 text-rose-300 py-2 rounded-xl font-bold text-[11px]">📢 Bildirerek Sil</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: HIZLI STOK ÇIKIŞI & FİRMA TAMAMLAMA -->
+  <!-- MODAL: HIZLI STOK ÇIKIŞI -->
   <div id="modal-deduct" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3 shadow-2xl">
+    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
-        <div>
-          <h3 class="font-bold text-white text-sm">Stok Çıkışı / Satış</h3>
-          <p id="deduct-part-header" class="text-[11px] text-emerald-400 font-mono font-semibold mt-0.5"></p>
-        </div>
+        <div><h3 class="font-bold text-white text-sm">Stok Çıkışı / Satış</h3><p id="deduct-part-header" class="text-[11px] text-emerald-400 font-mono mt-0.5"></p></div>
         <button onclick="closeDeductModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
-      <div class="relative">
-        <label class="text-xs text-slate-400 font-semibold flex items-center">
-          <span>Firma İsmi (Müşteri / Fabrika)</span> <span class="text-rose-400 ml-1">*</span>
-        </label>
-        <input type="text" id="deduct-destination" oninput="showFirmSuggestions(this.value, 'deduct-firm-dropdown', 'deduct-destination')" autocomplete="off" placeholder="Yazmaya başlayın..." class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-        <div id="deduct-firm-dropdown" class="absolute z-30 left-0 right-0 mt-1 bg-cardbg border border-bordercol rounded-xl shadow-2xl max-h-40 overflow-y-auto hidden"></div>
+      <div>
+        <label class="text-xs text-slate-400 font-semibold">Firma İsmi <span class="text-rose-400">*</span></label>
+        <input type="text" id="deduct-destination" placeholder="Örn: TERRY JAR" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
       </div>
       <div>
-        <label class="text-xs text-slate-400 font-semibold">İlgili Kişi & Telefon</label>
-        <input type="text" id="deduct-contact" placeholder="Örn: +998 88 984 5595" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
-      </div>
-      <div>
-        <div class="flex justify-between items-center text-xs">
-          <label class="text-slate-400 font-semibold">Düşülecek Miktar <span class="text-rose-400">*</span></label>
-          <span id="deduct-current-stock" class="text-slate-400 font-mono"></span>
-        </div>
-        <div class="flex items-center space-x-2 mt-1">
-          <input type="number" id="deduct-qty" value="1" min="1" class="flex-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-bold text-center text-sm focus:border-brand-500">
-          <div class="flex space-x-1">
-            <button onclick="setDeductQty(1)" class="px-2.5 py-1.5 bg-darkbg border border-bordercol text-xs font-bold rounded-xl text-slate-300">+1</button>
-            <button onclick="setDeductQty(2)" class="px-2.5 py-1.5 bg-darkbg border border-bordercol text-xs font-bold rounded-xl text-slate-300">+2</button>
-            <button onclick="setDeductQty(5)" class="px-2.5 py-1.5 bg-darkbg border border-bordercol text-xs font-bold rounded-xl text-slate-300">+5</button>
-          </div>
-        </div>
+        <label class="text-xs text-slate-400 font-semibold">Düşülecek Miktar <span class="text-rose-400">*</span></label>
+        <input type="number" id="deduct-qty" value="1" min="1" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-bold text-sm">
       </div>
       <input type="hidden" id="deduct-part-id" value="">
-      <button onclick="confirmStockDeduction()" class="w-full bg-rose-600 hover:bg-rose-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-rose-900/30 flex items-center justify-center space-x-2">
-        <i class="fa-solid fa-arrow-down-from-bracket"></i>
-        <span>Stoktan Düş & Herkese Bildir</span>
-      </button>
+      <button onclick="confirmStockDeduction()" class="w-full bg-rose-600 hover:bg-rose-500 py-2.5 rounded-xl font-bold text-white text-xs">Stoktan Düş & Bildir</button>
     </div>
   </div>
 
-  <!-- MODAL: YENİ PARÇA TANIMLAMA (YENİ LOGOSU ONAYI DAHİL) -->
+  <!-- MODAL: YENİ PARÇA -->
   <div id="modal-stock" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -347,60 +277,22 @@
           <input type="text" id="m-loc" value="ELIPS-DEPO" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
         </div>
       </div>
-
-      <!-- YENİ PARÇA LOGOSU SEÇENEĞİ -->
-      <div class="flex items-center space-x-2 bg-darkbg p-2.5 rounded-xl border border-bordercol text-xs">
-        <input type="checkbox" id="m-is-new" checked class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
-        <label for="m-is-new" class="text-slate-300 font-semibold cursor-pointer flex items-center space-x-1.5">
-          <span>✨ Bu parçaya</span>
-          <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">YENİ</span>
-          <span>logosu ekle</span>
-        </label>
+      <div class="flex items-center space-x-2 bg-darkbg p-2 rounded-xl border border-bordercol text-xs">
+        <input type="checkbox" id="m-is-new" checked class="w-4 h-4 accent-amber-500 rounded">
+        <label for="m-is-new" class="text-slate-300 font-semibold">✨ Bu parçaya [YENİ] logosu ekle</label>
       </div>
-
-      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-brand-900/30">Kaydet & Ekle</button>
-    </div>
-  </div>
-
-  <!-- MODAL: YENİ YOLDAKİ KARGO PAKETİ EKLE -->
-  <div id="modal-cargo" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
-      <div class="flex justify-between items-center border-b border-bordercol pb-2">
-        <h3 class="font-bold text-white text-sm flex items-center space-x-1.5">
-          <i class="fa-solid fa-plane-departure text-cyan-400"></i>
-          <span>Yoldaki Kargo Paketi Ekle</span>
-        </h3>
-        <button onclick="closeCargoModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
-      </div>
-      <div class="text-xs">
-        <label class="text-slate-400 font-medium">Paket / Kargo Başlığı <span class="text-rose-400">*</span></label>
-        <input type="text" id="crg-title" placeholder="Örn: Kargo #16 (Silkway Hava Kargo)" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
-      </div>
-      <div class="text-xs">
-        <label class="text-slate-400 font-medium">İçindeki Parçalar & Adetler (Her satıra bir parça) <span class="text-rose-400">*</span></label>
-        <textarea id="crg-items" rows="3" placeholder="Örnek:&#10;90567 - 5 adet&#10;90880 - 2 adet" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono text-xs"></textarea>
-      </div>
-      <div class="text-xs">
-        <label class="text-slate-400 font-medium">Kargo Notu / Takip No</label>
-        <input type="text" id="crg-notes" placeholder="Örn: Cuma günü Taşkent havaalanında" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
-      </div>
-      <button onclick="saveCargoPackage()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg shadow-cyan-900/30">Yoldaki Kargoyu Kaydet</button>
+      <button onclick="saveStockItem()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Kaydet & Ekle</button>
     </div>
   </div>
 
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) {
-      tg.expand();
-      tg.ready();
+      tg.expand(); tg.ready();
       if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
-      tg.setHeaderColor('#161F30');
-      tg.setBackgroundColor('#0B0F19');
+      tg.setHeaderColor('#161F30'); tg.setBackgroundColor('#0B0F19');
     }
 
-    // ==========================================
-    // CANLI ÇEVRİMİÇİ / ÇEVRİMDIŞI (ONLINE/OFFLINE) MODU
-    // ==========================================
     function updateOnlineStatus() {
       const badge = document.getElementById('connection-status');
       if (!badge) return;
@@ -415,11 +307,7 @@
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
 
-    function refreshPage() {
-      window.location.reload();
-    }
-
-    // %100 GERÇEK STOK LİSTESİ
+    // TÜM GERÇEK PARÇA LİSTESİ (TAMAMI GERİ YÜKLENDİ)
     const REAL_STOCKS_DATA = [
       {id:"s1",code:"Pd320",name:"Pd320 Kontrol Cihazı",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
       {id:"s2",code:"PD330",name:"PD330 Kontrol Cihazı",cat:"KONTROL",qty:4,loc:"ELIPS-DEPO"},
@@ -474,7 +362,7 @@
       {id:"s51",code:"40597",name:"BES005M BALLUFF Sensör",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
       {id:"s52",code:"40634",name:"BES0057: Balluff M12MI-NSC40B-BV03",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
       {id:"s53",code:"40647",name:"Smc CJPB15-10H6 Tek Etkili Silindir",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s54",code:"41300",name:"RD96 - MU CAMBAZ PISTONU POLIETILEN (YESIL) TAKOZ",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
+      {id:"s54",code:"41300",name:"RD96 - MU CAMBAZ PISTONU POLIETILEN TAKOZ",cat:"MEKATRONIK",qty:3,loc:"ELIPS-DEPO"},
       {id:"s55",code:"41316",name:"Lab120 encoder",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"},
       {id:"s56",code:"41396",name:"12'li Hareketli Kablo (X3-X4 Pistonu)",cat:"ELEKTRONIK",qty:1,loc:"ELIPS-DEPO"},
       {id:"s57",code:"42184",name:"PIPETLEME SIRINGA UCU",cat:"MEKATRONIK",qty:200,loc:"ELIPS-DEPO"},
@@ -520,7 +408,7 @@
       {id:"s97",code:"90881",name:"DST CEKVALF YAYI",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
       {id:"s98",code:"90946",name:"SLR1-40 FILTRE",cat:"MEKATRONIK",qty:12,loc:"ELIPS-DEPO"},
       {id:"s99",code:"90948",name:"FIP25 BAKALIT FLANŞ",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
-      {id:"s100",code:"91035",name:"OMAL (TAMIR) TAKIMI: KGBV4505 3/4\"",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
+      {id:"s100",code:"91035",name:"OMAL TAMIR TAKIMI: KGBV4505 3/4\"",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
       {id:"s101",code:"91036",name:"1\" OMAL VANA TAMIR TAKIMI",cat:"MEKATRONIK",qty:4,loc:"ELIPS-DEPO"},
       {id:"s102",code:"91037",name:"Omal küresel vana conta tamir takımı",cat:"MEKATRONIK",qty:5,loc:"ELIPS-DEPO"},
       {id:"s103",code:"91043",name:"VALF KABLOSU",cat:"ELEKTRONIK",qty:5,loc:"ELIPS-DEPO"},
@@ -550,60 +438,13 @@
       {id:"s127",code:"96496",name:"Omal Çift Etkili Aktüatör: DAN0015411S",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
       {id:"s128",code:"96515",name:"DST Polietilen Z Eksen dayama takozu",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
       {id:"s129",code:"96516",name:"DST Z Ekseni Polietilen Ağızlık",cat:"MEKATRONIK",qty:0,loc:"ELIPS-DEPO"},
-      {id:"s130",code:"96517",name:"Rd96_MU Z Polietilen Z eksen Piston Dayama Takozu",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
+      {id:"s130",code:"96517",name:"Rd96_MU Z Polietilen Dayama Takozu",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
       {id:"s131",code:"96570",name:"Ø19mm Şeffaf Telli Hortum (Mavi)",cat:"MEKATRONIK",qty:10,loc:"ELIPS-DEPO"},
       {id:"s132",code:"C-137161",name:"Tuz rofinadsiyon filtr kapagi",cat:"MEKATRONIK",qty:2,loc:"ELIPS-DEPO"},
       {id:"s133",code:"TEST",name:"Güç Kaynağı: DRL-24V75W1AZ",cat:"ELEKTRONIK",qty:2,loc:"ELIPS-DEPO"},
       {id:"s134",code:"90880",name:"DST Çekvalf Teflonu",cat:"MEKATRONIK",qty:1,loc:"ELIPS-DEPO"},
       {id:"s135",code:"90567",name:"66 Mm Teflon Takviyeli Diyafram",cat:"MEKATRONIK",qty:9,loc:"ELIPS-DEPO"},
-      {id:"s136",code:"90620",name:"PH Sensörü: SPH-1-DJ-6M Ph Sensör - 6mt Kablosu",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"}
-    ];
-
-    const REAL_PAST_SALES = [
-      {id:"h1",firm:"INDIGO",contact:"-",date:"17.03.2025",status:"APPROVED",timestamp:"2025-03-17",items:[{code:"90567",name:"66MM TEFLON TAKVIYELI DIYAFRAM",qty:5}]},
-      {id:"h2",firm:"WBM ANDIJON",contact:"-",date:"02.06.2025",status:"APPROVED",timestamp:"2025-06-02",items:[{code:"90840",name:"PISTON SENSORU:DC73L",qty:1}]},
-      {id:"h3",firm:"SAFF TEKSTIL",contact:"-",date:"11.06.2025",status:"APPROVED",timestamp:"2025-06-11",items:[{code:"90484",name:"3/4\" KIMYASAL VANA",qty:3}]},
-      {id:"h4",firm:"BEST COLOR",contact:"-",date:"11.06.2025",status:"APPROVED",timestamp:"2025-06-11",items:[{code:"50289",name:"VALF:SY3220-5LOU-M5-Q",qty:1}]},
-      {id:"h5",firm:"CHUST TEKSTIL",contact:"-",date:"11.06.2025",status:"APPROVED",timestamp:"2025-06-11",items:[{code:"90620",name:"PH SENSORU",qty:2}]},
-      {id:"h6",firm:"PARVOZ HUMO (HAJJ TEKSTIL)",contact:"-",date:"11.06.2025",status:"APPROVED",timestamp:"2025-06-11",items:[{code:"90567",name:"66MM TEFLON TAKVIYELI DIYAFRAM",qty:6}]},
-      {id:"h7",firm:"SOF MEGA TEKSTIL",contact:"-",date:"11.06.2025",status:"APPROVED",timestamp:"2025-06-11",items:[{code:"91332",name:"FESTO BASINC ANAHTARI",qty:1}]},
-      {id:"h8",firm:"TERRY JAR",contact:"-",date:"07.07.2025",status:"APPROVED",timestamp:"2025-07-07",items:[{code:"90567",name:"66MM TEFLON TAKVIYELI DIYAFRAM",qty:2}]},
-      {id:"h9",firm:"ASAKA TEKSTIL",contact:"-",date:"15.07.2025",status:"APPROVED",timestamp:"2025-07-15",items:[{code:"50257",name:"TEK ETLKILI PNOMATIK SILINDIR",qty:1},{code:"91071",name:"1/8\"-4MM DIRSEK RAKOR",qty:2}]},
-      {id:"h10",firm:"ASAKA TEKSTIL",contact:"-",date:"05.10.2025",status:"APPROVED",timestamp:"2025-10-05",items:[{code:"91071",name:"1/8\"-4MM DIRSEK RAKOR",qty:10}]},
-      {id:"h11",firm:"ZELAL TEKSTIL",contact:"-",date:"07.10.2025",status:"APPROVED",timestamp:"2025-10-07",items:[{code:"96516",name:"DST Z Ekseni Polietilen Ağızlık",qty:1}]},
-      {id:"h12",firm:"TERRY JAR",contact:"-",date:"09.10.2025",status:"APPROVED",timestamp:"2025-10-09",items:[{code:"90567",name:"66 Mm Teflon Takviyeli Diyafram",qty:5}]},
-      {id:"h13",firm:"BEST COLOR",contact:"-",date:"18.10.2025",status:"APPROVED",timestamp:"2025-10-18",items:[{code:"50260",name:"PISTON CD85N16-50-B",qty:2}]},
-      {id:"h14",firm:"TERRY JAR",contact:"-",date:"25.10.2025",status:"APPROVED",timestamp:"2025-10-25",items:[{code:"90620",name:"PH Sensörü: SPH-1-DJ-6M Ph Sensör",qty:2}]},
-      {id:"h15",firm:"JIZZAX TEKSTIL",contact:"-",date:"04.12.2025",status:"APPROVED",timestamp:"2025-12-04",items:[{code:"90567",name:"66MM TEFLON TAKVIYELI DIYAFRAM",qty:4}]},
-      {id:"h16",firm:"TERRY JAR",contact:"-",date:"20.12.2025",status:"APPROVED",timestamp:"2025-12-20",items:[{code:"91332",name:"FESTO BASINC ANAHTARI",qty:1}]},
-      {id:"h17",firm:"BIRYUZA TEKSTIL",contact:"-",date:"09.02.2026",status:"APPROVED",timestamp:"2026-02-09",items:[{code:"90567",name:"66 Mm Teflon Takviyeli Diyafram",qty:1}]},
-      {id:"h18",firm:"ZELAL TEKSTIL",contact:"-",date:"21.02.2026",status:"APPROVED",timestamp:"2026-02-21",items:[{code:"96516",name:"DST Z Ekseni Polietilen Ağızlık",qty:1}]},
-      {id:"h19",firm:"AKPAMUK TEKSTIL",contact:"-",date:"26.03.2026",status:"APPROVED",timestamp:"2026-03-26",items:[{code:"5022",name:"Salmastra",qty:1}]},
-      {id:"h20",firm:"ZELAL TEKSTIL",contact:"-",date:"01.04.2026",status:"APPROVED",timestamp:"2026-04-01",items:[{code:"50293",name:"VALF:SYJ3243-5LOU-Q",qty:1}]},
-      {id:"h21",firm:"BIRYUZA TEKSTIL",contact:"-",date:"16.04.2026",status:"APPROVED",timestamp:"2026-04-16",items:[{code:"50260",name:"PISTON CD85N16-50-B",qty:2},{code:"91086",name:"PNOMATIK T RAKOR",qty:2},{code:"90765",name:"RD96 CAMBAZ KOLU",qty:1}]},
-      {id:"h22",firm:"TERRY JAR",contact:"-",date:"23.04.2026",status:"APPROVED",timestamp:"2026-04-23",items:[{code:"90881",name:"DST CEKVALF YAYI",qty:2},{code:"90879",name:"DST CEKVALF O-RINGI",qty:2}]},
-      {id:"h23",firm:"ASAKA TEKSTIL",contact:"-",date:"07.05.2026",status:"APPROVED",timestamp:"2026-05-07",items:[{code:"91277",name:"RD96-Mu Polietilen Ağızlık",qty:1},{code:"50291",name:"VALF:SYJ3240-5LOU-Q",qty:1},{code:"50289",name:"VALF:SY3220-5LOU-M5-Q",qty:1},{code:"50287",name:"VALF:SY114-5LOU-Q",qty:2}]},
-      {id:"h24",firm:"AKPAMUK TEKSTIL",contact:"-",date:"20.05.2026",status:"APPROVED",timestamp:"2026-05-20",items:[{code:"90567",name:"66 Mm Teflon Takviyeli Diyafram",qty:1}]},
-      {id:"h25",firm:"DAKA TEKSTIL",contact:"-",date:"04.07.2026",status:"APPROVED",timestamp:"2026-07-04",items:[{code:"41316",name:"Lab120 encoder",qty:1}]},
-      {id:"h26",firm:"TERRY JAR",contact:"-",date:"06.07.2026",status:"APPROVED",timestamp:"2026-07-06",items:[{code:"90840",name:"PISTON SENSORU:DC73L",qty:2}]},
-      {id:"h27",firm:"ZELAL TEKSTIL",contact:"-",date:"30.09.2026",status:"APPROVED",timestamp:"2026-09-30",items:[{code:"50018",name:"VALF:SY5140-5YO-Q",qty:3}]},
-      {id:"h28",firm:"ZELAL TEKSTIL",contact:"-",date:"21.10.2026",status:"APPROVED",timestamp:"2026-10-21",items:[{code:"91594",name:"VALF:SY5240-5YO-Q",qty:3}]},
-      {id:"h29",firm:"TERRY JAR",contact:"-",date:"21.10.2026",status:"APPROVED",timestamp:"2026-10-21",items:[{code:"90879",name:"DST CEKVALF O-RINGI",qty:2},{code:"90881",name:"DST CEKVALF YAYI",qty:2},{code:"91284",name:"BONESSI VALF:P00112200",qty:2}]}
-    ];
-
-    // ÖRNEK YOLDAKİ KARGOLAR (TÜRKİYE ➔ ÖZBEKİSTAN)
-    const REAL_CARGOS_DATA = [
-      {
-        id: "crg-1",
-        title: "Kargo #15 (Silkway Hava Kargo - Taşkent)",
-        date: "04.11.2026",
-        status: "IN_TRANSIT",
-        notes: "Acil diyaframlar ve çekvalf teflonları",
-        items: [
-          { code: "90567", name: "Diyafram 66 Mm", qty: 5 },
-          { code: "90880", name: "DST Çekvalf Teflonu", qty: 4 }
-        ]
-      }
+      {id:"s136",code:"90620",name:"PH Sensörü: SPH-1-DJ-6M Ph Sensör",cat:"ELEKTRONIK",qty:0,loc:"ELIPS-DEPO"}
     ];
 
     const STORAGE_KEY = 'elips_depo_v11';
@@ -613,303 +454,215 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
     }
 
-    let sales = JSON.parse(localStorage.getItem('elips_sales_v11')) || REAL_PAST_SALES;
-    let cargos = JSON.parse(localStorage.getItem('elips_cargos_v11')) || REAL_CARGOS_DATA;
+    let sales = JSON.parse(localStorage.getItem('elips_sales_v11')) || [];
+    let repairs = JSON.parse(localStorage.getItem('elips_repairs_v11')) || [];
     let selectedCat = 'ALL';
-    let currentLang = 'tr';
+    let selectedRepairFilter = 'ALL';
 
     function normalizeTr(text) {
       if (!text) return "";
-      const m = {'ı':'i','İ':'i','I':'i','ş':'s','Ş':'s','ğ':'g','Ğ':'g','ü':'u','Ü':'u','ö':'o','Ö':'o','ç':'c','Ç':'c'};
+      const m = {'ı':'i','İ':'i','ş':'s','Ş':'s','ğ':'g','Ğ':'g','ü':'u','Ü':'u','ö':'o','Ö':'o','ç':'c','Ç':'c'};
       return text.toLowerCase().replace(/[ıİIşŞğĞüÜöÖçÇ]/g, c => m[c] || c);
     }
 
     function persist() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
       localStorage.setItem('elips_sales_v11', JSON.stringify(sales));
-      localStorage.setItem('elips_cargos_v11', JSON.stringify(cargos));
+      localStorage.setItem('elips_repairs_v11', JSON.stringify(repairs));
     }
 
-    // 3'LÜ SEKME GEÇİŞİ
     function switchTab(t) {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden'));
       document.getElementById('tab-' + t).classList.remove('hidden');
       document.querySelectorAll('.tab-btn').forEach(b => { 
-        b.classList.remove('bg-brand-600', 'text-white', 'shadow-md'); 
-        b.classList.add('text-slate-400'); 
+        b.classList.remove('bg-brand-600', 'text-white', 'shadow-md'); b.classList.add('text-slate-400'); 
       });
       document.getElementById('tab-btn-' + t).classList.add('bg-brand-600', 'text-white', 'shadow-md');
       document.getElementById('tab-btn-' + t).classList.remove('text-slate-400');
       if (t === 'reports') renderZReport();
-      if (t === 'cargo') renderCargoList();
+      if (t === 'repair') renderRepairs();
     }
 
     function filterCategory(cat) {
       selectedCat = cat;
       document.querySelectorAll('.cat-pill').forEach(btn => {
-        btn.classList.remove('bg-brand-600', 'text-white', 'shadow-sm');
+        btn.classList.remove('bg-brand-600', 'text-white');
         btn.classList.add('bg-cardbg', 'border', 'border-bordercol', 'text-slate-300');
       });
       const activeBtn = document.getElementById('pill-' + cat);
       if (activeBtn) {
         activeBtn.classList.remove('bg-cardbg', 'border', 'border-bordercol', 'text-slate-300');
-        activeBtn.classList.add('bg-brand-600', 'text-white', 'shadow-sm');
+        activeBtn.classList.add('bg-brand-600', 'text-white');
       }
       renderStockTable();
     }
 
-    function getCategoryBadge(cat) {
-      if (cat === 'KONTROL') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800">Kontrolör</span>`;
-      if (cat === 'ELEKTRONIK') return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-400 border border-amber-800">Elektronik</span>`;
-      return `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-950 text-purple-400 border border-purple-800">Mekatronik</span>`;
-    }
-
-    // ==========================================
-    // 1. DEPO STOK LİSTESİ ÇİZİMİ
-    // ==========================================
     function renderStockTable() {
       const s = normalizeTr(document.getElementById('stock-search')?.value || "");
       let filtered = stocks.filter(p => {
         const matchesSearch = normalizeTr(p.name).includes(s) || normalizeTr(p.code).includes(s);
-        let matchesCat = false;
-        if (selectedCat === 'ALL') matchesCat = true;
-        else if (selectedCat === 'YENI') matchesCat = !!p.is_new;
-        else matchesCat = (p.cat === selectedCat);
+        let matchesCat = (selectedCat === 'ALL') ? true : (selectedCat === 'YENI' ? !!p.is_new : p.cat === selectedCat);
         return matchesSearch && matchesCat;
       });
-
-      const sortMode = document.getElementById('stock-sort-select')?.value || 'DEFAULT';
-      if (sortMode === 'NEW_FIRST') filtered.sort((a, b) => (b.is_new ? 1 : 0) - (a.is_new ? 1 : 0));
-      else if (sortMode === 'QTY_ASC') filtered.sort((a, b) => a.qty - b.qty);
-      else if (sortMode === 'QTY_DESC') filtered.sort((a, b) => b.qty - a.qty);
-      else if (sortMode === 'MEK_FIRST') filtered.sort((a, b) => (b.cat === 'MEKATRONIK' ? 1 : 0) - (a.cat === 'MEKATRONIK' ? 1 : 0));
-      else if (sortMode === 'KONT_FIRST') filtered.sort((a, b) => (b.cat === 'KONTROL' ? 1 : 0) - (a.cat === 'KONTROL' ? 1 : 0));
-      else if (sortMode === 'ELK_FIRST') filtered.sort((a, b) => (b.cat === 'ELEKTRONIK' ? 1 : 0) - (a.cat === 'ELEKTRONIK' ? 1 : 0));
-      else if (sortMode === 'NAME_ASC') filtered.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
 
       document.getElementById('count-all').innerText = stocks.length;
       document.getElementById('count-yeni').innerText = stocks.filter(p => p.is_new).length;
       document.getElementById('count-kontrol').innerText = stocks.filter(p => p.cat === 'KONTROL').length;
       document.getElementById('count-elektronik').innerText = stocks.filter(p => p.cat === 'ELEKTRONIK').length;
       document.getElementById('count-mekatronik').innerText = stocks.filter(p => p.cat === 'MEKATRONIK').length;
-
-      const inTransitCargos = cargos.filter(c => c.status === 'IN_TRANSIT');
-      document.getElementById('count-in-transit').innerText = inTransitCargos.length;
+      document.getElementById('count-repair-active').innerText = repairs.filter(r => r.status !== 'TESLIM').length;
 
       const listEl = document.getElementById('stock-list');
-      if (filtered.length === 0) {
-        listEl.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-cardbg rounded-2xl border border-bordercol">Bu kategori veya aramaya uygun parça bulunamadı.</div>`;
-        return;
-      }
+      if (filtered.length === 0) { listEl.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 bg-cardbg rounded-2xl">Parça bulunamadı.</div>`; return; }
 
-      listEl.innerHTML = filtered.map(i => {
-        const hasStock = i.qty > 0;
-        const qtyDisplay = hasStock ? `${i.qty} ADT` : `<span class="text-rose-400">0 ADT (Tükendi)</span>`;
-        const newBadge = i.is_new ? `<span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">YENİ</span>` : '';
-
-        return `
-          <div class="bg-cardbg border border-bordercol rounded-2xl p-3 flex justify-between items-center shadow-md hover:border-slate-600 transition">
-            <div class="flex-1 pr-2">
-              <div class="flex items-center space-x-1.5">
-                <span class="text-[10px] font-mono font-bold text-white bg-darkbg px-2 py-0.5 rounded border border-emerald-500/40">${i.code}</span>
-                ${getCategoryBadge(i.cat || 'MEKATRONIK')}
-                ${newBadge}
-                <button onclick="openEditPartModal('${i.id}')" title="Ürünü, Kategoriyi ve YENİ Rozetini Düzenle" class="text-slate-400 hover:text-emerald-400 text-xs px-1">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-              </div>
-              <h4 class="text-xs font-semibold text-white mt-1 leading-tight">${i.name}</h4>
-              <p class="text-[10px] text-slate-400 mt-0.5">Konum: <span class="text-slate-300 font-mono">${i.loc}</span></p>
+      listEl.innerHTML = filtered.map(i => `
+        <div class="bg-cardbg border border-bordercol rounded-2xl p-3 flex justify-between items-center shadow-md">
+          <div class="flex-1 pr-2">
+            <div class="flex items-center space-x-1.5">
+              <span class="text-[10px] font-mono font-bold text-white bg-darkbg px-2 py-0.5 rounded border border-emerald-500/40">${i.code}</span>
+              ${i.is_new ? '<span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">YENİ</span>' : ''}
+              <button onclick="openEditPartModal('${i.id}')" class="text-slate-400 hover:text-emerald-400 text-xs px-1"><i class="fa-solid fa-pen-to-square"></i></button>
             </div>
-            <div class="flex items-center space-x-2">
-              <span class="text-xs font-black text-emerald-400 whitespace-nowrap">${qtyDisplay}</span>
-              <div class="flex flex-col space-y-1">
-                <button onclick="increaseStock('${i.id}')" title="Stok Ekle (+1)" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-emerald-950 text-emerald-400 rounded-lg text-xs font-bold flex items-center justify-center">+</button>
-                <button onclick="openDeductModal('${i.id}')" title="Stoktan Düş / Satış Yap" class="w-6 h-6 bg-darkbg border border-bordercol hover:bg-rose-950 text-rose-400 rounded-lg text-xs font-bold flex items-center justify-center">-</button>
-              </div>
+            <h4 class="text-xs font-semibold text-white mt-1 leading-tight">${i.name}</h4>
+            <p class="text-[10px] text-slate-400 mt-0.5">Konum: <span class="text-slate-300 font-mono">${i.loc}</span></p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-black text-emerald-400 whitespace-nowrap">${i.qty > 0 ? i.qty + ' ADT' : '<span class="text-rose-400">0 ADT</span>'}</span>
+            <div class="flex flex-col space-y-1">
+              <button onclick="increaseStock('${i.id}')" class="w-6 h-6 bg-darkbg border border-bordercol text-emerald-400 rounded-lg text-xs font-bold">+</button>
+              <button onclick="openDeductModal('${i.id}')" class="w-6 h-6 bg-darkbg border border-bordercol text-rose-400 rounded-lg text-xs font-bold">-</button>
             </div>
           </div>
-        `;
-      }).join('');
-    }
-
-    // ==========================================
-    // 2. YOLDAKİ KARGOLAR (TR ➔ ÖZBEKİSTAN)
-    // ==========================================
-    function renderCargoList() {
-      const container = document.getElementById('cargo-list');
-      const inTransit = cargos.filter(c => c.status === 'IN_TRANSIT');
-      const received = cargos.filter(c => c.status === 'RECEIVED');
-
-      document.getElementById('count-in-transit').innerText = inTransit.length;
-
-      if (cargos.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6 bg-cardbg rounded-2xl border border-bordercol">Kayıtlı kargo bulunamadı.</p>`;
-        return;
-      }
-
-      let htmlContent = '';
-
-      if (inTransit.length > 0) {
-        htmlContent += `<h4 class="text-xs font-bold text-cyan-400 px-1">✈️ Yoldaki Paketler (${inTransit.length})</h4>`;
-        htmlContent += inTransit.map(c => `
-          <div class="bg-cardbg border border-cyan-500/40 rounded-2xl p-3.5 space-y-2 shadow-lg">
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="text-xs font-bold text-white">${c.title}</span>
-                <p class="text-[10px] text-slate-400 mt-0.5">${c.notes || 'Not yok'}</p>
-              </div>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-700">YOLDA</span>
-            </div>
-            <div class="bg-darkbg p-2 rounded-xl text-xs space-y-1">
-              <span class="text-[10px] text-slate-400 font-semibold block">Paket İçeriği:</span>
-              ${c.items.map(it => `
-                <div class="flex justify-between items-center text-[11px]">
-                  <span class="text-slate-300"><span class="font-mono text-cyan-400">[${it.code}]</span> ${it.name}</span>
-                  <span class="font-bold text-white">${it.qty} Adet</span>
-                </div>
-              `).join('')}
-            </div>
-            <div class="flex space-x-2 pt-1">
-              <button onclick="acceptCargoToWarehouse('${c.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded-xl font-bold text-white text-xs shadow flex items-center justify-center space-x-1.5">
-                <i class="fa-solid fa-box-open"></i>
-                <span>Depoya Kabul Et (+Stoklara Ekle)</span>
-              </button>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      if (received.length > 0) {
-        htmlContent += `<h4 class="text-xs font-bold text-slate-400 px-1 pt-3">📦 Teslim Alınanlar & Depoya Eklenenler</h4>`;
-        htmlContent += received.slice(0, 5).map(c => `
-          <div class="bg-cardbg/60 border border-bordercol rounded-2xl p-3 text-xs space-y-1 opacity-80">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-slate-300">${c.title}</span>
-              <span class="text-[9px] text-emerald-400 font-bold">✓ KABUL EDİLDİ</span>
-            </div>
-            <p class="text-[10px] text-slate-400">${c.date} tarihinde depoya aktarıldı.</p>
-          </div>
-        `).join('');
-      }
-
-      container.innerHTML = htmlContent;
-    }
-
-    function openCargoModal() {
-      document.getElementById('modal-cargo').classList.remove('hidden');
-      document.getElementById('modal-cargo').classList.add('flex');
-    }
-    function closeCargoModal() {
-      document.getElementById('modal-cargo').classList.add('hidden');
-      document.getElementById('modal-cargo').classList.remove('flex');
-    }
-
-    function saveCargoPackage() {
-      const title = document.getElementById('crg-title').value.trim();
-      const rawItems = document.getElementById('crg-items').value.trim();
-      const notes = document.getElementById('crg-notes').value.trim();
-
-      if (!title || !rawItems) {
-        alert("Lütfen kargo başlığını ve içindeki parçaları yazın!");
-        return;
-      }
-
-      const parsedItems = [];
-      rawItems.split('\n').forEach(line => {
-        const clean = line.trim();
-        if (!clean) return;
-        const parts = clean.split('-');
-        const code = parts[0].trim();
-        const qtyMatch = clean.match(/(\d+)/);
-        const qty = qtyMatch ? parseInt(qtyMatch[0]) : 1;
-        parsedItems.push({ code: code, name: code, qty: qty });
-      });
-
-      cargos.unshift({
-        id: "crg-" + Date.now(),
-        title: title,
-        date: new Date().toLocaleDateString('tr-TR'),
-        status: "IN_TRANSIT",
-        notes: notes,
-        items: parsedItems
-      });
-
-      persist();
-      closeCargoModal();
-      renderCargoList();
-      document.getElementById('crg-title').value = '';
-      document.getElementById('crg-items').value = '';
-      document.getElementById('crg-notes').value = '';
-      alert("Yoldaki kargo paketi başarıyla kaydedildi!");
-    }
-
-    // TEK TIKLA KARGOYU DEPO STOKLARINA EKLEME
-    function acceptCargoToWarehouse(cargoId) {
-      const cargo = cargos.find(c => c.id === cargoId);
-      if (!cargo) return;
-
-      if (!confirm(`"${cargo.title}" içindeki parçalar depodaki mevcut stoklarınıza eklensin mi?`)) return;
-
-      cargo.items.forEach(it => {
-        let p = stocks.find(s => s.code.toLowerCase() === it.code.toLowerCase());
-        if (p) {
-          p.qty += it.qty;
-        } else {
-          stocks.unshift({
-            id: "s" + Date.now() + Math.random(),
-            code: it.code,
-            name: it.name || it.code,
-            cat: "MEKATRONIK",
-            qty: it.qty,
-            loc: "ELIPS-DEPO",
-            is_new: true
-          });
-        }
-      });
-
-      cargo.status = "RECEIVED";
-      persist();
-      renderStockTable();
-      renderCargoList();
-
-      const payload = {
-        direction: "CARGO_RECEIVED",
-        title: cargo.title,
-        items: cargo.items
-      };
-      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-
-      alert("Kargo depoya kabul edildi ve tüm parçalar doğrudan depo stoklarınıza eklendi!");
-    }
-
-    function showFirmSuggestions(val, dropdownId, inputId) {
-      const dd = document.getElementById(dropdownId);
-      if (!dd) return;
-      const q = normalizeTr(val.trim());
-      if (!q) { dd.classList.add('hidden'); return; }
-
-      const firmSet = new Set();
-      sales.forEach(s => { if (s.firm) firmSet.add(s.firm.toUpperCase()); });
-      ["TERRY JAR", "ASAKA TEKSTIL", "ZELAL TEKSTIL", "INDIGO", "MARK FORMELLE", "BEST COLOR", "CHUST TEKSTIL", "BIRYUZA TEKSTIL", "AKPAMUK TEKSTIL", "EZOZNUR", "AYA GLOBAL", "SAFF TEKSTIL"].forEach(f => firmSet.add(f));
-
-      const matches = Array.from(firmSet).filter(f => normalizeTr(f).includes(q));
-      if (matches.length === 0) { dd.classList.add('hidden'); return; }
-
-      dd.innerHTML = matches.slice(0, 6).map(f => `
-        <div onclick="selectFirmSuggestion('${f.replace(/'/g, "\\'")}', '${inputId}', '${dropdownId}')" class="p-2.5 hover:bg-slate-800 cursor-pointer text-xs font-semibold text-white border-b border-bordercol/30 flex items-center justify-between">
-          <span>${f}</span>
-          <i class="fa-solid fa-arrow-turn-down text-[10px] text-emerald-400"></i>
         </div>
       `).join('');
-      dd.classList.remove('hidden');
     }
 
-    function selectFirmSuggestion(val, inputId, dropdownId) {
-      const inp = document.getElementById(inputId);
-      if (inp) inp.value = val;
-      const dd = document.getElementById(dropdownId);
-      if (dd) dd.classList.add('hidden');
+    function filterRepairs(f) {
+      selectedRepairFilter = f;
+      document.querySelectorAll('.rf-pill').forEach(btn => {
+        btn.classList.remove('bg-cyan-600', 'text-white');
+        btn.classList.add('bg-cardbg', 'border', 'border-bordercol', 'text-slate-300');
+      });
+      const activeBtn = document.getElementById('rf-' + f);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-cardbg', 'border', 'border-bordercol', 'text-slate-300');
+        activeBtn.classList.add('bg-cyan-600', 'text-white');
+      }
+      renderRepairs();
+    }
+
+    function renderRepairs() {
+      const container = document.getElementById('repair-list');
+      let filtered = repairs;
+      if (selectedRepairFilter !== 'ALL') filtered = repairs.filter(r => r.status === selectedRepairFilter);
+
+      document.getElementById('rc-all').innerText = repairs.length;
+      document.getElementById('rc-wait').innerText = repairs.filter(r => r.status === 'BEKLEMEDE').length;
+      document.getElementById('rc-uz').innerText = repairs.filter(r => r.status === 'OZBEKISTAN').length;
+      document.getElementById('rc-tr').innerText = repairs.filter(r => r.status === 'TURKIYE').length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6 bg-cardbg rounded-2xl">Kayıtlı tamir kaydı bulunamadı.</p>`;
+        return;
+      }
+
+      const stBadges = {
+        'BEKLEMEDE': '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-700">⏳ Bekliyor</span>',
+        'OZBEKISTAN': '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700">🇺🇿 Özbekistan Onardı</span>',
+        'TURKIYE': '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-700">🇹🇷 Türkiye\'de</span>',
+        'TESLIM': '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">✅ Teslim Edildi</span>'
+      };
+
+      container.innerHTML = filtered.map(r => `
+        <div class="bg-cardbg border border-bordercol rounded-2xl p-3.5 space-y-2 shadow-md">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-xs font-bold text-white">${r.firm}</span>
+              <span class="text-[11px] text-cyan-400 font-bold ml-1.5">[${r.model}]</span>
+              <p class="text-[10px] text-slate-400 mt-0.5 font-mono">SN: ${r.sn || 'YOK'} | ${r.date}</p>
+            </div>
+            ${stBadges[r.status] || ''}
+          </div>
+          <div class="bg-darkbg p-2 rounded-xl text-xs">
+            <p class="text-slate-300"><b>Arıza:</b> ${r.issue}</p>
+            ${r.notes ? `<p class="text-[10px] text-slate-400 mt-0.5"><b>Not:</b> ${r.notes}</p>` : ''}
+          </div>
+          <div class="flex items-center space-x-1 pt-1 overflow-x-auto no-scrollbar text-[10px] font-bold">
+            <button onclick="changeRepairStatus('${r.id}', 'OZBEKISTAN')" class="px-2 py-1 bg-emerald-950 text-emerald-300 border border-emerald-800 rounded-lg whitespace-nowrap">🇺🇿 Özbekistan</button>
+            <button onclick="changeRepairStatus('${r.id}', 'TURKIYE')" class="px-2 py-1 bg-rose-950 text-rose-300 border border-rose-800 rounded-lg whitespace-nowrap">🇹🇷 Türkiye</button>
+            <button onclick="changeRepairStatus('${r.id}', 'TESLIM')" class="px-2 py-1 bg-slate-800 text-slate-300 border border-slate-600 rounded-lg whitespace-nowrap">✅ Teslim</button>
+            <button onclick="deleteRepairRecord('${r.id}')" class="px-2 py-1 bg-darkbg text-rose-400 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openRepairModal() { document.getElementById('modal-repair').classList.remove('hidden'); document.getElementById('modal-repair').classList.add('flex'); }
+    function closeRepairModal() { document.getElementById('modal-repair').classList.add('hidden'); document.getElementById('modal-repair').classList.remove('flex'); }
+
+    function saveRepairRecord() {
+      const firm = document.getElementById('r-firm').value.trim();
+      const model = document.getElementById('r-model').value.trim();
+      const sn = document.getElementById('r-sn').value.trim();
+      const issue = document.getElementById('r-issue').value.trim();
+      const status = document.getElementById('r-status').value;
+      const notes = document.getElementById('r-notes').value.trim();
+
+      if (!firm || !model || !issue) { alert("Lütfen Firma, Model ve Arıza alanlarını doldurun!"); return; }
+
+      const newRecord = {
+        id: "rep-" + Date.now(),
+        firm: firm.toUpperCase(),
+        model: model.toUpperCase(),
+        sn: sn || "YOK",
+        issue: issue,
+        status: status,
+        notes: notes,
+        date: new Date().toLocaleDateString('tr-TR')
+      };
+
+      repairs.unshift(newRecord);
+      persist();
+      closeRepairModal();
+      renderRepairs();
+
+      const stNames = { 'BEKLEMEDE': 'İncelemede Bekliyor', 'OZBEKISTAN': 'Özbekistan\'da Onarıldı', 'TURKIYE': 'Türkiye\'ye Gönderildi' };
+      const payload = {
+        direction: "REPAIR_UPDATE",
+        firm: newRecord.firm,
+        model: newRecord.model,
+        sn: newRecord.sn,
+        issue: newRecord.issue,
+        status_text: stNames[status]
+      };
+      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
+      alert("Ekran tamir kaydı açıldı!");
+    }
+
+    function changeRepairStatus(id, newStatus) {
+      const r = repairs.find(x => x.id === id);
+      if (!r) return;
+      r.status = newStatus;
+      persist();
+      renderRepairs();
+
+      const stNames = { 'OZBEKISTAN': 'Özbekistan\'da Onarıldı', 'TURKIYE': 'Türkiye\'ye Gönderildi', 'TESLIM': 'Müşteriye Teslim Edildi' };
+      const payload = {
+        direction: "REPAIR_UPDATE",
+        firm: r.firm,
+        model: r.model,
+        sn: r.sn,
+        issue: r.issue,
+        status_text: stNames[newStatus]
+      };
+      if (tg?.sendData) tg.sendData(JSON.stringify(payload));
+    }
+
+    function deleteRepairRecord(id) {
+      if (!confirm("Bu tamir kaydını silmek istediğinize emin misiniz?")) return;
+      repairs = repairs.filter(x => x.id !== id);
+      persist();
+      renderRepairs();
     }
 
     function openEditPartModal(id) {
@@ -936,54 +689,32 @@
       const it = stocks.find(x => x.id === id);
       if (!it) return;
 
-      const newCode = document.getElementById('edit-code').value.trim();
-      const newName = document.getElementById('edit-name').value.trim();
-      const newCat = document.getElementById('edit-cat').value;
-      const newQty = parseInt(document.getElementById('edit-qty').value) || 0;
-      const newLoc = document.getElementById('edit-loc').value.trim() || 'ELIPS-DEPO';
-      const isNew = document.getElementById('edit-is-new').checked;
-
-      if (!newCode || !newName) { alert("Lütfen ürün kodu ve ismini doldurun!"); return; }
-
-      it.code = newCode;
-      it.name = newName;
-      it.cat = newCat;
-      it.qty = Math.max(0, newQty);
-      it.loc = newLoc;
-      it.is_new = isNew;
+      it.code = document.getElementById('edit-code').value.trim();
+      it.name = document.getElementById('edit-name').value.trim();
+      it.cat = document.getElementById('edit-cat').value;
+      it.qty = Math.max(0, parseInt(document.getElementById('edit-qty').value) || 0);
+      it.loc = document.getElementById('edit-loc').value.trim() || 'ELIPS-DEPO';
+      it.is_new = document.getElementById('edit-is-new').checked;
 
       persist();
       renderStockTable();
       closeEditPartModal();
-      alert(`[${it.code}] ${it.name} güncellendi!`);
     }
 
-    // BİLDİRİMSİZ VEYA BİLDİRİMLİ PARÇA SİLME
     function deletePartFromModal(silent) {
       const id = document.getElementById('edit-id').value;
       const it = stocks.find(x => x.id === id);
       if (!it) return;
 
-      const confirmMsg = silent
-        ? `[${it.code}] ${it.name} parçasını KİMSEYE BİLDİRİM GÖNDERMEDEN depodan kalıcı olarak silmek istediğinize emin misiniz?`
-        : `[${it.code}] ${it.name} parçasını Kamil'e ve gruba Telegram bildirimi göndererek silmek istiyor musunuz?`;
-
-      if (!confirm(confirmMsg)) return;
+      if (!confirm(silent ? `[${it.code}] parçasını BİLDİRİMSİZ depodan silmek istiyor musunuz?` : `[${it.code}] parçasını BİLDİREREK silmek istiyor musunuz?`)) return;
 
       stocks = stocks.filter(x => x.id !== id);
       persist();
       renderStockTable();
       closeEditPartModal();
 
-      const payload = {
-        direction: "STOCK_DELETE",
-        code: it.code,
-        name: it.name,
-        silent: silent
-      };
+      const payload = { direction: "STOCK_DELETE", code: it.code, name: it.name, silent: silent };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-
-      alert(silent ? "Parça kimseye bildirilmeden sessizce depodan silindi." : "Parça depodan silindi ve bildirim iletildi.");
     }
 
     function openDeductModal(id) {
@@ -991,10 +722,8 @@
       if (!it) return;
       document.getElementById('deduct-part-id').value = id;
       document.getElementById('deduct-part-header').innerText = `[${it.code}] ${it.name}`;
-      document.getElementById('deduct-current-stock').innerText = `Mevcut: ${it.qty} ADT`;
       document.getElementById('deduct-qty').value = "1";
       document.getElementById('deduct-destination').value = "";
-      document.getElementById('deduct-contact').value = "";
       document.getElementById('modal-deduct').classList.remove('hidden');
       document.getElementById('modal-deduct').classList.add('flex');
     }
@@ -1004,29 +733,19 @@
       document.getElementById('modal-deduct').classList.remove('flex');
     }
 
-    function setDeductQty(d) {
-      const el = document.getElementById('deduct-qty');
-      let val = (parseInt(el.value) || 1) + d;
-      if (val < 1) val = 1;
-      el.value = val;
-    }
-
     function confirmStockDeduction() {
       const id = document.getElementById('deduct-part-id').value;
       const it = stocks.find(x => x.id === id);
       if (!it) return;
       const qty = parseInt(document.getElementById('deduct-qty').value) || 0;
       const dest = document.getElementById('deduct-destination').value.trim();
-      const contact = document.getElementById('deduct-contact').value.trim();
 
-      if (qty <= 0) { alert("Geçerli bir miktar girin!"); return; }
-      if (!dest) { alert("Lütfen Firma İsmini yazın!"); return; }
+      if (qty <= 0 || !dest) { alert("Lütfen firma ve miktar belirtin!"); return; }
 
       it.qty = Math.max(0, it.qty - qty);
       sales.unshift({
         id: "Q-" + Date.now(),
         firm: dest,
-        contact: contact || "-",
         date: new Date().toLocaleDateString('tr-TR'),
         status: "APPROVED",
         timestamp: new Date().toISOString().split('T')[0],
@@ -1038,20 +757,8 @@
       renderZReport();
       closeDeductModal();
 
-      const payload = {
-        direction: "STOCK_CHANGE",
-        action: "DECREASE",
-        delta: qty,
-        category: it.cat || "MEKATRONIK",
-        code: it.code,
-        name: it.name,
-        current_qty: it.qty,
-        destination: dest,
-        contact: contact,
-        loc: it.loc
-      };
+      const payload = { direction: "STOCK_CHANGE", action: "DECREASE", delta: qty, code: it.code, name: it.name, destination: dest };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-      alert(`Stoktan düşüldü: ${qty} Adet [${it.code}] ➔ ${dest}`);
     }
 
     function increaseStock(id) {
@@ -1060,17 +767,7 @@
       it.qty += 1;
       persist();
       renderStockTable();
-      const payload = {
-        direction: "STOCK_CHANGE",
-        action: "INCREASE",
-        delta: 1,
-        category: it.cat || "MEKATRONIK",
-        code: it.code,
-        name: it.name,
-        current_qty: it.qty,
-        loc: it.loc,
-        is_new: it.is_new || false
-      };
+      const payload = { direction: "STOCK_CHANGE", action: "INCREASE", delta: 1, code: it.code, name: it.name, is_new: it.is_new || false };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
 
@@ -1085,62 +782,19 @@
       const loc = document.getElementById('m-loc').value.trim() || 'ELIPS-DEPO';
       const isNew = document.getElementById('m-is-new').checked;
 
-      if (!code || !name) { alert("Lütfen Ürün Kodu ve İsmini doldurun!"); return; }
+      if (!code || !name) { alert("Lütfen Kod ve İsim alanlarını doldurun!"); return; }
 
       stocks.unshift({ id: "s" + Date.now(), code, cat, name, qty, loc, is_new: isNew });
       persist();
       closeStockModal();
       renderStockTable();
 
-      const payload = {
-        direction: "STOCK_CHANGE",
-        action: "INCREASE",
-        delta: qty,
-        category: cat,
-        code: code,
-        name: name,
-        current_qty: qty,
-        loc: loc,
-        is_new: isNew
-      };
+      const payload = { direction: "STOCK_CHANGE", action: "INCREASE", delta: qty, code, name, is_new: isNew };
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
-
-      document.getElementById('m-code').value = "";
-      document.getElementById('m-name').value = "";
-    }
-
-    function setDatePreset(type) {
-      const startEl = document.getElementById('z-start-date');
-      const endEl = document.getElementById('z-end-date');
-      const now = new Date();
-      const toIso = d => d.toISOString().split('T')[0];
-
-      if (type === 'week') {
-        const w = new Date(); w.setDate(now.getDate() - 7);
-        startEl.value = toIso(w); endEl.value = toIso(now);
-      } else if (type === 'month') {
-        const m = new Date(now.getFullYear(), now.getMonth(), 1);
-        startEl.value = toIso(m); endEl.value = toIso(now);
-      } else {
-        startEl.value = ""; endEl.value = "";
-      }
-      renderZReport();
     }
 
     function renderZReport() {
-      const startVal = document.getElementById('z-start-date').value;
-      const endVal = document.getElementById('z-end-date').value;
-
       let filtered = sales.filter(s => s.status === 'APPROVED');
-      if (startVal || endVal) {
-        filtered = filtered.filter(s => {
-          const sDate = s.timestamp ? s.timestamp.split('T')[0] : "";
-          if (startVal && sDate < startVal) return false;
-          if (endVal && sDate > endVal) return false;
-          return true;
-        });
-      }
-
       let totalQty = 0;
       const plants = new Set();
       filtered.forEach(s => {
@@ -1152,20 +806,13 @@
       document.getElementById('z-total-plants').innerText = `${plants.size} Tesis`;
 
       const listContainer = document.getElementById('z-sales-list');
-      if (filtered.length === 0) {
-        listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 bg-darkbg rounded-xl">Kayıtlı satış/çıkış bulunamadı.</p>`;
-        return;
-      }
+      if (filtered.length === 0) { listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 bg-darkbg rounded-xl">Kayıt yok.</p>`; return; }
 
       listContainer.innerHTML = filtered.map(s => `
         <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl text-xs space-y-1">
-          <div class="flex justify-between items-center">
-            <span class="font-bold text-white">${s.firm}</span>
-            <span class="text-[10px] text-slate-500">${s.date}</span>
-          </div>
-          <p class="text-[10px] text-slate-400">İlgili Kişi: <span class="text-slate-300 font-medium">${s.contact || 'Belirtilmedi'}</span></p>
+          <div class="flex justify-between items-center"><span class="font-bold text-white">${s.firm}</span><span class="text-[10px] text-slate-500">${s.date}</span></div>
           <div class="border-t border-bordercol/30 pt-1">
-            ${s.items.map(i => `<span class="text-[11px] text-emerald-400 font-mono">[${i.code}]</span> <span class="text-slate-200">${i.name}</span> (<b>${i.qty} Adet</b>)`).join('<br>')}
+            ${s.items.map(i => `<span class="text-[11px] text-emerald-400 font-mono">[${i.code}]</span> ${i.name} (<b>${i.qty} Adet</b>)`).join('<br>')}
           </div>
         </div>
       `).join('');
@@ -1173,67 +820,35 @@
 
     function exportZReportCSV() {
       const filtered = sales.filter(s => s.status === 'APPROVED');
-      if (filtered.length === 0) { alert("İndirilecek kayıt bulunamadı!"); return; }
-      
-      let csv = "\uFEFFSıra;Tarih;Firma İsmi;İlgili Kişi;Ürün Kodu;Ürün İsmi;Adet;Durum\n";
-      let cnt = 1;
-      filtered.forEach(s => {
-        s.items.forEach(i => {
-          csv += `${cnt};${s.date};"${s.firm}";"${s.contact || ''}";"${i.code}";"${i.name}";${i.qty};ONAYLANDI\n`;
-          cnt++;
-        });
-      });
-
+      if (filtered.length === 0) { alert("Kayıt yok!"); return; }
+      let csv = "\uFEFFTarih;Firma;Kod;Urun;Adet\n";
+      filtered.forEach(s => { s.items.forEach(i => { csv += `${s.date};"${s.firm}";"${i.code}";"${i.name}";${i.qty}\n`; }); });
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url;
-      a.download = `Elips_Depo_Z_Raporu_${new Date().toISOString().slice(0,10)}.csv`;
-      document.body.appendChild(a);
+      a.href = URL.createObjectURL(blob);
+      a.download = `Z_Raporu_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
-      document.body.removeChild(a);
     }
-
-    function exportZReportPDF() { window.print(); }
 
     function queryFacilityHistoryLive() {
       const q = normalizeTr(document.getElementById('facility-search-input').value.trim());
       const container = document.getElementById('facility-history-results');
-      if (!q) {
-        container.innerHTML = `<p class="text-slate-500 text-center py-2 text-[11px]">Geçmişini görmek istediğiniz fabrika adını yazın.</p>`;
-        return;
-      }
+      if (!q) { container.innerHTML = `<p class="text-slate-500 text-center py-2 text-[11px]">Fabrika adı yazın.</p>`; return; }
       const matched = sales.filter(s => s.status === 'APPROVED' && normalizeTr(s.firm).includes(q));
-      if (matched.length === 0) {
-        container.innerHTML = `<p class="text-slate-400 text-center py-2 text-[11px]">Kayıtlı parça geçmişi bulunamadı.</p>`;
-        return;
-      }
-
+      if (matched.length === 0) { container.innerHTML = `<p class="text-slate-400 text-center py-2 text-[11px]">Kayıt bulunamadı.</p>`; return; }
       container.innerHTML = matched.map(s => `
-        <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl space-y-1">
-          <div class="flex justify-between text-[11px]">
-            <span class="font-bold text-white">${s.firm}</span>
-            <span class="text-slate-500">${s.date}</span>
-          </div>
-          <p class="text-[10px] text-slate-400">İlgili Kişi: ${s.contact || 'Belirtilmedi'}</p>
+        <div class="p-2 bg-darkbg border border-bordercol rounded-xl space-y-1 text-xs">
+          <div class="flex justify-between text-[11px] font-bold text-white"><span>${s.firm}</span><span>${s.date}</span></div>
           <div class="border-t border-bordercol/40 pt-1">
-            ${s.items.map(i => `<p class="text-[11px] text-slate-300">• <span class="font-mono text-emerald-400">[${i.code}]</span> — ${i.name} (<b>${i.qty} Adet</b>)</p>`).join('')}
+            ${s.items.map(i => `<p class="text-[11px] text-slate-300">• [${i.code}] ${i.name} (<b>${i.qty} ADT</b>)</p>`).join('')}
           </div>
         </div>
       `).join('');
     }
 
-    function setLanguage(lang) {
-      currentLang = lang;
-      document.getElementById('lang-tr').className = lang === 'tr' ? 'px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white' : 'px-2 py-0.5 text-xs font-bold rounded-lg text-slate-400';
-      document.getElementById('lang-uz').className = lang === 'uz' ? 'px-2 py-0.5 text-xs font-bold rounded-lg bg-brand-600 text-white' : 'px-2 py-0.5 text-xs font-bold rounded-lg text-slate-400';
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
-      setLanguage('tr');
-      setDatePreset('all');
       renderStockTable();
-      renderCargoList();
+      renderRepairs();
       updateOnlineStatus();
     });
   </script>
