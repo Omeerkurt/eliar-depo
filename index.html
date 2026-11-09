@@ -1,16 +1,24 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr" id="html-root" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Elips Depo & Ekran Servis</title>
+  <title>Elips Depo & Servis</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: { extend: { colors: { brand: { 500: '#22c55e', 600: '#16a34a' }, darkbg: '#0B0F19', cardbg: '#161F30', bordercol: '#233047' } } }
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#10b981', 600: '#059669' },
+            darkbg: '#0B0F19', cardbg: '#161F30', bordercol: '#233047',
+            lightbg: '#F1F5F9', lightcard: '#FFFFFF', lightborder: '#CBD5E1'
+          }
+        }
+      }
     }
   </script>
   <style>
@@ -19,43 +27,46 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
   </style>
 </head>
-<body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
+<body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16 transition-colors duration-200" id="body-main">
 
-  <!-- TEST MODU UYARI ŞERİDİ (Sadece aktifken görünür) -->
+  <!-- TEST MODU ŞERİDİ -->
   <div id="test-mode-banner" class="hidden bg-amber-500 text-black text-[11px] font-black py-1 px-3 text-center tracking-wide">
-    ⚠️ SİMÜLASYON / TEST MODU AKTİF (Kamil'e bildirim gitmez, kayıtlar korunur)
+    ⚠️ TEST MODU AKTİF (Kamil'e bildirim gitmez, veritabanı simülasyondadır)
   </div>
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-40 bg-cardbg/95 backdrop-blur border-b border-bordercol px-4 py-3 flex items-center justify-between shadow-lg">
+  <header class="sticky top-0 z-40 bg-cardbg/95 backdrop-blur border-b border-bordercol px-4 py-3 flex items-center justify-between shadow-lg" id="app-header">
     <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-emerald-700 flex items-center justify-center shadow-md">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center shadow-md">
         <i class="fa-solid fa-boxes-stacked text-white text-base"></i>
       </div>
       <div>
         <div class="flex items-center space-x-2">
-          <h1 class="text-base font-bold tracking-wide text-white leading-tight">ELİPS DEPO</h1>
+          <h1 class="text-base font-black tracking-wide text-white leading-tight" id="header-title">ELİPS DEPO</h1>
           <span id="connection-status" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">🟢 Çevrimiçi</span>
         </div>
         <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ÖZBEKİSTAN MERKEZ SERVİS</p>
       </div>
     </div>
     
-    <!-- SAĞ ÜST KULLANICI & PROFİL BUTONU -->
+    <!-- SAĞ ÜST: TEMA DEĞİŞTİRME + KULLANICI PROFİLİ -->
     <div class="flex items-center space-x-2">
-      <button onclick="openUserDrawer()" id="user-badge-btn" class="px-2.5 py-1.5 bg-darkbg border border-bordercol rounded-xl text-xs flex items-center space-x-1.5 hover:border-slate-500 transition shadow">
-        <span id="user-avatar-icon">👑</span>
-        <span id="user-name-display" class="font-bold text-white text-[11px]">Giriş</span>
+      <!-- GÜNDÜZ / GECE TEMA BUTONU -->
+      <button onclick="toggleTheme()" id="theme-toggle-btn" title="Temayı Değiştir" class="p-2 bg-darkbg border border-bordercol rounded-xl text-amber-400 hover:text-white text-xs shadow">
+        <i class="fa-solid fa-sun" id="theme-icon"></i>
       </button>
-      <button onclick="window.location.reload()" title="Yenile" class="p-2 bg-darkbg border border-bordercol rounded-xl text-slate-400 hover:text-white text-xs">
-        <i class="fa-solid fa-arrows-rotate"></i>
+      
+      <!-- KULLANICI PROFİL BUTONU -->
+      <button onclick="openUserDrawer()" id="user-badge-btn" class="px-2.5 py-1.5 bg-darkbg border border-bordercol rounded-xl text-xs flex items-center space-x-1.5 shadow">
+        <span id="user-avatar-icon">👑</span>
+        <span id="user-name-display" class="font-bold text-white text-[11px]">Ömer</span>
       </button>
     </div>
   </header>
 
   <!-- 3'LÜ MENÜ -->
   <main class="p-3.5 max-w-2xl mx-auto space-y-4">
-    <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
+    <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold" id="menu-tabs">
       <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
         <i class="fa-solid fa-boxes-stacked text-sm"></i>
         <span>Depo Stok</span>
@@ -100,9 +111,9 @@
 
     <!-- 2. TAB: EKRAN TAMİR & SERVİS MODÜLÜ -->
     <section id="tab-repair" class="tab-content hidden space-y-3">
-      <div class="flex justify-between items-center bg-cardbg border border-bordercol rounded-2xl p-3 shadow-md">
+      <div class="flex justify-between items-center bg-cardbg border border-bordercol rounded-2xl p-3 shadow-md" id="repair-header-card">
         <div>
-          <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
+          <h3 class="text-xs font-bold text-white flex items-center space-x-1.5" id="repair-title-text">
             <i class="fa-solid fa-microchip text-cyan-400"></i>
             <span>Ekran & Cihaz Servis Takibi</span>
           </h3>
@@ -126,7 +137,7 @@
 
     <!-- 3. TAB: RAPOR & TESİS GEÇMİŞİ -->
     <section id="tab-reports" class="tab-content hidden space-y-3">
-      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
+      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl" id="report-main-card">
         <div class="flex justify-between items-center border-b border-bordercol pb-2">
           <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
             <i class="fa-solid fa-chart-pie text-emerald-400"></i>
@@ -141,7 +152,7 @@
         <div class="space-y-1.5 max-h-56 overflow-y-auto no-scrollbar" id="z-sales-list"></div>
       </div>
 
-      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-2 shadow-xl">
+      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-2 shadow-xl" id="facility-main-card">
         <h3 class="text-xs font-bold text-white">🏭 Tesis Parça Geçmişi</h3>
         <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Fabrika Adı Yazın (TERRY JAR)..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
         <div id="facility-history-results" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
@@ -149,74 +160,70 @@
     </section>
   </main>
 
-  <!-- MODAL: KULLANICI / PROFİL ÇEKMECESİ -->
+  <!-- MODAL: KULLANICI PROFİL ÇEKMECESİ -->
   <div id="modal-user-drawer" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-4">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
         <h3 class="font-bold text-white text-sm flex items-center space-x-2">
           <span id="drawer-user-icon">👑</span>
-          <span id="drawer-user-title">Kullanıcı Profili</span>
+          <span id="drawer-user-title">Kullanıcı Hesabı</span>
         </h3>
         <button onclick="closeUserDrawer()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
 
       <div class="p-3 bg-darkbg rounded-2xl border border-bordercol space-y-1 text-xs">
-        <div class="flex justify-between"><span class="text-slate-400">Aktif Kullanıcı:</span><span id="drawer-username" class="font-bold text-white">Ömer (Admin)</span></div>
-        <div class="flex justify-between"><span class="text-slate-400">Yetki Düzeyi:</span><span id="drawer-role" class="font-bold text-emerald-400">Süper Yönetici</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Giriş Yapan:</span><span id="drawer-username" class="font-bold text-white">Ömer</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Yetki:</span><span id="drawer-role" class="font-bold text-emerald-400">Yönetici</span></div>
       </div>
 
-      <!-- SADECE ÖMER'E ÖZEL TEST MODU ANAHTARI -->
+      <!-- SADECE ÖMER'E GÖRÜNÜR TEST MODU ANAHTARI -->
       <div id="admin-test-mode-box" class="p-3 bg-darkbg rounded-2xl border border-amber-500/40 space-y-2">
         <div class="flex justify-between items-center">
           <div>
-            <span class="text-xs font-bold text-amber-300 flex items-center space-x-1">
-              <span>🧪 Test / Simülasyon Modu</span>
-            </span>
-            <p class="text-[10px] text-slate-400">Açıldığında Kamil'e mesaj gitmez, veritabanı korunur.</p>
+            <span class="text-xs font-bold text-amber-300">🧪 Simülasyon / Test Modu</span>
+            <p class="text-[10px] text-slate-400">Açıldığında Kamil'e mesaj gitmez, canlı veri korunur.</p>
           </div>
           <input type="checkbox" id="test-mode-toggle" onchange="toggleTestMode(this.checked)" class="w-5 h-5 accent-amber-500 cursor-pointer">
         </div>
       </div>
 
-      <!-- SADECE ÖMER'E ÖZEL: KAMİL'İN ŞİFRESİNİ SIFIRLAMA BUTONU -->
-      <div id="admin-kamil-reset-box" class="pt-1">
-        <button onclick="resetKamilPassword()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 py-2 rounded-xl text-xs font-bold text-slate-300">
-          🔑 Kamil'in Şifresini Sıfırla
-        </button>
-      </div>
-
       <button onclick="logoutUser()" class="w-full bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 py-2.5 rounded-xl font-bold text-xs">
-        🚪 Çıkış Yap / Başka Kullanıcı Gir
+        🚪 Hesaptan Çıkış Yap
       </button>
     </div>
   </div>
 
-  <!-- MODAL: GİRİŞ EKRANI -->
-  <div id="modal-login" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm hidden items-center justify-center p-4">
+  <!-- MODAL: GİRİŞ EKRANI (TEMİZ VE GÜVENLİ) -->
+  <div id="modal-login" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="bg-cardbg border border-bordercol w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
       <div class="text-center space-y-1 border-b border-bordercol pb-3">
-        <h3 class="font-black text-white text-base">ELİPS DEPO GİRİŞ</h3>
-        <p class="text-[11px] text-slate-400">Lütfen kullanıcı bilgilerinizi giriniz.</p>
+        <h3 class="font-black text-white text-base">ELİPS DEPO GİRİŞİ</h3>
+        <p class="text-[11px] text-slate-400">Lütfen kullanıcı bilgilerinizi yazın.</p>
       </div>
-      <div class="space-y-3 text-xs">
+
+      <!-- STANDART GİRİŞ FORMU -->
+      <div id="login-standard-form" class="space-y-3 text-xs">
         <div>
           <label class="text-slate-400 font-semibold block mb-1">Kullanıcı Adı</label>
           <input type="text" id="login-username" placeholder="omeerkurt veya komil" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
         </div>
-        <div id="login-pass-group">
+        <div id="login-password-field">
           <label class="text-slate-400 font-semibold block mb-1">Şifre</label>
           <input type="password" id="login-password" placeholder="Şifreniz" class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
         </div>
-
-        <!-- KAMİL İLK KEZ GİRİYORSA ŞİFRE BELİRLEME PENCERESİ -->
-        <div id="kamil-first-setup" class="hidden space-y-2 p-3 bg-darkbg rounded-xl border border-cyan-500/40">
-          <span class="text-[11px] font-bold text-cyan-300 block">👋 Hoş geldiniz Kamil Bey!</span>
-          <p class="text-[10px] text-slate-400">Sisteme ilk kez giriyorsunuz. Lütfen bundan sonra kullanacağınız kendi şifrenizi belirleyin:</p>
-          <input type="password" id="kamil-new-pass" placeholder="Yeni Şifreniz" class="w-full bg-cardbg border border-bordercol rounded-lg px-2.5 py-1.5 text-white text-xs">
-          <button onclick="saveKamilFirstPassword()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-1.5 rounded-lg font-bold text-white text-[11px]">Şifremi Kaydet & Giriş Yap</button>
-        </div>
+        <button onclick="handleLoginSubmit()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Giriş Yap</button>
       </div>
-      <button onclick="handleLoginSubmit()" id="login-submit-btn" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Giriş Yap</button>
+
+      <!-- KAMİL İLK KEZ GİRİYORSA: KENDİ ŞİFRESİNİ BELİRLEME PENCERESİ -->
+      <div id="kamil-setup-view" class="hidden space-y-3 p-3 bg-darkbg rounded-xl border border-cyan-500/40 text-xs">
+        <div class="text-center">
+          <span class="text-xs font-bold text-cyan-300">👋 Hoş geldin Kamil!</span>
+          <p class="text-[10px] text-slate-400 mt-0.5">Sisteme ilk kez giriyorsun. Kendi şifreni belirle:</p>
+        </div>
+        <input type="password" id="kamil-init-pass" placeholder="Yeni Şifren (En az 3 hane)" class="w-full bg-cardbg border border-bordercol rounded-xl px-3 py-2 text-white">
+        <button onclick="saveKamilPasswordAndLogin()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-2 rounded-xl font-bold text-white text-xs shadow">Şifremi Kaydet & Giriş Yap</button>
+        <button onclick="backToStandardLogin()" class="w-full text-slate-400 text-[10px] hover:text-white">Geri Dön</button>
+      </div>
     </div>
   </div>
 
@@ -224,7 +231,7 @@
   <div id="modal-repair" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
-        <h3 class="font-bold text-white text-sm">Yeni Ekran / Cihaz Servis Kaydı</h3>
+        <h3 class="font-bold text-white text-sm">Yeni Ekran Servis Kaydı</h3>
         <button onclick="closeRepairModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
       <div class="grid grid-cols-2 gap-2 text-xs">
@@ -242,7 +249,7 @@
         <input type="text" id="r-sn" placeholder="Örn: SN-92841" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white font-mono">
       </div>
       <div class="text-xs">
-        <label class="text-slate-400 font-medium">Arıza / Sıkıntı <span class="text-rose-400">*</span></label>
+        <label class="text-slate-400 font-medium">Arıza Tanımı <span class="text-rose-400">*</span></label>
         <input type="text" id="r-issue" placeholder="Örn: Dokunmatik basmıyor" class="w-full mt-1 bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-white">
       </div>
       <div class="text-xs">
@@ -261,7 +268,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ÜRÜN DÜZENLEME (SİLME BUTONU SADECE ÖMER'E ÇIKAR) -->
+  <!-- MODAL: ÜRÜN DÜZENLEME (KAMİL'DE SİLME BUTONLARI ÇIKMAZ) -->
   <div id="modal-edit-part" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -299,12 +306,12 @@
         </div>
       </div>
       <div class="flex items-center space-x-2 bg-darkbg p-2 rounded-xl border border-bordercol text-xs">
-        <input type="checkbox" id="edit-is-new" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
-        <label for="edit-is-new" class="text-slate-300 font-semibold cursor-pointer">✨ Bu parçada [YENİ] rozeti göster</label>
+        <input type="checkbox" id="edit-is-new" class="w-4 h-4 accent-amber-500 rounded">
+        <label for="edit-is-new" class="text-slate-300 font-semibold">✨ Bu parçada [YENİ] rozeti göster</label>
       </div>
       <button onclick="savePartChanges()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Değişiklikleri Kaydet</button>
 
-      <!-- SİLME BUTONLARI (KAMİL'DE GİZLENİR, SADECE ÖMER'E AÇILIR) -->
+      <!-- SİLME BUTONLARI (SADECE ÖMER'E ÇIKAR, KAMİL'DE ASLA ÇIKMAZ) -->
       <div id="admin-delete-buttons-group" class="pt-2 border-t border-bordercol/40 flex space-x-2">
         <button onclick="deletePartFromModal(true)" class="flex-1 bg-slate-800 border border-slate-600 text-slate-300 py-2 rounded-xl font-bold text-[11px]">🔕 Bildirimsiz Sil</button>
         <button onclick="deletePartFromModal(false)" class="flex-1 bg-rose-950 border border-rose-800 text-rose-300 py-2 rounded-xl font-bold text-[11px]">📢 Bildirerek Sil</button>
@@ -332,7 +339,7 @@
     </div>
   </div>
 
-  <!-- MODAL: YENİ PARÇA (HEM ÖMER HEM KAMİL BELİRLEYEBİLİR) -->
+  <!-- MODAL: YENİ PARÇA -->
   <div id="modal-stock" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -385,10 +392,41 @@
     }
 
     // ==========================================
-    // KULLANICI & YETKİLENDİRME SİSTEMİ
+    // ☀️ GÜNDÜZ / 🌙 GECE ŞIK TEMA MOTORU
     // ==========================================
-    const DEFAULT_ADMIN = { user: "omeerkurt", pass: "6152665", name: "Ömer", role: "ADMIN" };
-    let currentUser = JSON.parse(localStorage.getItem('elips_user_session')) || DEFAULT_ADMIN;
+    let currentTheme = localStorage.getItem('elips_theme') || 'dark';
+
+    function applyTheme() {
+      const root = document.getElementById('html-root');
+      const body = document.getElementById('body-main');
+      const icon = document.getElementById('theme-icon');
+
+      if (currentTheme === 'light') {
+        root.classList.remove('dark');
+        body.classList.remove('bg-darkbg', 'text-slate-100');
+        body.classList.add('bg-slate-100', 'text-slate-800');
+        icon.className = "fa-solid fa-moon text-slate-700";
+        if (tg) tg.setHeaderColor('#FFFFFF');
+      } else {
+        root.classList.add('dark');
+        body.classList.remove('bg-slate-100', 'text-slate-800');
+        body.classList.add('bg-darkbg', 'text-slate-100');
+        icon.className = "fa-solid fa-sun text-amber-400";
+        if (tg) tg.setHeaderColor('#161F30');
+      }
+      localStorage.setItem('elips_theme', currentTheme);
+    }
+
+    function toggleTheme() {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      applyTheme();
+    }
+
+    // ==========================================
+    // KULLANICI & GÜVENLİ GİRİŞ SİSTEMİ
+    // ==========================================
+    const DEFAULT_USER = { user: "omeerkurt", name: "Ömer", role: "ADMIN" };
+    let currentUser = JSON.parse(localStorage.getItem('elips_user_session')) || DEFAULT_USER;
     let kamilPass = localStorage.getItem('elips_kamil_pass') || null;
     let isTestMode = JSON.parse(localStorage.getItem('elips_test_mode')) || false;
 
@@ -396,20 +434,17 @@
       const isAdm = currentUser && currentUser.role === "ADMIN";
       document.getElementById('user-name-display').innerText = currentUser.name;
       document.getElementById('user-avatar-icon').innerText = isAdm ? "👑" : "👷";
-      
-      // Test modu şeridi
+
+      document.getElementById('drawer-user-icon').innerText = isAdm ? "👑" : "👷";
+      document.getElementById('drawer-username').innerText = currentUser.name;
+      document.getElementById('drawer-role').innerText = isAdm ? "Yönetici" : "Teknisyen";
+
+      // Test Modu ve Silme butonları SADECE Ömer'e görünür!
+      document.getElementById('admin-test-mode-box').classList.toggle('hidden', !isAdm);
+      document.getElementById('admin-delete-buttons-group').classList.toggle('hidden', !isAdm);
+
       document.getElementById('test-mode-banner').classList.toggle('hidden', !isTestMode);
       document.getElementById('test-mode-toggle').checked = isTestMode;
-
-      // Drawer içi bilgiler
-      document.getElementById('drawer-user-icon').innerText = isAdm ? "👑" : "👷";
-      document.getElementById('drawer-username').innerText = `${currentUser.name} (${currentUser.user})`;
-      document.getElementById('drawer-role').innerText = isAdm ? "Süper Yönetici (Admin)" : "Teknisyen (Kamil)";
-
-      // Kamil için gizlenecek / kilitlenecek alanlar
-      document.getElementById('admin-test-mode-box').classList.toggle('hidden', !isAdm);
-      document.getElementById('admin-kamil-reset-box').classList.toggle('hidden', !isAdm);
-      document.getElementById('admin-delete-buttons-group').classList.toggle('hidden', !isAdm);
     }
 
     function openUserDrawer() {
@@ -429,21 +464,12 @@
       if (tg?.sendData) tg.sendData(JSON.stringify({ direction: "TEST_MODE_TOGGLE", active: isTestMode }));
     }
 
-    function resetKamilPassword() {
-      if (currentUser.role !== "ADMIN") return;
-      if (!confirm("Kamil'in şifresi sıfırlansın mı? Bir sonraki girişinde yeni şifre belirleyebilecek.")) return;
-      localStorage.removeItem('elips_kamil_pass');
-      kamilPass = null;
-      alert("Kamil Bey'in şifresi sıfırlandı.");
-    }
-
     function logoutUser() {
       closeUserDrawer();
       document.getElementById('login-username').value = "";
       document.getElementById('login-password').value = "";
-      document.getElementById('kamil-first-setup').classList.add('hidden');
-      document.getElementById('login-pass-group').classList.remove('hidden');
-      document.getElementById('login-submit-btn').classList.remove('hidden');
+      document.getElementById('login-standard-form').classList.remove('hidden');
+      document.getElementById('kamil-setup-view').classList.add('hidden');
       document.getElementById('modal-login').classList.remove('hidden');
       document.getElementById('modal-login').classList.add('flex');
     }
@@ -452,6 +478,7 @@
       const u = document.getElementById('login-username').value.trim().toLowerCase();
       const p = document.getElementById('login-password').value.trim();
 
+      // Ömer Girişi
       if (u === "omeerkurt" && p === "6152665") {
         currentUser = { user: "omeerkurt", name: "Ömer", role: "ADMIN" };
         localStorage.setItem('elips_user_session', JSON.stringify(currentUser));
@@ -462,13 +489,13 @@
         return;
       }
 
+      // Kamil Girişi
       if (u === "komil") {
         kamilPass = localStorage.getItem('elips_kamil_pass');
         if (!kamilPass) {
-          // Kamil ilk kez giriyor -> Şifre belirleme alanı aç
-          document.getElementById('login-pass-group').classList.add('hidden');
-          document.getElementById('login-submit-btn').classList.add('hidden');
-          document.getElementById('kamil-first-setup').classList.remove('hidden');
+          // İlk giriş: Şifre belirleme ekranını göster
+          document.getElementById('login-standard-form').classList.add('hidden');
+          document.getElementById('kamil-setup-view').classList.remove('hidden');
           return;
         }
 
@@ -481,7 +508,7 @@
           renderStockTable();
           return;
         } else {
-          alert("Kamil Bey için şifre hatalı!");
+          alert("Hatalı şifre!");
           return;
         }
       }
@@ -489,9 +516,9 @@
       alert("Kullanıcı adı veya şifre hatalı!");
     }
 
-    function saveKamilFirstPassword() {
-      const np = document.getElementById('kamil-new-pass').value.trim();
-      if (!np || np.length < 3) { alert("Lütfen en az 3 haneli bir şifre belirleyin!"); return; }
+    function saveKamilPasswordAndLogin() {
+      const np = document.getElementById('kamil-init-pass').value.trim();
+      if (!np || np.length < 3) { alert("Lütfen en az 3 haneli bir şifre belirle!"); return; }
 
       localStorage.setItem('elips_kamil_pass', np);
       kamilPass = np;
@@ -501,7 +528,12 @@
       document.getElementById('modal-login').classList.remove('flex');
       applyUserPermissions();
       renderStockTable();
-      alert("Şifreniz başarıyla kaydedildi! Hoş geldiniz Kamil Bey.");
+      alert("Şifren kaydedildi, hoş geldin Kamil!");
+    }
+
+    function backToStandardLogin() {
+      document.getElementById('kamil-setup-view').classList.add('hidden');
+      document.getElementById('login-standard-form').classList.remove('hidden');
     }
 
     // ==========================================
@@ -541,6 +573,7 @@
     }
 
     async function initData() {
+      applyTheme();
       if (!stocks || stocks.length === 0) {
         try {
           const res = await fetch('stocks_db.json');
@@ -635,7 +668,7 @@
       `).join('');
     }
 
-    // --- EKRAN TAMİR FONKSİYONLARI ---
+    // --- EKRAN TAMİR İŞLEMLERİ ---
     function filterRepairs(f) {
       selectedRepairFilter = f;
       document.querySelectorAll('.rf-pill').forEach(btn => {
@@ -667,7 +700,7 @@
 
       const stBadges = {
         'BEKLEMEDE': '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-700">⏳ Bekliyor</span>',
-        'OZBEKISTAN': '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700">🇺🇿 Özbekistan Onardı</span>',
+        'OZBEKISTAN': '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700">🇺🇿 Özbekistan</span>',
         'TURKIYE': '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-700">🇹🇷 Türkiye\'de</span>',
         'TESLIM': '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">✅ Teslim Edildi</span>'
       };
@@ -761,7 +794,7 @@
     }
 
     function deleteRepairRecord(id) {
-      if (!confirm("Bu kaydı silmek istediğinize emin misiniz?")) return;
+      if (!confirm("Bu kaydı silmek istediğine emin misin?")) return;
       repairs = repairs.filter(x => x.id !== id);
       persist();
       renderRepairs();
@@ -811,7 +844,7 @@
       const it = stocks.find(x => x.id === id);
       if (!it) return;
 
-      if (!confirm(silent ? `[${it.code}] parçasını BİLDİRİMSİZ depodan silmek istiyor musunuz?` : `[${it.code}] parçasını BİLDİREREK silmek istiyor musunuz?`)) return;
+      if (!confirm(silent ? `[${it.code}] parçasını BİLDİRİMSİZ silmek istiyor musun?` : `[${it.code}] parçasını BİLDİREREK silmek istiyor musun?`)) return;
 
       stocks = stocks.filter(x => x.id !== id);
       persist();
@@ -879,7 +912,6 @@
     function openStockModal() { document.getElementById('modal-stock').classList.remove('hidden'); document.getElementById('modal-stock').classList.add('flex'); }
     function closeStockModal() { document.getElementById('modal-stock').classList.add('hidden'); document.getElementById('modal-stock').classList.remove('flex'); }
 
-    // HEM ÖMER HEM KAMİL YENİ PARÇA KAYDEDEBİLİR
     function saveStockItem() {
       const code = document.getElementById('m-code').value.trim();
       const cat = document.getElementById('m-cat').value;
