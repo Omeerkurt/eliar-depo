@@ -15,7 +15,7 @@
           colors: {
             brand: { 500: '#10b981', 600: '#059669' },
             darkbg: '#0B0F19', cardbg: '#161F30', bordercol: '#233047',
-            lightbg: '#F1F5F9', lightcard: '#FFFFFF', lightborder: '#CBD5E1'
+            lightbg: '#F8FAFC', lightcard: '#FFFFFF', lightborder: '#E2E8F0'
           }
         }
       }
@@ -42,21 +42,19 @@
       </div>
       <div>
         <div class="flex items-center space-x-2">
-          <h1 class="text-base font-black tracking-wide text-white leading-tight" id="header-title">ELİPS DEPO</h1>
+          <h1 class="text-base font-black tracking-wide text-white leading-tight">ELİPS DEPO</h1>
           <span id="connection-status" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">🟢 Çevrimiçi</span>
         </div>
         <p class="text-[10px] text-emerald-400 font-mono tracking-wider font-semibold">ÖZBEKİSTAN MERKEZ SERVİS</p>
       </div>
     </div>
     
-    <!-- SAĞ ÜST: TEMA DEĞİŞTİRME + KULLANICI PROFİLİ -->
+    <!-- SAĞ ÜST: TEMA BUTONU + KULLANICI PROFİLİ -->
     <div class="flex items-center space-x-2">
-      <!-- GÜNDÜZ / GECE TEMA BUTONU -->
       <button onclick="toggleTheme()" id="theme-toggle-btn" title="Temayı Değiştir" class="p-2 bg-darkbg border border-bordercol rounded-xl text-amber-400 hover:text-white text-xs shadow">
         <i class="fa-solid fa-sun" id="theme-icon"></i>
       </button>
       
-      <!-- KULLANICI PROFİL BUTONU -->
       <button onclick="openUserDrawer()" id="user-badge-btn" class="px-2.5 py-1.5 bg-darkbg border border-bordercol rounded-xl text-xs flex items-center space-x-1.5 shadow">
         <span id="user-avatar-icon">👑</span>
         <span id="user-name-display" class="font-bold text-white text-[11px]">Ömer</span>
@@ -66,7 +64,7 @@
 
   <!-- 3'LÜ MENÜ -->
   <main class="p-3.5 max-w-2xl mx-auto space-y-4">
-    <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold" id="menu-tabs">
+    <div class="grid grid-cols-3 gap-1.5 p-1 bg-cardbg border border-bordercol rounded-2xl text-xs font-semibold">
       <button onclick="switchTab('stock')" id="tab-btn-stock" class="tab-btn py-3 rounded-xl flex flex-col items-center justify-center space-y-1 bg-brand-600 text-white shadow-md">
         <i class="fa-solid fa-boxes-stacked text-sm"></i>
         <span>Depo Stok</span>
@@ -83,20 +81,25 @@
 
     <!-- 1. TAB: DEPO STOK LİSTESİ -->
     <section id="tab-stock" class="tab-content space-y-3">
+      <!-- NİLAY HANIM'A TEKLİF LİSTESİ HAZIRLAMA BUTONU -->
+      <button onclick="triggerQuoteFromMiniApp()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 p-2.5 rounded-2xl text-xs font-black text-white shadow-lg flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-file-invoice"></i>
+        <span>📝 Nilay Hanım'a Teklif Listesi Hazırla (Botta Başlat)</span>
+      </button>
+
       <div class="flex space-x-2">
         <div class="relative flex-1">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
           <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="Kod veya isimle ara..." 
             class="w-full bg-cardbg border border-bordercol rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none">
         </div>
-        <!-- HEM ÖMER HEM KAMİL YENİ PARÇA BELİRLEYEBİLİR -->
         <button onclick="openStockModal()" class="px-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold flex items-center space-x-1 text-xs shadow-md">
           <i class="fa-solid fa-plus"></i>
           <span>Yeni</span>
         </button>
       </div>
 
-      <!-- KATEGORİLER (SENSÖRLER DAHİL) -->
+      <!-- KATEGORİLER (SENSÖRLER VE YENİ DAHİL) -->
       <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
         <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white whitespace-nowrap">Tümü (<span id="count-all">0</span>)</button>
         <button onclick="filterCategory('YENI')" id="pill-YENI" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-amber-300 whitespace-nowrap">✨ Yeni (<span id="count-yeni">0</span>)</button>
@@ -111,10 +114,10 @@
 
     <!-- 2. TAB: EKRAN TAMİR & SERVİS MODÜLÜ -->
     <section id="tab-repair" class="tab-content hidden space-y-3">
-      <div class="flex justify-between items-center bg-cardbg border border-bordercol rounded-2xl p-3 shadow-md" id="repair-header-card">
+      <div class="flex justify-between items-center bg-cardbg border border-bordercol rounded-2xl p-3 shadow-md">
         <div>
-          <h3 class="text-xs font-bold text-white flex items-center space-x-1.5" id="repair-title-text">
-            <i class="fa-solid fa-microchip text-cyan-400"></i>
+          <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
+            <i class="fa-solid fa-tv text-cyan-400"></i>
             <span>Ekran & Cihaz Servis Takibi</span>
           </h3>
           <p class="text-[10px] text-slate-400 mt-0.5">Özbekistan / Türkiye Onarım Süreçleri</p>
@@ -135,25 +138,59 @@
       <div id="repair-list" class="space-y-2.5"></div>
     </section>
 
-    <!-- 3. TAB: RAPOR & TESİS GEÇMİŞİ -->
+    <!-- 3. TAB: RAPOR & TESİS GEÇMİŞİ (FİRMA, ÜRÜN VE TARİH FİLTRELİ) -->
     <section id="tab-reports" class="tab-content hidden space-y-3">
-      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl" id="report-main-card">
+      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
         <div class="flex justify-between items-center border-b border-bordercol pb-2">
           <h3 class="text-xs font-bold text-white flex items-center space-x-1.5">
             <i class="fa-solid fa-chart-pie text-emerald-400"></i>
-            <span>Satış Z-Raporu</span>
+            <span>Satış Z-Raporu & Canlı Döküm</span>
           </h3>
           <button onclick="exportZReportCSV()" class="px-2.5 py-1 bg-emerald-600 text-white rounded-xl text-[11px] font-bold">Excel İndir</button>
         </div>
+
+        <!-- TARİH ARALIĞI -->
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <label class="text-slate-400 text-[10px] font-semibold block mb-1">Başlangıç Tarihi</label>
+            <input type="date" id="z-start-date" onchange="renderZReport()" class="w-full bg-darkbg border border-bordercol rounded-xl px-2.5 py-1.5 text-white text-xs">
+          </div>
+          <div>
+            <label class="text-slate-400 text-[10px] font-semibold block mb-1">Bitiş Tarihi</label>
+            <input type="date" id="z-end-date" onchange="renderZReport()" class="w-full bg-darkbg border border-bordercol rounded-xl px-2.5 py-1.5 text-white text-xs">
+          </div>
+        </div>
+
+        <!-- YENİ GELİŞMİŞ FİLTRELER: FİRMA VE ÜRÜN ARAMA -->
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <label class="text-slate-400 text-[10px] font-semibold block mb-1">Firma / Fabrika Filtresi</label>
+            <input type="text" id="z-filter-firm" oninput="renderZReport()" placeholder="Örn: TERRY JAR" class="w-full bg-darkbg border border-bordercol rounded-xl px-2.5 py-1.5 text-white text-xs">
+          </div>
+          <div>
+            <label class="text-slate-400 text-[10px] font-semibold block mb-1">Ürün Kodu veya Adı</label>
+            <input type="text" id="z-filter-part" oninput="renderZReport()" placeholder="Örn: 90567 veya diyafram" class="w-full bg-darkbg border border-bordercol rounded-xl px-2.5 py-1.5 text-white text-xs">
+          </div>
+        </div>
+
+        <!-- HIZLI TARİH BUTONLARI -->
+        <div class="flex space-x-1.5 text-[10px]">
+          <button onclick="setDatePreset('all')" class="px-2.5 py-1 bg-darkbg border border-bordercol rounded-lg text-slate-300">Tümü</button>
+          <button onclick="setDatePreset('week')" class="px-2.5 py-1 bg-darkbg border border-bordercol rounded-lg text-slate-300">Son 7 Gün</button>
+          <button onclick="setDatePreset('month')" class="px-2.5 py-1 bg-darkbg border border-bordercol rounded-lg text-slate-300">Bu Ay</button>
+        </div>
+
+        <!-- ÖZET SAYILAR -->
         <div class="grid grid-cols-2 gap-2 text-center">
-          <div class="p-2 bg-darkbg rounded-xl"><span class="text-[10px] text-slate-400 block">Toplam Parça</span><span id="z-total-qty" class="text-base font-black text-emerald-400">0 ADT</span></div>
+          <div class="p-2 bg-darkbg rounded-xl"><span class="text-[10px] text-slate-400 block">Filtrelenen Parça</span><span id="z-total-qty" class="text-base font-black text-emerald-400">0 ADT</span></div>
           <div class="p-2 bg-darkbg rounded-xl"><span class="text-[10px] text-slate-400 block">Hizmet Verilen</span><span id="z-total-plants" class="text-base font-black text-cyan-400">0 Tesis</span></div>
         </div>
         <div class="space-y-1.5 max-h-56 overflow-y-auto no-scrollbar" id="z-sales-list"></div>
       </div>
 
-      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-2 shadow-xl" id="facility-main-card">
-        <h3 class="text-xs font-bold text-white">🏭 Tesis Parça Geçmişi</h3>
+      <!-- TESİS GEÇMİŞİ -->
+      <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-2 shadow-xl">
+        <h3 class="text-xs font-bold text-white">🏭 Tesis Parça Geçmişi ("Bu Fabrikaya Ne Verdik?")</h3>
         <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Fabrika Adı Yazın (TERRY JAR)..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
         <div id="facility-history-results" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
       </div>
@@ -166,7 +203,7 @@
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
         <h3 class="font-bold text-white text-sm flex items-center space-x-2">
           <span id="drawer-user-icon">👑</span>
-          <span id="drawer-user-title">Kullanıcı Hesabı</span>
+          <span id="drawer-user-title">Hesap Detayı</span>
         </h3>
         <button onclick="closeUserDrawer()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-darkbg">✕</button>
       </div>
@@ -193,15 +230,14 @@
     </div>
   </div>
 
-  <!-- MODAL: GİRİŞ EKRANI (TEMİZ VE GÜVENLİ) -->
+  <!-- MODAL: GİRİŞ EKRANI -->
   <div id="modal-login" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="bg-cardbg border border-bordercol w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
       <div class="text-center space-y-1 border-b border-bordercol pb-3">
         <h3 class="font-black text-white text-base">ELİPS DEPO GİRİŞİ</h3>
-        <p class="text-[11px] text-slate-400">Lütfen kullanıcı bilgilerinizi yazın.</p>
+        <p class="text-[11px] text-slate-400">Kullanıcı bilgilerinizi giriniz.</p>
       </div>
 
-      <!-- STANDART GİRİŞ FORMU -->
       <div id="login-standard-form" class="space-y-3 text-xs">
         <div>
           <label class="text-slate-400 font-semibold block mb-1">Kullanıcı Adı</label>
@@ -268,7 +304,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ÜRÜN DÜZENLEME (KAMİL'DE SİLME BUTONLARI ÇIKMAZ) -->
+  <!-- MODAL: ÜRÜN DÜZENLEME (KAMİL'DE SİLME BUTONLARI VE DÜZENLEME KALEMİ ÇIKMAZ) -->
   <div id="modal-edit-part" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -306,12 +342,12 @@
         </div>
       </div>
       <div class="flex items-center space-x-2 bg-darkbg p-2 rounded-xl border border-bordercol text-xs">
-        <input type="checkbox" id="edit-is-new" class="w-4 h-4 accent-amber-500 rounded">
-        <label for="edit-is-new" class="text-slate-300 font-semibold">✨ Bu parçada [YENİ] rozeti göster</label>
+        <input type="checkbox" id="edit-is-new" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+        <label for="edit-is-new" class="text-slate-300 font-semibold cursor-pointer">✨ Bu parçada [YENİ] rozeti göster</label>
       </div>
       <button onclick="savePartChanges()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Değişiklikleri Kaydet</button>
 
-      <!-- SİLME BUTONLARI (SADECE ÖMER'E ÇIKAR, KAMİL'DE ASLA ÇIKMAZ) -->
+      <!-- SADECE ÖMER'E GÖRÜNÜR SİLME BUTONLARI -->
       <div id="admin-delete-buttons-group" class="pt-2 border-t border-bordercol/40 flex space-x-2">
         <button onclick="deletePartFromModal(true)" class="flex-1 bg-slate-800 border border-slate-600 text-slate-300 py-2 rounded-xl font-bold text-[11px]">🔕 Bildirimsiz Sil</button>
         <button onclick="deletePartFromModal(false)" class="flex-1 bg-rose-950 border border-rose-800 text-rose-300 py-2 rounded-xl font-bold text-[11px]">📢 Bildirerek Sil</button>
@@ -392,7 +428,7 @@
     }
 
     // ==========================================
-    // ☀️ GÜNDÜZ / 🌙 GECE ŞIK TEMA MOTORU
+    // ☀️ GÜNDÜZ / 🌙 GECE TEMA SEÇENEĞİ
     // ==========================================
     let currentTheme = localStorage.getItem('elips_theme') || 'dark';
 
@@ -478,7 +514,6 @@
       const u = document.getElementById('login-username').value.trim().toLowerCase();
       const p = document.getElementById('login-password').value.trim();
 
-      // Ömer Girişi
       if (u === "omeerkurt" && p === "6152665") {
         currentUser = { user: "omeerkurt", name: "Ömer", role: "ADMIN" };
         localStorage.setItem('elips_user_session', JSON.stringify(currentUser));
@@ -489,11 +524,9 @@
         return;
       }
 
-      // Kamil Girişi
       if (u === "komil") {
         kamilPass = localStorage.getItem('elips_kamil_pass');
         if (!kamilPass) {
-          // İlk giriş: Şifre belirleme ekranını göster
           document.getElementById('login-standard-form').classList.add('hidden');
           document.getElementById('kamil-setup-view').classList.remove('hidden');
           return;
@@ -586,8 +619,10 @@
         }
       }
       applyUserPermissions();
+      setDatePreset('month');
       renderStockTable();
       renderRepairs();
+      renderZReport();
       updateOnlineStatus();
     }
 
@@ -601,6 +636,13 @@
       document.getElementById('tab-btn-' + t).classList.remove('text-slate-400');
       if (t === 'reports') renderZReport();
       if (t === 'repair') renderRepairs();
+    }
+
+    function triggerQuoteFromMiniApp() {
+      if (tg?.close) {
+        alert("Bot sohbet penceresi açılıyor. Nilay Hanım için teklif oluşturma sihirbazı başlayacak.");
+        tg.close();
+      }
     }
 
     function filterCategory(cat) {
@@ -668,7 +710,7 @@
       `).join('');
     }
 
-    // --- EKRAN TAMİR İŞLEMLERİ ---
+    // --- EKRAN TAMİR FONKSİYONLARI ---
     function filterRepairs(f) {
       selectedRepairFilter = f;
       document.querySelectorAll('.rf-pill').forEach(btn => {
@@ -931,20 +973,76 @@
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
 
+    // ==========================================
+    // CANLI VE GELİŞMİŞ Z-RAPORU MOTORU (TARİH + FİRMA + ÜRÜN FİLTRESİ)
+    // ==========================================
+    function setDatePreset(type) {
+      const now = new Date();
+      const toIso = d => d.toISOString().split('T')[0];
+      const startEl = document.getElementById('z-start-date');
+      const endEl = document.getElementById('z-end-date');
+
+      if (type === 'week') {
+        const d = new Date(); d.setDate(now.getDate() - 7);
+        startEl.value = toIso(d); endEl.value = toIso(now);
+      } else if (type === 'month') {
+        const d = new Date(now.getFullYear(), now.getMonth(), 1);
+        startEl.value = toIso(d); endEl.value = toIso(now);
+      } else {
+        startEl.value = ""; endEl.value = "";
+      }
+      renderZReport();
+    }
+
     function renderZReport() {
+      const startVal = document.getElementById('z-start-date')?.value;
+      const endVal = document.getElementById('z-end-date')?.value;
+      const firmFilter = normalizeTr(document.getElementById('z-filter-firm')?.value || "");
+      const partFilter = normalizeTr(document.getElementById('z-filter-part')?.value || "");
+
       let filtered = sales.filter(s => s.status === 'APPROVED');
+
+      // 1. Tarih Filtresi
+      if (startVal || endVal) {
+        filtered = filtered.filter(s => {
+          const sDate = s.timestamp ? s.timestamp.split('T')[0] : "";
+          if (startVal && sDate < startVal) return false;
+          if (endVal && sDate > endVal) return false;
+          return true;
+        });
+      }
+
+      // 2. Firma Filtresi
+      if (firmFilter) {
+        filtered = filtered.filter(s => normalizeTr(s.firm).includes(firmFilter));
+      }
+
+      // 3. Ürün Kodu veya Adı Filtresi
+      if (partFilter) {
+        filtered = filtered.filter(s => {
+          return s.items && s.items.some(i => normalizeTr(i.code).includes(partFilter) || normalizeTr(i.name).includes(partFilter));
+        });
+      }
+
       let totalQty = 0;
       const plants = new Set();
       filtered.forEach(s => {
         plants.add(s.firm);
-        s.items.forEach(i => totalQty += parseInt(i.qty || 1));
+        s.items.forEach(i => {
+          if (!partFilter || (normalizeTr(i.code).includes(partFilter) || normalizeTr(i.name).includes(partFilter))) {
+            totalQty += parseInt(i.qty || 1);
+          }
+        });
       });
 
       document.getElementById('z-total-qty').innerText = `${totalQty} ADT`;
       document.getElementById('z-total-plants').innerText = `${plants.size} Tesis`;
 
       const listContainer = document.getElementById('z-sales-list');
-      if (filtered.length === 0) { listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 bg-darkbg rounded-xl">Kayıt yok.</p>`; return; }
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4 bg-darkbg rounded-xl">Filtreye uygun kayıt bulunamadı.</p>`;
+        return;
+      }
 
       listContainer.innerHTML = filtered.map(s => `
         <div class="p-2.5 bg-darkbg border border-bordercol rounded-xl text-xs space-y-1">
@@ -964,7 +1062,7 @@
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `Z_Raporu_${new Date().toISOString().slice(0,10)}.csv`;
+      a.download = `Elips_Z_Raporu_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
     }
 
