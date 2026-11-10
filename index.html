@@ -49,7 +49,6 @@
       </div>
     </div>
     
-    <!-- SAĞ ÜST: TEMA BUTONU + KULLANICI PROFİLİ -->
     <div class="flex items-center space-x-2">
       <button onclick="toggleTheme()" id="theme-toggle-btn" title="Temayı Değiştir" class="p-2 bg-darkbg border border-bordercol rounded-xl text-amber-400 hover:text-white text-xs shadow">
         <i class="fa-solid fa-sun" id="theme-icon"></i>
@@ -81,10 +80,9 @@
 
     <!-- 1. TAB: DEPO STOK LİSTESİ -->
     <section id="tab-stock" class="tab-content space-y-3">
-      <!-- NİLAY HANIM'A TEKLİF LİSTESİ HAZIRLAMA BUTONU -->
       <button onclick="triggerQuoteFromMiniApp()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 p-2.5 rounded-2xl text-xs font-black text-white shadow-lg flex items-center justify-center space-x-2">
         <i class="fa-solid fa-file-invoice"></i>
-        <span>📝 Nilay Hanım'a Teklif Listesi Hazırla (Botta Başlat)</span>
+        <span>📝 Nilay Hanım'a Teklif Listesi Hazırla</span>
       </button>
 
       <div class="flex space-x-2">
@@ -99,7 +97,6 @@
         </button>
       </div>
 
-      <!-- KATEGORİLER (SENSÖRLER VE YENİ DAHİL) -->
       <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
         <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white whitespace-nowrap">Tümü (<span id="count-all">0</span>)</button>
         <button onclick="filterCategory('YENI')" id="pill-YENI" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-amber-300 whitespace-nowrap">✨ Yeni (<span id="count-yeni">0</span>)</button>
@@ -138,7 +135,7 @@
       <div id="repair-list" class="space-y-2.5"></div>
     </section>
 
-    <!-- 3. TAB: RAPOR & TESİS GEÇMİŞİ (FİRMA, ÜRÜN VE TARİH FİLTRELİ) -->
+    <!-- 3. TAB: RAPOR & TESİS GEÇMİŞİ -->
     <section id="tab-reports" class="tab-content hidden space-y-3">
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
         <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -149,7 +146,6 @@
           <button onclick="exportZReportCSV()" class="px-2.5 py-1 bg-emerald-600 text-white rounded-xl text-[11px] font-bold">Excel İndir</button>
         </div>
 
-        <!-- TARİH ARALIĞI -->
         <div class="grid grid-cols-2 gap-2 text-xs">
           <div>
             <label class="text-slate-400 text-[10px] font-semibold block mb-1">Başlangıç Tarihi</label>
@@ -161,7 +157,6 @@
           </div>
         </div>
 
-        <!-- YENİ GELİŞMİŞ FİLTRELER: FİRMA VE ÜRÜN ARAMA -->
         <div class="grid grid-cols-2 gap-2 text-xs">
           <div>
             <label class="text-slate-400 text-[10px] font-semibold block mb-1">Firma / Fabrika Filtresi</label>
@@ -173,14 +168,12 @@
           </div>
         </div>
 
-        <!-- HIZLI TARİH BUTONLARI -->
         <div class="flex space-x-1.5 text-[10px]">
           <button onclick="setDatePreset('all')" class="px-2.5 py-1 bg-darkbg border border-bordercol rounded-lg text-slate-300">Tümü</button>
           <button onclick="setDatePreset('week')" class="px-2.5 py-1 bg-darkbg border border-bordercol rounded-lg text-slate-300">Son 7 Gün</button>
           <button onclick="setDatePreset('month')" class="px-2.5 py-1 bg-darkbg border border-bordercol rounded-lg text-slate-300">Bu Ay</button>
         </div>
 
-        <!-- ÖZET SAYILAR -->
         <div class="grid grid-cols-2 gap-2 text-center">
           <div class="p-2 bg-darkbg rounded-xl"><span class="text-[10px] text-slate-400 block">Filtrelenen Parça</span><span id="z-total-qty" class="text-base font-black text-emerald-400">0 ADT</span></div>
           <div class="p-2 bg-darkbg rounded-xl"><span class="text-[10px] text-slate-400 block">Hizmet Verilen</span><span id="z-total-plants" class="text-base font-black text-cyan-400">0 Tesis</span></div>
@@ -188,7 +181,6 @@
         <div class="space-y-1.5 max-h-56 overflow-y-auto no-scrollbar" id="z-sales-list"></div>
       </div>
 
-      <!-- TESİS GEÇMİŞİ -->
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-2 shadow-xl">
         <h3 class="text-xs font-bold text-white">🏭 Tesis Parça Geçmişi ("Bu Fabrikaya Ne Verdik?")</h3>
         <input type="text" id="facility-search-input" oninput="queryFacilityHistoryLive()" placeholder="Fabrika Adı Yazın (TERRY JAR)..." class="w-full bg-darkbg border border-bordercol rounded-xl px-3 py-2 text-xs text-white">
@@ -213,7 +205,6 @@
         <div class="flex justify-between"><span class="text-slate-400">Yetki:</span><span id="drawer-role" class="font-bold text-emerald-400">Yönetici</span></div>
       </div>
 
-      <!-- SADECE ÖMER'E GÖRÜNÜR TEST MODU ANAHTARI -->
       <div id="admin-test-mode-box" class="p-3 bg-darkbg rounded-2xl border border-amber-500/40 space-y-2">
         <div class="flex justify-between items-center">
           <div>
@@ -250,7 +241,6 @@
         <button onclick="handleLoginSubmit()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Giriş Yap</button>
       </div>
 
-      <!-- KAMİL İLK KEZ GİRİYORSA: KENDİ ŞİFRESİNİ BELİRLEME PENCERESİ -->
       <div id="kamil-setup-view" class="hidden space-y-3 p-3 bg-darkbg rounded-xl border border-cyan-500/40 text-xs">
         <div class="text-center">
           <span class="text-xs font-bold text-cyan-300">👋 Hoş geldin Kamil!</span>
@@ -304,7 +294,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ÜRÜN DÜZENLEME (KAMİL'DE SİLME BUTONLARI VE DÜZENLEME KALEMİ ÇIKMAZ) -->
+  <!-- MODAL: ÜRÜN DÜZENLEME -->
   <div id="modal-edit-part" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-cardbg border border-bordercol w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-3">
       <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -347,7 +337,7 @@
       </div>
       <button onclick="savePartChanges()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Değişiklikleri Kaydet</button>
 
-      <!-- SADECE ÖMER'E GÖRÜNÜR SİLME BUTONLARI -->
+      <!-- SİLME BUTONLARI -->
       <div id="admin-delete-buttons-group" class="pt-2 border-t border-bordercol/40 flex space-x-2">
         <button onclick="deletePartFromModal(true)" class="flex-1 bg-slate-800 border border-slate-600 text-slate-300 py-2 rounded-xl font-bold text-[11px]">🔕 Bildirimsiz Sil</button>
         <button onclick="deletePartFromModal(false)" class="flex-1 bg-rose-950 border border-rose-800 text-rose-300 py-2 rounded-xl font-bold text-[11px]">📢 Bildirerek Sil</button>
@@ -475,7 +465,6 @@
       document.getElementById('drawer-username').innerText = currentUser.name;
       document.getElementById('drawer-role').innerText = isAdm ? "Yönetici" : "Teknisyen";
 
-      // Test Modu ve Silme butonları SADECE Ömer'e görünür!
       document.getElementById('admin-test-mode-box').classList.toggle('hidden', !isAdm);
       document.getElementById('admin-delete-buttons-group').classList.toggle('hidden', !isAdm);
 
@@ -605,8 +594,36 @@
       localStorage.setItem('elips_repairs_v11', JSON.stringify(repairs));
     }
 
+    // =========================================================================
+    // CANLI SUNUCU SENKRONİZASYONU (Madde 1 & 2 Köprüsü)
+    // =========================================================================
+    let apiUrl = new URLSearchParams(window.location.search).get('api') || localStorage.getItem('elips_api_url') || '';
+    if (apiUrl) {
+      if (apiUrl.endsWith('/')) apiUrl = apiUrl.slice(0, -1);
+      localStorage.setItem('elips_api_url', apiUrl);
+    }
+
     async function initData() {
       applyTheme();
+      updateOnlineStatus();
+
+      // Sunucudan canlı verileri çek ve iki telefonu eşitle
+      if (navigator.onLine && apiUrl) {
+        try {
+          const res = await fetch(`${apiUrl}/api/sync`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.stocks && data.stocks.length > 0) stocks = data.stocks;
+            if (data.sales) sales = data.sales;
+            if (data.repairs) repairs = data.repairs;
+            persist();
+          }
+        } catch (err) {
+          console.warn("Canlı sunucuya ulaşılamadı, yerel hafızadan açılıyor.");
+        }
+      }
+
+      // İlk kurulum için yerel dosya yedeği
       if (!stocks || stocks.length === 0) {
         try {
           const res = await fetch('stocks_db.json');
@@ -614,16 +631,14 @@
             stocks = await res.json();
             persist();
           }
-        } catch (e) {
-          console.log("Offline mode", e);
-        }
+        } catch(e) {}
       }
+
       applyUserPermissions();
       setDatePreset('month');
       renderStockTable();
       renderRepairs();
       renderZReport();
-      updateOnlineStatus();
     }
 
     function switchTab(t) {
@@ -640,7 +655,7 @@
 
     function triggerQuoteFromMiniApp() {
       if (tg?.close) {
-        alert("Bot sohbet penceresi açılıyor. Nilay Hanım için teklif oluşturma sihirbazı başlayacak.");
+        alert("Bot sohbet penceresi açılıyor. Nilay Hanım için teklif hazırlama sihirbazı başlayacak.");
         tg.close();
       }
     }
@@ -710,7 +725,7 @@
       `).join('');
     }
 
-    // --- EKRAN TAMİR FONKSİYONLARI ---
+    // --- EKRAN TAMİR İŞLEMLERİ ---
     function filterRepairs(f) {
       selectedRepairFilter = f;
       document.querySelectorAll('.rf-pill').forEach(btn => {
@@ -973,9 +988,6 @@
       if (tg?.sendData) tg.sendData(JSON.stringify(payload));
     }
 
-    // ==========================================
-    // CANLI VE GELİŞMİŞ Z-RAPORU MOTORU (TARİH + FİRMA + ÜRÜN FİLTRESİ)
-    // ==========================================
     function setDatePreset(type) {
       const now = new Date();
       const toIso = d => d.toISOString().split('T')[0];
@@ -986,14 +998,17 @@
         const d = new Date(); d.setDate(now.getDate() - 7);
         startEl.value = toIso(d); endEl.value = toIso(now);
       } else if (type === 'month') {
-        const d = new Date(now.getFullYear(), now.getMonth(), 1);
-        startEl.value = toIso(d); endEl.value = toIso(now);
+        const m = new Date(now.getFullYear(), now.getMonth(), 1);
+        startEl.value = toIso(m); endEl.value = toIso(now);
       } else {
         startEl.value = ""; endEl.value = "";
       }
       renderZReport();
     }
 
+    // ==========================================
+    // GELİŞMİŞ FİLTRELİ Z-RAPORU (FİRMA + ÜRÜN + TARİH)
+    // ==========================================
     function renderZReport() {
       const startVal = document.getElementById('z-start-date')?.value;
       const endVal = document.getElementById('z-end-date')?.value;
@@ -1002,7 +1017,6 @@
 
       let filtered = sales.filter(s => s.status === 'APPROVED');
 
-      // 1. Tarih Filtresi
       if (startVal || endVal) {
         filtered = filtered.filter(s => {
           const sDate = s.timestamp ? s.timestamp.split('T')[0] : "";
@@ -1012,12 +1026,10 @@
         });
       }
 
-      // 2. Firma Filtresi
       if (firmFilter) {
         filtered = filtered.filter(s => normalizeTr(s.firm).includes(firmFilter));
       }
 
-      // 3. Ürün Kodu veya Adı Filtresi
       if (partFilter) {
         filtered = filtered.filter(s => {
           return s.items && s.items.some(i => normalizeTr(i.code).includes(partFilter) || normalizeTr(i.name).includes(partFilter));
