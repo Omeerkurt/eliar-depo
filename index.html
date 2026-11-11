@@ -49,11 +49,11 @@
       </div>
     </div>
     
+    <!-- TEMA DEĞİŞTİRME + KULLANICI PROFİLİ -->
     <div class="flex items-center space-x-2">
       <button onclick="toggleTheme()" id="theme-toggle-btn" title="Temayı Değiştir" class="p-2 bg-darkbg border border-bordercol rounded-xl text-amber-400 hover:text-white text-xs shadow">
         <i class="fa-solid fa-sun" id="theme-icon"></i>
       </button>
-      
       <button onclick="openUserDrawer()" id="user-badge-btn" class="px-2.5 py-1.5 bg-darkbg border border-bordercol rounded-xl text-xs flex items-center space-x-1.5 shadow">
         <span id="user-avatar-icon">👑</span>
         <span id="user-name-display" class="font-bold text-white text-[11px]">Ömer</span>
@@ -97,6 +97,7 @@
         </button>
       </div>
 
+      <!-- KATEGORİLER (SENSÖRLER VE YENİ DAHİL) -->
       <div class="flex space-x-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
         <button onclick="filterCategory('ALL')" id="pill-ALL" class="cat-pill px-3 py-1.5 rounded-xl font-bold bg-brand-600 text-white whitespace-nowrap">Tümü (<span id="count-all">0</span>)</button>
         <button onclick="filterCategory('YENI')" id="pill-YENI" class="cat-pill px-3 py-1.5 rounded-xl font-semibold bg-cardbg border border-bordercol text-amber-300 whitespace-nowrap">✨ Yeni (<span id="count-yeni">0</span>)</button>
@@ -109,7 +110,7 @@
       <div id="stock-list" class="space-y-2"></div>
     </section>
 
-    <!-- 2. TAB: EKRAN TAMİR & SERVİS MODÜLÜ -->
+    <!-- 2. TAB: EKRAN TAMİR MODÜLÜ -->
     <section id="tab-repair" class="tab-content hidden space-y-3">
       <div class="flex justify-between items-center bg-cardbg border border-bordercol rounded-2xl p-3 shadow-md">
         <div>
@@ -135,7 +136,7 @@
       <div id="repair-list" class="space-y-2.5"></div>
     </section>
 
-    <!-- 3. TAB: RAPOR & TESİS GEÇMİŞİ -->
+    <!-- 3. TAB: RAPOR & TESİS GEÇMİŞİ (FİRMA, ÜRÜN VE TARİH FİLTRELİ) -->
     <section id="tab-reports" class="tab-content hidden space-y-3">
       <div class="bg-cardbg border border-bordercol rounded-2xl p-4 space-y-3 shadow-xl">
         <div class="flex justify-between items-center border-b border-bordercol pb-2">
@@ -241,6 +242,7 @@
         <button onclick="handleLoginSubmit()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Giriş Yap</button>
       </div>
 
+      <!-- KAMİL İLK GİRİŞ ŞİFRE BELİRLEME -->
       <div id="kamil-setup-view" class="hidden space-y-3 p-3 bg-darkbg rounded-xl border border-cyan-500/40 text-xs">
         <div class="text-center">
           <span class="text-xs font-bold text-cyan-300">👋 Hoş geldin Kamil!</span>
@@ -337,7 +339,7 @@
       </div>
       <button onclick="savePartChanges()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-xs shadow-lg">Değişiklikleri Kaydet</button>
 
-      <!-- SİLME BUTONLARI -->
+      <!-- SADECE ÖMER'E GÖRÜNÜR SİLME BUTONLARI -->
       <div id="admin-delete-buttons-group" class="pt-2 border-t border-bordercol/40 flex space-x-2">
         <button onclick="deletePartFromModal(true)" class="flex-1 bg-slate-800 border border-slate-600 text-slate-300 py-2 rounded-xl font-bold text-[11px]">🔕 Bildirimsiz Sil</button>
         <button onclick="deletePartFromModal(false)" class="flex-1 bg-rose-950 border border-rose-800 text-rose-300 py-2 rounded-xl font-bold text-[11px]">📢 Bildirerek Sil</button>
@@ -594,9 +596,7 @@
       localStorage.setItem('elips_repairs_v11', JSON.stringify(repairs));
     }
 
-    // =========================================================================
-    // CANLI SUNUCU SENKRONİZASYONU (Madde 1 & 2 Köprüsü)
-    // =========================================================================
+    // CANLI SUNUCU SENKRONİZASYONU
     let apiUrl = new URLSearchParams(window.location.search).get('api') || localStorage.getItem('elips_api_url') || '';
     if (apiUrl) {
       if (apiUrl.endsWith('/')) apiUrl = apiUrl.slice(0, -1);
@@ -607,7 +607,6 @@
       applyTheme();
       updateOnlineStatus();
 
-      // Sunucudan canlı verileri çek ve iki telefonu eşitle
       if (navigator.onLine && apiUrl) {
         try {
           const res = await fetch(`${apiUrl}/api/sync`);
@@ -623,7 +622,6 @@
         }
       }
 
-      // İlk kurulum için yerel dosya yedeği
       if (!stocks || stocks.length === 0) {
         try {
           const res = await fetch('stocks_db.json');
@@ -999,16 +997,13 @@
         startEl.value = toIso(d); endEl.value = toIso(now);
       } else if (type === 'month') {
         const m = new Date(now.getFullYear(), now.getMonth(), 1);
-        startEl.value = toIso(m); endEl.value = toIso(now);
+        startEl.value = toIso(d); endEl.value = toIso(now);
       } else {
         startEl.value = ""; endEl.value = "";
       }
       renderZReport();
     }
 
-    // ==========================================
-    // GELİŞMİŞ FİLTRELİ Z-RAPORU (FİRMA + ÜRÜN + TARİH)
-    // ==========================================
     function renderZReport() {
       const startVal = document.getElementById('z-start-date')?.value;
       const endVal = document.getElementById('z-end-date')?.value;
